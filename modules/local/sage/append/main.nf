@@ -8,7 +8,7 @@ process SAGE_APPEND {
         'biocontainers/hmftools-sage:4.0--hdfd78af_0' }"
 
     input:
-    tuple val(meta), path(vcf), path(bam), path(bai)
+    tuple val(meta), path(vcf), val(labels), path(bams), path(bais)
     path genome_fasta
     val genome_ver
     path genome_fai
@@ -32,13 +32,13 @@ process SAGE_APPEND {
         com.hartwig.hmftools.sage.append.SageAppendApplication \\
         ${args} \\
         -input_vcf ${vcf} \\
-        -reference ${meta.tumor_rna_id} \\
-        -reference_bam ${bam} \\
+        -reference ${labels.join(',')} \\
+        -reference_bam ${bams.join(',')} \\
         -ref_genome ${genome_fasta} \\
         -ref_genome_version ${genome_ver} \\
         -skip_msi_jitter \\
         -threads ${task.cpus} \\
-        -output_vcf ${meta.dna_id}.sage.append.vcf.gz
+        -output_vcf ${meta.id}.sage.append.vcf.gz
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -48,7 +48,7 @@ process SAGE_APPEND {
 
     stub:
     """
-    touch "${meta.dna_id}.sage.append.vcf.gz"
+    touch "${meta.id}.sage.append.vcf.gz"
 
     echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
     """

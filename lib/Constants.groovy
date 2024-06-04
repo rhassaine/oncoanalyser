@@ -26,6 +26,7 @@ class Constants {
 
 
     static enum RunMode {
+        MRD,
         TARGETED,
         WGTS,
     }
@@ -49,6 +50,7 @@ class Constants {
         SAGE,
         SIGS,
         VIRUSINTERPRETER,
+        WISP,
     }
 
     static enum FileType {
@@ -101,6 +103,7 @@ class Constants {
         CANCER_TYPE,
         LANE,
         LIBRARY_ID,
+        LONGITUDINAL_PRIMARY,
     }
 
     static Map PLACEHOLDER_META = [meta_placeholder: null]
