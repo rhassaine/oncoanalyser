@@ -3,11 +3,9 @@ process ESVEE_CALL {
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
-//    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-//        'https://depot.galaxyproject.org/singularity/hmftools-esvee:1.0_beta--hdfd78af_0' :
-//        'quay.io/biocontainers/hmftools-esvee:1.0_beta--hdfd78af_0' }"
-
-    container 'docker.io/luannnguyen/hmftools-esvee:1.0_beta--hdfd78af_2'
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/hmftools-esvee:1.0_beta--hdfd78af_2' :
+        'biocontainers/hmftools-esvee:1.0_beta--hdfd78af_2' }"
 
     input:
     tuple val(meta), path(ref_depth_vcf), path(fragment_lengths_tsv)
