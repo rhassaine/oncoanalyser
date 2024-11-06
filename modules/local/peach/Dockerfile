@@ -1,37 +1,32 @@
-FROM mambaorg/micromamba:0.24.0
+FROM continuumio/miniconda3:23.5.2-0-alpine as build
 
 RUN \
-  micromamba install -y -n base -c bioconda -c conda-forge \
-    chardet \
-    cython \
-    dask \
-    mypy \
-    numpy \
-    'openjdk >=8' \
-    pandas \
-    scikit-allel \
-    zlib && \
-  micromamba clean --all --yes
-
-USER root
+    conda install conda-libmamba-solver
 
 RUN \
-  apt-get update && \
-  apt-get install -y build-essential git procps wget && \
-  apt-get clean && \
-  rm -rf /var/lib/apt/lists/*
-
-ENV PATH="/opt/conda/bin:/opt/conda/condabin:${PATH}"
-
-RUN \
-  pip install 'TransVar==2.5.8.20190813'
+    echo -e > ~/.condarc '\
+solver: libmamba\n\
+channels:\n\
+    - conda-forge\n\
+    - bioconda\n\
+    - defaults'
 
 RUN \
-  git clone https://github.com/hartwigmedical/peach.git -b v1.6 /opt/peach/
+  conda create -y -p /env/ \
+    'openjdk >=8'
 
 RUN \
-  apt-get remove -y build-essential git && \
-  apt-get clean && \
-  rm -rf /var/lib/apt/lists/*
+  mkdir -p /opt/peach/ && \
+  wget -O /opt/peach/peach.jar 'https://github.com/hartwigmedical/hmftools/releases/download/peach-v2.0.0/peach_v2.0.0.jar'
 
-USER mambauser
+RUN \
+    conda clean -yaf
+
+# Move Conda environment into standard BioContainers base image
+FROM quay.io/bioconda/base-glibc-busybox-bash:2.1.0
+
+COPY --from=build /env/ /env/
+COPY --from=build /opt/peach/ /opt/peach/
+
+ENV PATH="/env/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/env/lib/:${LD_LIBRARY_PATH}"
