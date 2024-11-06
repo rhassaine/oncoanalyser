@@ -64,6 +64,7 @@ include { LINX_PLOTTING         } from '../subworkflows/local/linx_plotting'
 include { NEO_PREDICTION        } from '../subworkflows/local/neo_prediction'
 include { ORANGE_REPORTING      } from '../subworkflows/local/orange_reporting'
 include { PAVE_ANNOTATION       } from '../subworkflows/local/pave_annotation'
+include { PEACH_CALLING         } from '../subworkflows/local/peach_calling'
 include { PREPARE_REFERENCE     } from '../subworkflows/local/prepare_reference'
 include { PURPLE_CALLING        } from '../subworkflows/local/purple_calling'
 include { READ_ALIGNMENT_DNA    } from '../subworkflows/local/read_alignment_dna'
@@ -675,6 +676,23 @@ workflow WGTS {
     } else {
 
         ch_virusinterpreter_out = ch_inputs.map { meta -> [meta, []] }
+
+    }
+
+    //
+    // SUBWORKFLOW: Run PEACH to call germline haplotypes and report pharmacogenomics
+    //
+    if (run_config.stages.peach) {
+
+        PEACH_CALLING(
+            ch_inputs,
+            ch_purple_out,
+            hmf_data.peach_haplotypes,
+            hmf_data.peach_haplotype_functions,
+            hmf_data.peach_drug_info,
+        )
+
+        ch_versions = ch_versions.mix(PEACH_CALLING.out.versions)
 
     }
 
