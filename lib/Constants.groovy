@@ -45,6 +45,7 @@ class Constants {
         NEO,
         ORANGE,
         PAVE,
+        PEACH,
         PURPLE,
         REDUX,
         SAGE,
