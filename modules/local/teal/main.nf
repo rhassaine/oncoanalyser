@@ -2,7 +2,7 @@ process TEAL {
     tag "${meta.id}"
     label 'process_medium'
 
-    container 'docker.io/scwatts/teal:1.3.1--0'
+    container 'docker.io/scwatts/teal:563f6e0--0'
 
     input:
     tuple val(meta), path(tumor_bam), path(tumor_bai), path(normal_bam), path(normal_bai), path(tumor_metrics_dir), path(normal_metrics_dir), path(cobalt_dir), path(purple_dir)
@@ -48,7 +48,7 @@ process TEAL {
     # NOTE(SW): hard coded since there is no reliable way to obtain version information.
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        teal: 1.3.1
+        teal: 563f6e0
     END_VERSIONS
     """
 

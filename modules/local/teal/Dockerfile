@@ -15,9 +15,11 @@ RUN \
   conda create -y -p /env/ \
     'openjdk >=8'
 
+# NOTE(SW): TEAL JAR built from hartwigmedical/hmftools at commit 563f6e0
+COPY teal.jar /tmp/
 RUN \
   mkdir -p /opt/teal/ && \
-  wget -O /opt/teal/teal.jar 'https://github.com/hartwigmedical/hmftools/releases/download/teal-v1.3.1/teal-v1.3.1.jar'
+  mv /tmp/teal.jar /opt/teal/teal.jar
 
 RUN \
     conda clean -yaf
