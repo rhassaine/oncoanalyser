@@ -36,6 +36,7 @@ class Constants {
         AMBER,
         BAMTOOLS,
         CHORD,
+        CIDER,
         COBALT,
         CUPPA,
         ESVEE,
