@@ -1,22 +1,32 @@
-FROM mambaorg/micromamba:0.24.0
-
-USER root
+FROM continuumio/miniconda3:23.5.2-0-alpine as build
 
 RUN \
-  apt-get update && \
-  apt-get install -y procps wget && \
-  apt-get clean && \
-  rm -rf /var/lib/apt/lists/*
+    conda install conda-libmamba-solver
+
+RUN \
+    echo -e > ~/.condarc '\
+solver: libmamba\n\
+channels:\n\
+    - conda-forge\n\
+    - bioconda\n\
+    - defaults'
+
+RUN \
+  conda create -y -p /env/ \
+    'openjdk >=8'
 
 RUN \
   mkdir -p /opt/teal/ && \
-  wget -O /opt/teal/teal.jar 'https://github.com/hartwigmedical/hmftools/releases/download/teal-v1.0.1/teal-1.0.1.jar'
-
-USER mambauser
+  wget -O /opt/teal/teal.jar 'https://github.com/hartwigmedical/hmftools/releases/download/teal-v1.3.1/teal-v1.3.1.jar'
 
 RUN \
-  micromamba install -y -n base -c bioconda -c conda-forge \
-    picard && \
-  micromamba clean --all --yes
+    conda clean -yaf
 
-ENV PATH="/opt/conda/bin:/opt/conda/condabin:${PATH}"
+# Move Conda environment into standard BioContainers base image
+FROM quay.io/bioconda/base-glibc-busybox-bash:2.1.0
+
+COPY --from=build /env/ /env/
+COPY --from=build /opt/teal/ /opt/teal/
+
+ENV PATH="/env/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/env/lib/:${LD_LIBRARY_PATH}"
