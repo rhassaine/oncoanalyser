@@ -1,6 +1,3 @@
-// TODO(SW): support longitudinal samples (requires primary and subsequent samples [proposing: InfoField.LONGITUDINAL_PRIMARY])
-
-
 //
 // This file holds several Groovy functions that could be useful for any Nextflow pipeline
 //
@@ -29,43 +26,6 @@ class Utils {
                         Nextflow.exit(1)
                     } else {
                         meta.subject_id = it.subject_id
-                    }
-
-                    // Sample type
-                    def sample_type_enum = Utils.getEnumFromString(it.sample_type, Constants.SampleType)
-                    if (!sample_type_enum) {
-                        def sample_type_str = Utils.getEnumNames(Constants.SampleType).join('\n  - ')
-                        log.error "received invalid sample type: '${it.sample_type}'. Valid options are:\n  - ${sample_type_str}"
-                        Nextflow.exit(1)
-                    }
-
-                    // Sequence type
-                    def sequence_type_enum = Utils.getEnumFromString(it.sequence_type, Constants.SequenceType)
-                    if (!sequence_type_enum) {
-                        def sequence_type_str = Utils.getEnumNames(Constants.SequenceType).join('\n  - ')
-                        log.error "received invalid sequence type: '${it.sequence_type}'. Valid options are:\n  - ${sequence_type_str}"
-                        Nextflow.exit(1)
-                    }
-
-                    // Filetype
-                    def filetype_enum = Utils.getEnumFromString(it.filetype, Constants.FileType)
-                    if (!filetype_enum) {
-                        def filetype_str = Utils.getEnumNames(Constants.FileType).join('\n  - ')
-                        log.error "received invalid file type: '${it.filetype}'. Valid options are:\n  - ${filetype_str}"
-                        Nextflow.exit(1)
-                    }
-
-                    def sample_key = [sample_type_enum, sequence_type_enum]
-                    def meta_sample = meta.get(sample_key, [sample_id: it.sample_id])
-
-                    if (meta_sample.sample_id != it.sample_id) {
-                        log.error "got unexpected sample name for ${group_id} ${sample_type_enum}/${sequence_type_enum}: ${it.sample_id}"
-                        Nextflow.exit(1)
-                    }
-
-                    if (meta_sample.containsKey(filetype_enum) & filetype_enum != Constants.FileType.FASTQ) {
-                        log.error "got duplicate file for ${group_id} ${sample_type_enum}/${sequence_type_enum}: ${filetype_enum}"
-                        Nextflow.exit(1)
                     }
 
                     // Info data
@@ -99,6 +59,63 @@ class Utils {
 
                     }
 
+                    // Sample type
+                    def sample_type_enum = Utils.getEnumFromString(it.sample_type, Constants.SampleType)
+                    if (!sample_type_enum) {
+                        def sample_type_str = Utils.getEnumNames(Constants.SampleType).join('\n  - ')
+                        log.error "received invalid sample type: '${it.sample_type}'. Valid options are:\n  - ${sample_type_str}"
+                        Nextflow.exit(1)
+                    }
+
+                    // Sequence type
+                    def sequence_type_enum = Utils.getEnumFromString(it.sequence_type, Constants.SequenceType)
+                    if (!sequence_type_enum) {
+                        def sequence_type_str = Utils.getEnumNames(Constants.SequenceType).join('\n  - ')
+                        log.error "received invalid sequence type: '${it.sequence_type}'. Valid options are:\n  - ${sequence_type_str}"
+                        Nextflow.exit(1)
+                    }
+
+                    // Filetype
+                    def filetype_enum = Utils.getEnumFromString(it.filetype, Constants.FileType)
+                    if (!filetype_enum) {
+                        def filetype_str = Utils.getEnumNames(Constants.FileType).join('\n  - ')
+                        log.error "received invalid file type: '${it.filetype}'. Valid options are:\n  - ${filetype_str}"
+                        Nextflow.exit(1)
+                    }
+
+                    def sample_key = [sample_type_enum, sequence_type_enum]
+                    def meta_sample = meta.get(sample_key, [sample_id: it.sample_id])
+
+
+                    // Sample ID; special case for longitudinal samples
+                    if (info_data.containsKey(Constants.InfoField.LONGITUDINAL_SAMPLE)) {
+                        if (meta_sample.containsKey('longitudinal_sample_id')) {
+
+                            if (meta_sample.longitudinal_sample_id != it.sample_id) {
+
+                                log.error "got unexpected longitudinal sample name for ${group_id} ${sample_type_enum}/${sequence_type_enum}: ${it.sample_id}"
+                                Nextflow.exit(1)
+
+                            }
+
+                        } else {
+
+                            meta_sample.longitudinal_sample_id = it.sample_id
+
+                        }
+
+                    } else if (meta_sample.sample_id != it.sample_id) {
+
+                        log.error "got unexpected sample name for ${group_id} ${sample_type_enum}/${sequence_type_enum}: ${it.sample_id}"
+                        Nextflow.exit(1)
+
+                    }
+
+                    // Filetype uniqueness
+                    if (meta_sample.containsKey(filetype_enum) & filetype_enum != Constants.FileType.FASTQ) {
+                        log.error "got duplicate file for ${group_id} ${sample_type_enum}/${sequence_type_enum}: ${filetype_enum}"
+                        Nextflow.exit(1)
+                    }
 
                     // Handle inputs appropriately
                     if (filetype_enum === Constants.FileType.FASTQ) {
@@ -462,8 +479,21 @@ class Utils {
     }
 
     // Sample names
+    static public getTumorDnaSampleName(Map named_args, meta) {
+        def meta_sample = getTumorDnaSample(meta)
+        def sample_id
+
+        if (named_args.getOrDefault('primary', false)) {
+            sample_id = meta_sample['sample_id']
+        } else {
+            sample_id = meta_sample.getOrDefault('longitudinal_sample_id', meta_sample['sample_id'])
+        }
+
+        return sample_id
+    }
+
     static public getTumorDnaSampleName(meta) {
-        return getTumorDnaSample(meta)['sample_id']
+        getTumorDnaSampleName([:], meta)
     }
 
     static public getTumorRnaSampleName(meta) {

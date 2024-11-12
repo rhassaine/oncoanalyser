@@ -103,7 +103,7 @@ class Constants {
         CANCER_TYPE,
         LANE,
         LIBRARY_ID,
-        LONGITUDINAL_PRIMARY,
+        LONGITUDINAL_SAMPLE,
     }
 
     static Map PLACEHOLDER_META = [meta_placeholder: null]
