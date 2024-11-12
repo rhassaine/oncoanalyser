@@ -52,7 +52,7 @@ include { WISP_ANALYSIS      } from '../subworkflows/local/wisp_analysis'
 // Get absolute file paths
 samplesheet = Utils.getFileObject(params.input)
 
-workflow MRD {
+workflow PURITY_ESTIMATE {
     // Create channel for versions
     // channel: [ versions.yml ]
     ch_versions = Channel.empty()
