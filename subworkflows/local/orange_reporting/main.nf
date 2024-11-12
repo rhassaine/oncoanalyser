@@ -15,8 +15,8 @@ workflow ORANGE_REPORTING {
     ch_bamtools_germline        // channel: [mandatory] [ meta, metrics_dir ]
     ch_sage_somatic             // channel: [mandatory] [ meta, sage_dir ]
     ch_sage_germline            // channel: [mandatory] [ meta, sage_dir ]
-    ch_sage_somatic_append      // channel: [mandatory] [ meta, sage_append_vcf ]
-    ch_sage_germline_append     // channel: [mandatory] [ meta, sage_append_vcf ]
+    ch_sage_somatic_append      // channel: [mandatory] [ meta, sage_append_dir ]
+    ch_sage_germline_append     // channel: [mandatory] [ meta, sage_append_dir ]
     ch_purple                   // channel: [mandatory] [ meta, purple_dir ]
     ch_linx_somatic_annotation  // channel: [mandatory] [ meta, linx_annotation_dir ]
     ch_linx_somatic_plot        // channel: [mandatory] [ meta, linx_visualiser_dir ]
@@ -67,7 +67,8 @@ workflow ORANGE_REPORTING {
         15,  // isofox_dir
     ]
 
-    rna_sage_germline_append_index = 7  // sage_germline_append
+    sage_somatic_append_index = 4  // sage_somatic_append
+    sage_germline_append_index = 5  // sage_germline_append
 
     // Select input sources
     // channel: [ meta, tbt_metrics_dir, nbt_metrics_dir, tsage_dir, nsage_dir, tsage_append, nsage_append, purple_dir, tlinx_anno_dir, tlinx_plot_dir, nlinx_anno_dir, virusinterpreter_dir, chord_dir, sigs_dir, lilac_dir, cuppa_dir, isofox_dir ]
@@ -103,8 +104,8 @@ workflow ORANGE_REPORTING {
                 Utils.selectCurrentOrExisting(inputs[1], meta, Constants.INPUT.BAMTOOLS_DIR_NORMAL),
                 Utils.selectCurrentOrExisting(inputs[2], meta, Constants.INPUT.SAGE_DIR_TUMOR),
                 Utils.selectCurrentOrExisting(inputs[3], meta, Constants.INPUT.SAGE_DIR_NORMAL),
-                Utils.selectCurrentOrExisting(inputs[4], meta, Constants.INPUT.SAGE_APPEND_VCF_TUMOR),
-                Utils.selectCurrentOrExisting(inputs[5], meta, Constants.INPUT.SAGE_APPEND_VCF_NORMAL),
+                Utils.selectCurrentOrExisting(inputs[4], meta, Constants.INPUT.SAGE_APPEND_DIR_TUMOR),
+                Utils.selectCurrentOrExisting(inputs[5], meta, Constants.INPUT.SAGE_APPEND_DIR_NORMAL),
                 Utils.selectCurrentOrExisting(inputs[6], meta, Constants.INPUT.PURPLE_DIR),
                 Utils.selectCurrentOrExisting(inputs[7], meta, Constants.INPUT.LINX_ANNO_DIR_TUMOR),
                 Utils.selectCurrentOrExisting(inputs[8], meta, Constants.INPUT.LINX_PLOT_DIR_TUMOR),
@@ -191,7 +192,7 @@ workflow ORANGE_REPORTING {
             // SAGE append germline is only required when normal DNA is present
             def rna_tumor_input_indexes_ready
             if (has_dna_normal) {
-                rna_tumor_input_indexes_ready = [*rna_tumor_input_indexes, rna_sage_germline_append_index]
+                rna_tumor_input_indexes_ready = [*rna_tumor_input_indexes, sage_germline_append_index]
             } else {
                 rna_tumor_input_indexes_ready = rna_tumor_input_indexes.clone()
             }
@@ -204,6 +205,21 @@ workflow ORANGE_REPORTING {
                 meta_orange.tumor_rna_id = Utils.getTumorRnaSampleName(meta)
             } else {
                 rna_tumor_input_indexes.each { i -> inputs_selected[i] = [] }
+            }
+
+            // Set SAGE append VCF input
+            if (has_rna_tumor) {
+                // Somatic
+                def sage_somatic_append = inputs_selected[sage_somatic_append_index]
+                if (sage_somatic_append) {
+                    inputs_selected[sage_somatic_append_index] = file(sage_somatic_append).resolve("${meta_orange.tumor_id}.sage.append.vcf.gz")
+                }
+
+                // Germline
+                def sage_germline_append = inputs_selected[sage_germline_append_index]
+                if (sage_germline_append) {
+                    inputs_selected[sage_germline_append_index] = file(sage_germline_append).resolve("${meta_orange.normal_dna_id}.sage.append.vcf.gz")
+                }
             }
 
             assert inputs_selected.size() == input_expected_size
