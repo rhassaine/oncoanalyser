@@ -19,7 +19,7 @@ RUN \
 
 RUN \
   mkdir -p /opt/wisp/ && \
-  wget -O /opt/wisp/wisp.jar 'https://github.com/hartwigmedical/hmftools/releases/download/wisp-v1.1.rc1/wisp_v1.1.rc1.jar'
+  wget -O /opt/wisp/wisp.jar 'https://github.com/hartwigmedical/hmftools/releases/download/wisp-v1.2_beta/wisp_v1.2_beta.jar'
 
 RUN \
     conda clean -yaf
