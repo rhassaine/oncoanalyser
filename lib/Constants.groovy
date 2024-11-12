@@ -26,6 +26,10 @@ class Constants {
 
 
     static enum RunMode {
+<<<<<<< HEAD
+=======
+        PURITY_ESTIMATE,
+>>>>>>> 964faa0... Rename mrd mode to purity_estimate
         TARGETED,
         WGTS,
     }
