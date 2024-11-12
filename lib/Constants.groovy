@@ -26,7 +26,7 @@ class Constants {
 
 
     static enum RunMode {
-        MRD,
+        PURITY_ESTIMATE,
         TARGETED,
         WGTS,
     }
