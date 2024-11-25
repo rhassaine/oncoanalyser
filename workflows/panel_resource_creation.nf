@@ -234,7 +234,7 @@ workflow PANEL_RESOURCE_CREATION {
             ch_redux_dna_donor_out,
             ref_data.genome_version,
             hmf_data.heterozygous_sites,
-            panel_data.target_region_bed,
+            [],  // target_region_bed
         )
 
         ch_versions = ch_versions.mix(AMBER_PROFILING.out.versions)
@@ -259,7 +259,7 @@ workflow PANEL_RESOURCE_CREATION {
             ch_redux_dna_normal_out,
             hmf_data.gc_profile,
             hmf_data.diploid_bed,
-            panel_data.target_region_normalisation,
+            [],  // panel_target_region_normalisation
         )
 
         ch_versions = ch_versions.mix(COBALT_PROFILING.out.versions)
@@ -292,12 +292,16 @@ workflow PANEL_RESOURCE_CREATION {
             ref_data.genome_fai,
             ref_data.genome_dict,
             hmf_data.sage_known_hotspots_somatic,
-            hmf_data.sage_known_hotspots_germline,
-            panel_data.sage_actionable_panel,
-            panel_data.sage_coverage_panel,
+            [],  //sage_known_hotspots_germline
+
+
+            params.sage_actionable_panel,
+
+
+            [],  //sage_coverage_panel
             hmf_data.sage_highconf_regions,
-            hmf_data.segment_mappability,
-            panel_data.driver_gene_panel,
+            [],  // segment_mappability
+            [],  // driver_gene_panel
             hmf_data.ensembl_data_resources,
         )
 
