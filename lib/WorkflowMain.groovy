@@ -353,6 +353,7 @@ class WorkflowMain {
 
         if (ref_data_types.contains(Constants.RefDataType.PANEL)) {
             require_genome = true
+            require_bwa_index = true
             require_hmftools_data = true
         }
 
