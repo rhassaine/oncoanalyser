@@ -12,11 +12,12 @@ class Constants {
 
 
     // NOTE(SW): these public URLs are for the oncoanalyser dev bucket
-    static String HMF_DATA_37_PATH = 'https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/hmf_reference_data/hmftools/hmf_pipeline_resources.37_v2.0.0--3.tar.gz'
-    static String HMF_DATA_38_PATH = 'https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/hmf_reference_data/hmftools/hmf_pipeline_resources.38_v2.0.0--3.tar.gz'
+    static String HMF_DATA_37_PATH = 'https://pub-29f2e5b2b7384811bdbbcba44f8b5083.r2.dev/hmf_reference_data/hmftools/6.0_37--0.tar.gz'
+    static String HMF_DATA_38_PATH = 'https://pub-29f2e5b2b7384811bdbbcba44f8b5083.r2.dev/hmf_reference_data/hmftools/6.0_38--1.tar.gz'
 
-    static String TSO500_PANEL_37_PATH = 'https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/hmf_reference_data/panels/hmf_panel_resources.tso500.37_v2.0.0--3.tar.gz'
-    static String TSO500_PANEL_38_PATH = 'https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/hmf_reference_data/panels/hmf_panel_resources.tso500.38_v2.0.0--3.tar.gz'
+
+    static String TSO500_PANEL_37_PATH = 'https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/hmf_reference_data/panels/tso500_5.34_37--1.tar.gz'
+    static String TSO500_PANEL_38_PATH = 'https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/hmf_reference_data/panels/tso500_5.34_38--1.tar.gz'
 
     static String HLA_SLICE_BED_GRCH38_ALT_PATH = 'https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/other/hla_slice/grch38_alt.plus_homologous.bed'
 
@@ -26,6 +27,7 @@ class Constants {
 
 
     static enum RunMode {
+        PURITY_ESTIMATE,
         TARGETED,
         WGTS,
     }
@@ -49,20 +51,18 @@ class Constants {
         SAGE,
         SIGS,
         VIRUSINTERPRETER,
+        WISP,
     }
 
     static enum FileType {
         // Generic
         BAM,
+        BAM_REDUX,
         BAI,
         FASTQ,
-        // Redux
-        BAM_REDUX,
-        REDUX_DUP_FREQ_TSV,
-        REDUX_JITTER_TSV,
-        REDUX_MS_TSV,
         // Process
         AMBER_DIR,
+        BAMTOOLS,
         BAMTOOLS_DIR,
         COBALT_DIR,
         ESVEE_VCF,
@@ -74,7 +74,7 @@ class Constants {
         PURPLE_DIR,
         SAGE_VCF,
         SAGE_VCF_TBI,
-        SAGE_APPEND_VCF,
+        SAGE_APPEND_DIR,
         VIRUSINTERPRETER_DIR,
         // ORANGE specific
         CHORD_DIR,
@@ -101,6 +101,7 @@ class Constants {
         CANCER_TYPE,
         LANE,
         LIBRARY_ID,
+        LONGITUDINAL_SAMPLE,
     }
 
     static Map PLACEHOLDER_META = [meta_placeholder: null]
@@ -108,9 +109,14 @@ class Constants {
 
     static Map INPUT = [
 
-        // Bams
         BAM_DNA_TUMOR: [
             FileType.BAM,
+            SampleType.TUMOR,
+            SequenceType.DNA,
+        ],
+
+        BAM_REDUX_DNA_TUMOR: [
+            FileType.BAM_REDUX,
             SampleType.TUMOR,
             SequenceType.DNA,
         ],
@@ -121,8 +127,20 @@ class Constants {
             SequenceType.DNA,
         ],
 
+        BAM_REDUX_DNA_NORMAL: [
+            FileType.BAM_REDUX,
+            SampleType.NORMAL,
+            SequenceType.DNA,
+        ],
+
         BAM_DNA_DONOR: [
             FileType.BAM,
+            SampleType.DONOR,
+            SequenceType.DNA,
+        ],
+
+        BAM_REDUX_DNA_DONOR: [
+            FileType.BAM_REDUX,
             SampleType.DONOR,
             SequenceType.DNA,
         ],
@@ -157,82 +175,6 @@ class Constants {
             SequenceType.RNA,
         ],
 
-
-        // REDUX
-        BAM_REDUX_DNA_TUMOR: [
-            FileType.BAM_REDUX,
-            SampleType.TUMOR,
-            SequenceType.DNA,
-        ],
-
-        REDUX_DUP_FREQ_TSV_TUMOR: [
-            FileType.REDUX_DUP_FREQ_TSV,
-            SampleType.TUMOR,
-            SequenceType.DNA,
-        ],
-
-        REDUX_JITTER_TSV_TUMOR: [
-            FileType.REDUX_JITTER_TSV,
-            SampleType.TUMOR,
-            SequenceType.DNA,
-        ],
-
-        REDUX_MS_TSV_TUMOR: [
-            FileType.REDUX_MS_TSV,
-            SampleType.TUMOR,
-            SequenceType.DNA,
-        ],
-
-        BAM_REDUX_DNA_NORMAL: [
-            FileType.BAM_REDUX,
-            SampleType.NORMAL,
-            SequenceType.DNA,
-        ],
-
-        REDUX_DUP_FREQ_TSV_NORMAL: [
-            FileType.REDUX_DUP_FREQ_TSV,
-            SampleType.NORMAL,
-            SequenceType.DNA,
-        ],
-
-        REDUX_JITTER_TSV_NORMAL: [
-            FileType.REDUX_JITTER_TSV,
-            SampleType.NORMAL,
-            SequenceType.DNA,
-        ],
-
-        REDUX_MS_TSV_NORMAL: [
-            FileType.REDUX_MS_TSV,
-            SampleType.NORMAL,
-            SequenceType.DNA,
-        ],
-
-        BAM_REDUX_DNA_DONOR: [
-            FileType.BAM_REDUX,
-            SampleType.DONOR,
-            SequenceType.DNA,
-        ],
-
-        REDUX_DUP_FREQ_TSV_DONOR: [
-            FileType.REDUX_DUP_FREQ_TSV,
-            SampleType.DONOR,
-            SequenceType.DNA,
-        ],
-
-        REDUX_JITTER_TSV_DONOR: [
-            FileType.REDUX_JITTER_TSV,
-            SampleType.DONOR,
-            SequenceType.DNA,
-        ],
-
-        REDUX_MS_TSV_DONOR: [
-            FileType.REDUX_MS_TSV,
-            SampleType.DONOR,
-            SequenceType.DNA,
-        ],
-
-
-        // Other tools
         ISOFOX_DIR: [
             FileType.ISOFOX_DIR,
             SampleType.TUMOR,
@@ -250,13 +192,18 @@ class Constants {
             SequenceType.DNA,
         ],
 
-        BAMTOOLS_DIR_TUMOR: [
+        BAMTOOLS_DIR: [
             FileType.BAMTOOLS_DIR,
+            [SampleType.TUMOR, SampleType.TUMOR_NORMAL],
+            SequenceType.DNA,
+        ],
+        BAMTOOLS_TUMOR: [
+            FileType.BAMTOOLS,
             SampleType.TUMOR,
             SequenceType.DNA,
         ],
-        BAMTOOLS_DIR_NORMAL: [
-            FileType.BAMTOOLS_DIR,
+        BAMTOOLS_NORMAL: [
+            FileType.BAMTOOLS,
             SampleType.NORMAL,
             SequenceType.DNA,
         ],
@@ -291,13 +238,13 @@ class Constants {
             SampleType.NORMAL,
             SequenceType.DNA,
         ],
-        SAGE_APPEND_VCF_TUMOR: [
-            FileType.SAGE_APPEND_VCF,
+        SAGE_APPEND_DIR_TUMOR: [
+            FileType.SAGE_APPEND_DIR,
             SampleType.TUMOR,
             SequenceType.DNA_RNA,
         ],
-        SAGE_APPEND_VCF_NORMAL: [
-            FileType.SAGE_APPEND_VCF,
+        SAGE_APPEND_DIR_NORMAL: [
+            FileType.SAGE_APPEND_DIR,
             SampleType.NORMAL,
             SequenceType.DNA_RNA,
         ],

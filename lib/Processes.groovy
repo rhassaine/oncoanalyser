@@ -41,7 +41,7 @@ class Processes {
                     return Constants.Process.valueOf(name.toUpperCase())
                 } catch(java.lang.IllegalArgumentException e) {
                     def processes_str = Processes.getProcessNames().join('\n  - ')
-                    log.error "received invalid process: '${name}'. Valid options are:\n  - ${processes_str}"
+                    log.error "recieved invalid process: '${name}'. Valid options are:\n  - ${processes_str}"
                     Nextflow.exit(1)
                 }
             }
