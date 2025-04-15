@@ -771,7 +771,7 @@ process {
     withName: CUPPA            { cpus = 4;  memory = 16.GB; }
     withName: 'ESVEE.*'        { cpus = 32; memory = 64.GB; }
     withName: LILAC            { cpus = 16; memory = 24.GB; }
-    withName: 'LINX.*'         { cpus = 16; memory = 16.GB; }
+    withName: 'LINX_.*'        { cpus = 8;  memory = 32.GB; }
     withName: REDUX            { cpus = 32; memory = 64.GB; }
     withName: ORANGE           { cpus = 4;  memory = 16.GB; }
     withName: 'PAVE.*'         { cpus = 8;  memory = 32.GB; }
