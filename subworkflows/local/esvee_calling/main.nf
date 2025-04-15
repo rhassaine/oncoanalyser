@@ -5,6 +5,8 @@
 import Constants
 import Utils
 
+import java.nio.channels.Channel
+
 include { ESVEE_CALL } from '../../../modules/local/esvee/main'
 
 workflow ESVEE_CALLING {
@@ -41,17 +43,24 @@ workflow ESVEE_CALLING {
                 normal_bai ?: Utils.getInput(meta, Constants.INPUT.BAI_DNA_NORMAL),
             ]
         }
-        .branch { meta, tumor_bam, _tumor_bai, _normal_bam, _normal_bai ->
+        .branch { meta, tumor_bam, tumor_bai, normal_bam, normal_bai ->
             def has_existing = Utils.hasExistingInput(meta, Constants.INPUT.ESVEE_VCF_TUMOR)
 
-            runnable: tumor_bam && !has_existing
+            runnable_tn: tumor_bam && normal_bam && !has_existing
+            runnable_to: tumor_bam && !has_existing
+                return [meta, tumor_bam, tumor_bai]
             skip: true
                 return meta
         }
 
     // Create process input channel
-    ch_esvee_inputs = ch_inputs_sorted.runnable
+    ch_esvee_inputs = Channel.empty()
+        .mix(
+            ch_inputs_sorted.runnable_tn,
+            ch_inputs_sorted.runnable_to.map { [*it, [], []] },
+        )
         .map { meta, tumor_bam, tumor_bai, normal_bam, normal_bai ->
+
             def meta_esvee = [
                 key: meta.group_id,
                 id: meta.group_id,
@@ -63,9 +72,7 @@ workflow ESVEE_CALLING {
             }
 
             return [meta_esvee, tumor_bam, tumor_bai, normal_bam, normal_bai]
-    }
-
-
+        }
 
     // Run ESVEE_CALL process
     ESVEE_CALL(
@@ -94,7 +101,8 @@ workflow ESVEE_CALLING {
     ch_germline_out = Channel.empty()
         .mix(
             WorkflowOncoanalyser.restoreMeta(ESVEE_CALL.out.germline_vcf, ch_inputs),
-            ch_inputs_sorted.skip.map { meta -> [meta, [], []] }
+            ch_inputs_sorted.runnable_to.map { meta, tumor_bam, tumor_bai -> [meta, [], []] },
+            ch_inputs_sorted.skip.map { meta -> [meta, [], []] },
         )
 
     ch_unfiltered_out = Channel.empty()
