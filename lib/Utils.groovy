@@ -166,7 +166,8 @@ class Utils {
 
                         if (key === Constants.FileType.BAM) {
                             index_enum = Constants.FileType.BAI
-                            index_str = 'bai'
+                            index_str = (meta[sample_key][key].toString().endsWith('cram')) ? 'crai' : 'bai'
+                            // index_str = 'bai'
                         } else if (key === Constants.FileType.BAM_REDUX) {
                             index_enum = Constants.FileType.BAI
                             index_str = 'bai'
