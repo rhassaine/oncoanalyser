@@ -55,6 +55,10 @@ include { COBALT_PROFILING      } from '../subworkflows/local/cobalt_profiling'
 include { ISOFOX_NORMALISATION  } from '../subworkflows/local/isofox_normalisation'
 include { ISOFOX_QUANTIFICATION } from '../subworkflows/local/isofox_quantification'
 include { PAVE_PON_CREATION     } from '../subworkflows/local/pave_pon_creation'
+include { PREPARE_REFERENCE     } from '../subworkflows/local/prepare_reference'
+include { READ_ALIGNMENT_DNA    } from '../subworkflows/local/read_alignment_dna'
+include { READ_ALIGNMENT_RNA    } from '../subworkflows/local/read_alignment_rna'
+include { REDUX_PROCESSING      } from '../subworkflows/local/redux_processing'
 include { SAGE_CALLING          } from '../subworkflows/local/sage_calling'
 
 /*
@@ -295,7 +299,16 @@ workflow PANEL_RESOURCE_CREATION {
             [],  //sage_known_hotspots_germline
 
 
-            params.sage_actionable_panel,
+
+
+
+
+            // TODO(SW): this (and others need to be selected from CLI or config [i.e. params])
+            //params.sage_actionable_panel,
+            hmf_data.sage_actionable_panel,
+
+
+
 
 
             [],  //sage_coverage_panel

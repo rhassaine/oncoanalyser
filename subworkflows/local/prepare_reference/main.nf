@@ -183,6 +183,12 @@ workflow PREPARE_REFERENCE {
     //
     // Set panel reference data, unpack if required
     //
+
+
+    //if (run_config.mode === Constants.RunMode.TARGETED || run_config.mode === Constants.RunMode.PANEL_RESOURCE_CREATION) {
+
+
+
     ch_panel_data = Channel.empty()
     if (run_config.mode === Constants.RunMode.TARGETED) {
 
