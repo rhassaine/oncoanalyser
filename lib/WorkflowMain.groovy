@@ -37,7 +37,7 @@ class WorkflowMain {
             }
         }
 
-        if (!params.containsKey('ref_hmf_data_path')) {
+        if (!params.containsKey('ref_data_hmf_data_path')) {
             if (params.genome_version.toString() == '37') {
                 params.ref_data_hmf_data_path = Constants.HMF_DATA_37_PATH
             } else if (params.genome_version.toString() == '38') {
@@ -110,7 +110,6 @@ class WorkflowMain {
         if (!params.containsKey('ref_data_genome_gtf')) params.ref_data_genome_gtf = null
         if (!params.containsKey('ref_data_hla_slice_bed')) params.ref_data_hla_slice_bed = null
         if (!params.containsKey('ref_data_panel_data_path')) params.ref_data_panel_data_path = null
-        if (!params.containsKey('ref_data_virusbreakenddb_path')) params.ref_data_virusbreakenddb_path = null
 
         // Additionally set selected parameters with false-ish truthy values to avoid passing null values as inputs
         if (!params.containsKey('fastp_umi_location')) params.fastp_umi_location = ''
