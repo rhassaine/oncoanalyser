@@ -23,11 +23,6 @@ def checkPathParamList = [
     params.isofox_gc_ratios,
 ]
 
-// Mode check required as evaluated regardless of workflow selection
-if (run_config.stages.virusinterpreter && run_config.mode !== Constants.RunMode.TARGETED) {
-    checkPathParamList.add(params.ref_data_virusbreakenddb_path)
-}
-
 if (run_config.stages.lilac) {
     if (params.genome_version.toString() == '38' && params.genome_type == 'alt' && params.containsKey('ref_data_hla_slice_bed')) {
         checkPathParamList.add(params.ref_data_hla_slice_bed)
@@ -157,7 +152,7 @@ workflow WGTS {
     ch_redux_dna_normal_out = Channel.empty()
     ch_redux_dna_donor_out = Channel.empty()
 
-    // channel: [ meta, dup_freq_tsv, jitter_tsv, ms_tsv, repeat_tsv ]
+    // channel: [ meta, dup_freq_tsv, jitter_tsv, ms_tsv ]
     ch_redux_dna_tumor_tsv_out = Channel.empty()
     ch_redux_dna_normal_tsv_out = Channel.empty()
     ch_redux_dna_donor_tsv_out = Channel.empty()
@@ -456,9 +451,9 @@ workflow WGTS {
     }
 
     //
-    // SUBWORKFLOW: Append read data to SAGE VCF
+    // SUBWORKFLOW: Append RNA data to SAGE VCF
     //
-    // channel: [ meta, sage_append_dir ]
+    // channel: [ meta, sage_append_vcf ]
     ch_sage_somatic_append_out = Channel.empty()
     ch_sage_germline_append_out = Channel.empty()
     if (run_config.stages.orange || run_config.stages.neo) {
@@ -612,6 +607,7 @@ workflow WGTS {
     } else {
 
         ch_chord_out = ch_inputs.map { meta -> [meta, []] }
+
     }
 
     //
@@ -666,7 +662,7 @@ workflow WGTS {
             hmf_data.virusbreakend_db,
             hmf_data.virus_taxonomy_db,
             hmf_data.virus_reporting_db,
-            hmf_data.virus_blacklist_db,
+            hmf_data.virus_blocklist_db,
             gridss_config,
         )
 
