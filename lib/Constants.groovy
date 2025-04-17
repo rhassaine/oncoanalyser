@@ -56,6 +56,9 @@ class Constants {
         BAM,
         BAI,
         FASTQ,
+        //CRAM support
+        CRAM,
+        CRAI,
         // Redux
         BAM_REDUX,
         REDUX_DUP_FREQ_TSV,
@@ -156,6 +159,33 @@ class Constants {
             SampleType.TUMOR,
             SequenceType.RNA,
         ],
+
+        // CRAM SUPPORT ATTEMPT
+
+        CRAM_DNA_TUMOR: [
+            FileType.CRAM,
+            SampleType.TUMOR,
+            SequenceType.DNA,
+        ],
+
+        CRAI_DNA_TUMOR: [
+            FileType.CRAI,
+            SampleType.TUMOR,
+            SequenceType.DNA,
+        ],
+
+        CRAM_DNA_NORMAL: [
+            FileType.CRAM,
+            SampleType.NORMAL,
+            SequenceType.DNA,
+        ],
+
+        CRAI_DNA_TUMOR: [
+            FileType.CRAI,
+            SampleType.NORMAL,
+            SequenceType.DNA,
+        ],
+
 
 
         // REDUX
