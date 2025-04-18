@@ -490,10 +490,6 @@ class Utils {
         return getTumorDnaSample(meta).getOrDefault(Constants.FileType.BAM, null)
     }
 
-    static public getTumorDnaCram(meta) {
-        return getTumorDnaSample(meta).getOrDefault(Constants.FileType.CRAM, null)
-    }
-
     static public getTumorDnaReduxBam(meta) {
         return getTumorDnaSample(meta).getOrDefault(Constants.FileType.BAM_REDUX, null)
     }
@@ -502,9 +498,6 @@ class Utils {
         return getTumorDnaSample(meta).getOrDefault(Constants.FileType.BAI, null)
     }
 
-    static public getTumorDnaCrai(meta) {
-        return getTumorDnaSample(meta).getOrDefault(Constants.FileType.CRAI, null)
-    }
 
     static public hasTumorDnaFastq(meta) {
         return getTumorDnaFastq(meta) !== null
@@ -528,10 +521,6 @@ class Utils {
         return getNormalDnaSample(meta).getOrDefault(Constants.FileType.BAM, null)
     }
 
-    static public getNormalDnaCram(meta) {
-        return getNormalDnaSample(meta).getOrDefault(Constants.FileType.CRAM, null)
-    }
-
     static public getNormalDnaReduxBam(meta) {
         return getNormalDnaSample(meta).getOrDefault(Constants.FileType.BAM_REDUX, null)
     }
@@ -539,9 +528,6 @@ class Utils {
         return getNormalDnaSample(meta).getOrDefault(Constants.FileType.BAI, null)
     }
 
-    static public getNormalDnaCrai(meta) {
-        return getNormalDnaSample(meta).getOrDefault(Constants.FileType.CRAI, null)
-    }
 
     static public hasNormalDnaFastq(meta) {
         return getNormalDnaFastq(meta) !== null
@@ -620,11 +606,11 @@ class Utils {
 
     // Status
     static public hasTumorDna(meta) {
-        return hasTumorDnaBam(meta) || hasTumorDnaReduxBam(meta) || hasTumorDnaFastq(meta) || hasTumorDnaCram(meta)
+        return hasTumorDnaBam(meta) || hasTumorDnaReduxBam(meta) || hasTumorDnaFastq(meta)
     }
 
     static public hasNormalDna(meta) {
-        return hasNormalDnaBam(meta) || hasNormalDnaReduxBam(meta) || hasNormalDnaFastq(meta) || hasNormalDnaCram(meta)
+        return hasNormalDnaBam(meta) || hasNormalDnaReduxBam(meta) || hasNormalDnaFastq(meta)
     }
 
     static public hasDonorDna(meta) {
