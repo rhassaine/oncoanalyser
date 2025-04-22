@@ -39,8 +39,10 @@ workflow REDUX_PROCESSING {
         .map { meta, bams, bais ->
             return [
                 meta,
-                Utils.hasExistingInput(meta, Constants.INPUT.BAM_DNA_TUMOR) ? [Utils.getInput(meta, Constants.INPUT.BAM_DNA_TUMOR)] : bams,
-                Utils.hasExistingInput(meta, Constants.INPUT.BAI_DNA_TUMOR) ? [Utils.getInput(meta, Constants.INPUT.BAI_DNA_TUMOR)] : bais,
+                Utils.hasExistingInput(meta, Constants.INPUT.BAM_DNA_TUMOR) ? [Utils.getInput(meta, Constants.INPUT.BAM_DNA_TUMOR)] :
+                Utils.hasExistingInput(meta, Constants.INPUT.CRAM_DNA_TUMOR) ? [Utils.getInput(meta, Constants.INPUT.CRAM_DNA_TUMOR)] : bams,
+                Utils.hasExistingInput(meta, Constants.INPUT.BAI_DNA_TUMOR) ? [Utils.getInput(meta, Constants.INPUT.BAI_DNA_TUMOR)] :
+                Utils.hasExistingInput(meta, Constants.INPUT.CRAI_DNA_TUMOR) ? [Utils.getInput(meta, Constants.INPUT.CRAI_DNA_TUMOR)] : bais,
             ]
         }
         .branch { meta, bams, bais ->

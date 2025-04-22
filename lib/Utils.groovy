@@ -146,7 +146,11 @@ class Utils {
 
                         if (key === Constants.FileType.BAM) {
                             index_enum = Constants.FileType.BAI
-                            index_str = (meta[sample_key][key].toString().endsWith('cram')) ? 'crai' : 'bai'
+                            // index_str = (meta[sample_key][key].toString().endsWith('cram')) ? 'crai' : 'bai'
+                            index_str = 'bai'
+                        } else if (key === Constants.FileType.CRAM) {
+                            index_enum = Constants.FileType.CRAI
+                            index_str = 'crai'
                         } else if (key === Constants.FileType.BAM_REDUX) {
                             index_enum = Constants.FileType.BAI
                             index_str = 'bai'
@@ -304,6 +308,7 @@ class Utils {
                 def (sample_type, sequence_type) = key
 
                 if (!meta[key].containsKey(Constants.FileType.BAM) &&
+                    !meta[key].containsKey(Constants.FileType.CRAM) &&
                     !meta[key].containsKey(Constants.FileType.BAM_REDUX) &&
                     !meta[key].containsKey(Constants.FileType.FASTQ)) {
 
