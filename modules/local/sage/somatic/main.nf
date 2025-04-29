@@ -18,8 +18,7 @@ process SAGE_SOMATIC {
     path genome_dict
     path sage_pon
     path sage_known_hotspots_somatic
-    path sage_actionable_panel
-    path sage_coverage_panel
+    path driver_gene_panel
     path sage_highconf_regions
     path ensembl_data_resources
     path gnomad_resource
@@ -83,8 +82,7 @@ process SAGE_SOMATIC {
         -ref_genome_version ${genome_ver} \\
         -pon_file ${sage_pon} \\
         -hotspots ${sage_known_hotspots_somatic} \\
-        -panel_bed ${sage_actionable_panel} \\
-        -coverage_bed ${sage_coverage_panel} \\
+        -driver_gene_panel ${driver_gene_panel} \\
         -high_confidence_bed ${sage_highconf_regions} \\
         -ensembl_data_dir ${ensembl_data_resources} \\
         ${high_depth_mode_arg} \\

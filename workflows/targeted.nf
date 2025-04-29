@@ -348,8 +348,6 @@ workflow TARGETED {
             hmf_data.sage_pon,
             hmf_data.sage_known_hotspots_somatic,
             hmf_data.sage_known_hotspots_germline,
-            panel_data.sage_actionable_panel,
-            panel_data.sage_coverage_panel,
             hmf_data.sage_highconf_regions,
             hmf_data.segment_mappability,
             panel_data.driver_gene_panel,

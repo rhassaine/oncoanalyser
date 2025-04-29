@@ -29,8 +29,6 @@ workflow SAGE_CALLING {
     sage_pon                     // channel: [mandatory] /path/to/sage_pon
     sage_known_hotspots_somatic  // channel: [mandatory] /path/to/sage_known_hotspots_somatic
     sage_known_hotspots_germline // channel: [optional]  /path/to/sage_known_hotspots_germline
-    sage_actionable_panel        // channel: [mandatory] /path/to/sage_actionable_panel
-    sage_coverage_panel          // channel: [mandatory] /path/to/sage_coverage_panel
     sage_highconf_regions        // channel: [mandatory] /path/to/sage_highconf_regions
     segment_mappability          // channel: [mandatory] /path/to/segment_mappability
     driver_gene_panel            // channel: [mandatory] /path/to/driver_gene_panel
@@ -138,8 +136,7 @@ workflow SAGE_CALLING {
         genome_fai,
         genome_dict,
         sage_known_hotspots_germline,
-        sage_actionable_panel,
-        sage_coverage_panel,
+        driver_gene_panel,
         sage_highconf_regions,
         ensembl_data_resources,
         gnomad_resource,
@@ -196,8 +193,7 @@ workflow SAGE_CALLING {
         genome_dict,
         sage_pon,
         sage_known_hotspots_somatic,
-        sage_actionable_panel,
-        sage_coverage_panel,
+        driver_gene_panel,
         sage_highconf_regions,
         ensembl_data_resources,
         gnomad_resource,

@@ -14,8 +14,7 @@ process SAGE_GERMLINE {
     path genome_fai
     path genome_dict
     path sage_known_hotspots_germline
-    path sage_actionable_panel
-    path sage_coverage_panel
+    path driver_gene_panel
     path sage_highconf_regions
     path ensembl_data_resources
     path gnomad_resource
@@ -54,8 +53,7 @@ process SAGE_GERMLINE {
         -ref_genome ${genome_fasta} \\
         -ref_genome_version ${genome_ver} \\
         -hotspots ${sage_known_hotspots_germline} \\
-        -panel_bed ${sage_actionable_panel} \\
-        -coverage_bed ${sage_coverage_panel} \\
+        -driver_gene_panel ${driver_gene_panel} \\
         -high_confidence_bed ${sage_highconf_regions} \\
         -ensembl_data_dir ${ensembl_data_resources} \\
         -germline \\
