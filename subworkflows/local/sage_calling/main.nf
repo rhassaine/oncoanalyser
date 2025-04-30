@@ -139,7 +139,6 @@ workflow SAGE_CALLING {
         driver_gene_panel,
         sage_highconf_regions,
         ensembl_data_resources,
-        gnomad_resource,
     )
 
     ch_versions = ch_versions.mix(SAGE_GERMLINE.out.versions)
