@@ -80,13 +80,13 @@ process SAGE_SOMATIC {
         -jitter_param_dir ./ \\
         -ref_genome ${genome_fasta} \\
         -ref_genome_version ${genome_ver} \\
-        -pon_file ${sage_pon} \\
         -hotspots ${sage_known_hotspots_somatic} \\
         -driver_gene_panel ${driver_gene_panel} \\
         -high_confidence_bed ${sage_highconf_regions} \\
         -ensembl_data_dir ${ensembl_data_resources} \\
-        ${high_depth_mode_arg} \\
+        -pon_file ${sage_pon} \\
         ${gnomad_args} \\
+        ${high_depth_mode_arg} \\
         ${run_tinc_arg} \\
         -bqr_write_plot \\
         -threads ${task.cpus} \\

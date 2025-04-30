@@ -20,12 +20,14 @@ workflow PAVE_ANNOTATION {
     genome_version         // channel: [mandatory] genome version
     genome_fai             // channel: [mandatory] /path/to/genome_fai
     pon_artefacts          // channel: [optional]  /path/to/pon_artefacts
+    sage_pon               // channel: [mandatory] /path/to/sage_pon
     sage_blocklist_regions // channel: [mandatory] /path/to/sage_blocklist_regions
     sage_blocklist_sites   // channel: [mandatory] /path/to/sage_blocklist_sites
     clinvar_annotations    // channel: [mandatory] /path/to/clinvar_annotations
     segment_mappability    // channel: [mandatory] /path/to/segment_mappability
     driver_gene_panel      // channel: [mandatory] /path/to/driver_gene_panel
     ensembl_data_resources // channel: [mandatory] /path/to/ensembl_data_resources/
+    gnomad_resource        // channel: [mandatory] /path/to/gnomad_resource
 
     main:
     // Channel for version.yml files
@@ -128,10 +130,12 @@ workflow PAVE_ANNOTATION {
         genome_version,
         genome_fai,
         pon_artefacts,
+        sage_pon,
         clinvar_annotations,
         segment_mappability,
         driver_gene_panel,
         ensembl_data_resources,
+        gnomad_resource,
     )
 
     ch_versions = ch_versions.mix(PAVE_SOMATIC.out.versions)

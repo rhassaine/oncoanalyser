@@ -13,10 +13,12 @@ process PAVE_SOMATIC {
     val genome_ver
     path genome_fai
     path pon_artefacts
+    path sage_pon
     path clinvar_annotations
     path segment_mappability
     path driver_gene_panel
     path ensembl_data_resources
+    path gnomad_resource
 
     output:
     tuple val(meta), path("*.vcf.gz")    , emit: vcf
@@ -32,10 +34,13 @@ process PAVE_SOMATIC {
     def xmx_mod = task.ext.xmx_mod ?: 0.75
 
     def pon_filters
+    def gnomad_args
     if (genome_ver.toString() == '37') {
         pon_filters = 'HOTSPOT:10:5;PANEL:6:5;UNKNOWN:6:0'
+        gnomad_args = "-gnomad_freq_file ${gnomad_resource}"
     } else if (genome_ver.toString() == '38') {
         pon_filters = 'HOTSPOT:5:5;PANEL:2:5;UNKNOWN:2:0'
+        gnomad_args = "-gnomad_freq_dir ${gnomad_resource}"
     } else {
         error "got bad genome version: ${genome_ver}"
     }
@@ -53,6 +58,8 @@ process PAVE_SOMATIC {
         -ref_genome_version ${genome_ver} \\
         -pon_filters "${pon_filters}" \\
         ${pon_artefact_arg} \\
+        -pon_file ${sage_pon} \\
+        ${gnomad_args} \\
         -clinvar_vcf ${clinvar_annotations} \\
         -driver_gene_panel ${driver_gene_panel} \\
         -mappability_bed ${segment_mappability} \\

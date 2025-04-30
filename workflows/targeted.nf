@@ -387,12 +387,14 @@ workflow TARGETED {
             ref_data.genome_version,
             ref_data.genome_fai,
             panel_data.pon_artefacts,
+            hmf_data.sage_pon,
             hmf_data.sage_blocklist_regions,
             hmf_data.sage_blocklist_sites,
             hmf_data.clinvar_annotations,
             hmf_data.segment_mappability,
             panel_data.driver_gene_panel,
             hmf_data.ensembl_data_resources,
+            hmf_data.gnomad_resource,
         )
 
         ch_versions = ch_versions.mix(PAVE_ANNOTATION.out.versions)
