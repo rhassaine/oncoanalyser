@@ -205,7 +205,7 @@ class Utils {
                         return
 
                     def meta_sample = meta[sample_key]
-                    def sample_id = meta_sample.sample_id
+                    def sample_id = meta_sample.getOrDefault('longitudinal_sample_id', meta_sample['sample_id'])
 
                     if(!meta_sample.containsKey(Constants.FileType.BAM_REDUX))
                         return
