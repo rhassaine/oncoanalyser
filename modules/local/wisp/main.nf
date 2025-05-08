@@ -2,7 +2,7 @@ process WISP {
     tag "${meta.id}"
     label 'process_low'
 
-    container 'docker.io/scwatts/wisp:1.2_beta--0'
+    container 'docker.io/scwatts/wisp:1.2_beta.2--0'
 
     input:
     tuple val(meta), path(sage_append_dir), path('sample_amber_dir'), path(cobalt_dir), path('primary_amber_dir'), path(primary_purple_dir)
