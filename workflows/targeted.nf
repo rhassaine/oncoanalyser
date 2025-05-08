@@ -460,7 +460,8 @@ workflow TARGETED {
         SAGE_APPEND(
             ch_inputs,
             ch_purple_out,
-            ch_inputs.map { meta -> [meta, [], []] },  // ch_dna_bam
+            ch_inputs.map { meta -> [meta, [], []] },  // ch_tumor_dna_bam
+            ch_inputs.map { meta -> [meta, [], [], [], []] },  // ch_tumor_dna_tsv
             ch_align_rna_tumor_out,
             ref_data.genome_fasta,
             ref_data.genome_version,

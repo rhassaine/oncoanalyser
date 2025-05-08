@@ -8,7 +8,7 @@ process SAGE_APPEND {
         'biocontainers/hmftools-sage:4.0--hdfd78af_0' }"
 
     input:
-    tuple val(meta), path(vcf), path(bams), path(bais)
+    tuple val(meta), path(vcf), path(bams), path(bais), path(redux_tsvs)
     path genome_fasta
     val genome_ver
     path genome_fai

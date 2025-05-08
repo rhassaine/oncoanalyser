@@ -219,9 +219,10 @@ workflow PURITY_ESTIMATE {
 
         SAGE_APPEND(
             ch_inputs,
-            ch_inputs.map { meta -> [meta, []] },  // purple_dir
+            ch_inputs.map { meta -> [meta, []] },  // ch_purple_dir
             ch_redux_dna_tumor_out,
-            ch_inputs.map { meta -> [meta, [], []] },  // ch_rna_bam
+            ch_redux_dna_tumor_tsv_out,
+            ch_inputs.map { meta -> [meta, [], []] },  // ch_tumor_rna_bam
             ref_data.genome_fasta,
             ref_data.genome_version,
             ref_data.genome_fai,
