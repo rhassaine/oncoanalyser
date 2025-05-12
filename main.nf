@@ -62,6 +62,7 @@ if (workflow.stubRun && params.create_stub_placeholders) {
 
 include { TARGETED } from './workflows/targeted'
 include { WGTS     } from './workflows/wgts'
+include { RNA_WORKFLOW } from './workflows/rna_workflow'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -80,6 +81,8 @@ workflow NFCORE_ONCOANALYSER {
         WGTS()
     } else if (run_mode === Constants.RunMode.TARGETED) {
         TARGETED()
+    } else if (run_mode === Constants.RunMode.RNA_WORKFLOW) {
+        RNA_WORKFLOW()
     } else {
         log.error("received bad run mode: ${run_mode}")
         Nextflow.exit(1)

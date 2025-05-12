@@ -28,6 +28,7 @@ class Constants {
     static enum RunMode {
         TARGETED,
         WGTS,
+        RNA_WORKFLOW,
     }
 
     static enum Process {
