@@ -78,9 +78,9 @@ run_mode = Utils.getRunMode(params.mode, log)
 workflow NFCORE_ONCOANALYSER {
 
     if (run_mode === Constants.RunMode.WGTS) {
-        WGTS()
+        //WGTS()
     } else if (run_mode === Constants.RunMode.TARGETED) {
-        TARGETED()
+        //TARGETED()
     } else if (run_mode === Constants.RunMode.PANEL_RESOURCE_CREATION) {
         PANEL_RESOURCE_CREATION()
     } else {

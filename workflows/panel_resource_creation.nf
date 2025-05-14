@@ -92,289 +92,210 @@ workflow PANEL_RESOURCE_CREATION {
     //
     // SUBWORKFLOW: Run read alignment to generate BAMs
     //
+    READ_ALIGNMENT_DNA(
+        ch_inputs,
+        ref_data.genome_fasta,
+        ref_data.genome_bwamem2_index,
+        params.max_fastq_records,
+        params.fastp_umi,
+        params.fastp_umi_location,
+        params.fastp_umi_length,
+        params.fastp_umi_skip,
+    )
+
+    READ_ALIGNMENT_RNA(
+        ch_inputs,
+        ref_data.genome_star_index,
+    )
+
     // channel: [ meta, [bam, ...], [bai, ...] ]
-    ch_align_dna_tumor_out = Channel.empty()
-    ch_align_dna_normal_out = Channel.empty()
-    ch_align_dna_donor_out = Channel.empty()
-    ch_align_rna_tumor_out = Channel.empty()
-    if (run_config.stages.alignment) {
+    ch_versions = ch_versions.mix(
+        READ_ALIGNMENT_DNA.out.versions,
+        READ_ALIGNMENT_RNA.out.versions,
+    )
 
-        READ_ALIGNMENT_DNA(
-            ch_inputs,
-            ref_data.genome_fasta,
-            ref_data.genome_bwamem2_index,
-            params.max_fastq_records,
-            params.fastp_umi,
-            params.fastp_umi_location,
-            params.fastp_umi_length,
-            params.fastp_umi_skip,
-        )
-
-        READ_ALIGNMENT_RNA(
-            ch_inputs,
-            ref_data.genome_star_index,
-        )
-
-        ch_versions = ch_versions.mix(
-            READ_ALIGNMENT_DNA.out.versions,
-            READ_ALIGNMENT_RNA.out.versions,
-        )
-
-        ch_align_dna_tumor_out = ch_align_dna_tumor_out.mix(READ_ALIGNMENT_DNA.out.dna_tumor)
-        ch_align_dna_normal_out = ch_align_dna_normal_out.mix(READ_ALIGNMENT_DNA.out.dna_normal)
-        ch_align_dna_donor_out = ch_align_dna_donor_out.mix(READ_ALIGNMENT_DNA.out.dna_donor)
-        ch_align_rna_tumor_out = ch_align_rna_tumor_out.mix(READ_ALIGNMENT_RNA.out.rna_tumor)
-
-    } else {
-
-        ch_align_dna_tumor_out = ch_inputs.map { meta -> [meta, [], []] }
-        ch_align_dna_normal_out = ch_inputs.map { meta -> [meta, [], []] }
-        ch_align_dna_donor_out = ch_inputs.map { meta -> [meta, [], []] }
-        ch_align_rna_tumor_out = ch_inputs.map { meta -> [meta, [], []] }
-
-    }
+    // channel: [ meta, [bam, ...], [bai, ...] ]
+    ch_align_dna_tumor_out = ch_align_dna_tumor_out.mix(READ_ALIGNMENT_DNA.out.dna_tumor)
+    ch_align_dna_normal_out = ch_align_dna_normal_out.mix(READ_ALIGNMENT_DNA.out.dna_normal)
+    ch_align_dna_donor_out = ch_align_dna_donor_out.mix(READ_ALIGNMENT_DNA.out.dna_donor)
+    ch_align_rna_tumor_out = ch_align_rna_tumor_out.mix(READ_ALIGNMENT_RNA.out.rna_tumor)
 
     //
     // SUBWORKFLOW: Run REDUX for DNA BAMs
     //
+    REDUX_PROCESSING(
+        ch_inputs,
+        ch_align_dna_tumor_out,
+        ch_align_dna_normal_out,
+        ch_align_dna_donor_out,
+        ref_data.genome_fasta,
+        ref_data.genome_version,
+        ref_data.genome_fai,
+        ref_data.genome_dict,
+        hmf_data.unmap_regions,
+        hmf_data.msi_jitter_sites,
+        params.redux_umi,
+        params.redux_umi_duplex_delim,
+    )
+
+    ch_versions = ch_versions.mix(REDUX_PROCESSING.out.versions)
+
     // channel: [ meta, bam, bai ]
-    ch_redux_dna_tumor_out = Channel.empty()
-    ch_redux_dna_normal_out = Channel.empty()
-    ch_redux_dna_donor_out = Channel.empty()
+    ch_redux_dna_tumor_out = ch_redux_dna_tumor_out.mix(REDUX_PROCESSING.out.dna_tumor)
+    ch_redux_dna_normal_out = ch_redux_dna_normal_out.mix(REDUX_PROCESSING.out.dna_normal)
+    ch_redux_dna_donor_out = ch_redux_dna_donor_out.mix(REDUX_PROCESSING.out.dna_donor)
 
     // channel: [ meta, dup_freq_tsv, jitter_tsv, ms_tsv, repeat_tsv ]
-    ch_redux_dna_tumor_tsv_out = Channel.empty()
-    ch_redux_dna_normal_tsv_out = Channel.empty()
-    ch_redux_dna_donor_tsv_out = Channel.empty()
-
-    if (run_config.stages.redux) {
-
-        REDUX_PROCESSING(
-            ch_inputs,
-            ch_align_dna_tumor_out,
-            ch_align_dna_normal_out,
-            ch_align_dna_donor_out,
-            ref_data.genome_fasta,
-            ref_data.genome_version,
-            ref_data.genome_fai,
-            ref_data.genome_dict,
-            hmf_data.unmap_regions,
-            hmf_data.msi_jitter_sites,
-            params.redux_umi,
-            params.redux_umi_duplex_delim,
-        )
-
-        ch_versions = ch_versions.mix(REDUX_PROCESSING.out.versions)
-
-        ch_redux_dna_tumor_out = ch_redux_dna_tumor_out.mix(REDUX_PROCESSING.out.dna_tumor)
-        ch_redux_dna_normal_out = ch_redux_dna_normal_out.mix(REDUX_PROCESSING.out.dna_normal)
-        ch_redux_dna_donor_out = ch_redux_dna_donor_out.mix(REDUX_PROCESSING.out.dna_donor)
-
-        ch_redux_dna_tumor_tsv_out = ch_redux_dna_tumor_tsv_out.mix(REDUX_PROCESSING.out.dna_tumor_tsv)
-        ch_redux_dna_normal_tsv_out = ch_redux_dna_normal_tsv_out.mix(REDUX_PROCESSING.out.dna_normal_tsv)
-        ch_redux_dna_donor_tsv_out = ch_redux_dna_donor_tsv_out.mix(REDUX_PROCESSING.out.dna_donor_tsv)
-
-    } else {
-
-        ch_redux_dna_tumor_out = ch_inputs.map { meta -> [meta, [], []] }
-        ch_redux_dna_normal_out = ch_inputs.map { meta -> [meta, [], []] }
-        ch_redux_dna_donor_out = ch_inputs.map { meta -> [meta, [], []] }
-
-        ch_redux_dna_tumor_tsv_out = ch_inputs.map { meta -> [meta, [], [], [], []] }
-        ch_redux_dna_normal_tsv_out = ch_inputs.map { meta -> [meta, [], [], [], []] }
-        ch_redux_dna_donor_tsv_out = ch_inputs.map { meta -> [meta, [], [], [], []] }
-
-    }
+    ch_redux_dna_tumor_tsv_out = ch_redux_dna_tumor_tsv_out.mix(REDUX_PROCESSING.out.dna_tumor_tsv)
+    ch_redux_dna_normal_tsv_out = ch_redux_dna_normal_tsv_out.mix(REDUX_PROCESSING.out.dna_normal_tsv)
+    ch_redux_dna_donor_tsv_out = ch_redux_dna_donor_tsv_out.mix(REDUX_PROCESSING.out.dna_donor_tsv)
 
     //
     // MODULE: Run Isofox to analyse RNA data
     //
+    isofox_counts = params.isofox_counts ? file(params.isofox_counts) : panel_data.isofox_counts
+    isofox_gc_ratios = params.isofox_gc_ratios ? file(params.isofox_gc_ratios) : panel_data.isofox_gc_ratios
+
+    isofox_gene_ids = params.isofox_gene_ids ? file(params.isofox_gene_ids) : panel_data.isofox_gene_ids
+    isofox_tpm_norm = params.isofox_tpm_norm ? file(params.isofox_tpm_norm) : panel_data.isofox_tpm_norm
+
+    ISOFOX_QUANTIFICATION(
+        ch_inputs,
+        ch_align_rna_tumor_out,
+        ref_data.genome_fasta,
+        ref_data.genome_version,
+        ref_data.genome_fai,
+        hmf_data.ensembl_data_resources,
+        hmf_data.known_fusion_data,
+        isofox_counts,
+        isofox_gc_ratios,
+        isofox_gene_ids,
+        isofox_tpm_norm,
+        params.isofox_functions,
+        isofox_read_length,
+    )
+
+    ch_versions = ch_versions.mix(ISOFOX_QUANTIFICATION.out.versions)
+
     // channel: [ meta, isofox_dir ]
-    ch_isofox_out = Channel.empty()
-    if (run_config.stages.isofox) {
-
-        isofox_counts = params.isofox_counts ? file(params.isofox_counts) : panel_data.isofox_counts
-        isofox_gc_ratios = params.isofox_gc_ratios ? file(params.isofox_gc_ratios) : panel_data.isofox_gc_ratios
-
-        isofox_gene_ids = params.isofox_gene_ids ? file(params.isofox_gene_ids) : panel_data.isofox_gene_ids
-        isofox_tpm_norm = params.isofox_tpm_norm ? file(params.isofox_tpm_norm) : panel_data.isofox_tpm_norm
-
-        ISOFOX_QUANTIFICATION(
-            ch_inputs,
-            ch_align_rna_tumor_out,
-            ref_data.genome_fasta,
-            ref_data.genome_version,
-            ref_data.genome_fai,
-            hmf_data.ensembl_data_resources,
-            isofox_counts,
-            isofox_gc_ratios,
-            isofox_gene_ids,
-            isofox_tpm_norm,
-            params.isofox_functions,
-            isofox_read_length,
-        )
-
-        ch_versions = ch_versions.mix(ISOFOX_QUANTIFICATION.out.versions)
-
-        ch_isofox_out = ch_isofox_out.mix(ISOFOX_QUANTIFICATION.out.isofox_dir)
-
-    } else {
-
-        ch_isofox_out = ch_inputs.map { meta -> [meta, []] }
-
-    }
+    ch_isofox_out = ch_isofox_out.mix(ISOFOX_QUANTIFICATION.out.isofox_dir)
 
     //
     // SUBWORKFLOW: Run AMBER to obtain b-allele frequencies
     //
+    AMBER_PROFILING(
+        ch_inputs,
+        ch_redux_dna_tumor_out,
+        ch_redux_dna_normal_out,
+        ch_redux_dna_donor_out,
+        ref_data.genome_version,
+        hmf_data.heterozygous_sites,
+        [],  // target_region_bed
+    )
+
+    ch_versions = ch_versions.mix(AMBER_PROFILING.out.versions)
+
     // channel: [ meta, amber_dir ]
-    ch_amber_out = Channel.empty()
-    if (run_config.stages.amber) {
-
-        AMBER_PROFILING(
-            ch_inputs,
-            ch_redux_dna_tumor_out,
-            ch_redux_dna_normal_out,
-            ch_redux_dna_donor_out,
-            ref_data.genome_version,
-            hmf_data.heterozygous_sites,
-            [],  // target_region_bed
-        )
-
-        ch_versions = ch_versions.mix(AMBER_PROFILING.out.versions)
-        ch_amber_out = ch_amber_out.mix(AMBER_PROFILING.out.amber_dir)
-
-    } else {
-
-        ch_amber_out = ch_inputs.map { meta -> [meta, []] }
-
-    }
+    ch_amber_out = ch_amber_out.mix(AMBER_PROFILING.out.amber_dir)
 
     //
     // SUBWORKFLOW: Run COBALT to obtain read ratios
     //
+    COBALT_PROFILING(
+        ch_inputs,
+        ch_redux_dna_tumor_out,
+        ch_redux_dna_normal_out,
+        hmf_data.gc_profile,
+        hmf_data.diploid_bed,
+        [],  // panel_target_region_normalisation
+    )
+
+    ch_versions = ch_versions.mix(COBALT_PROFILING.out.versions)
+
     // channel: [ meta, cobalt_dir ]
-    ch_cobalt_out = Channel.empty()
-    if (run_config.stages.cobalt) {
-
-        COBALT_PROFILING(
-            ch_inputs,
-            ch_redux_dna_tumor_out,
-            ch_redux_dna_normal_out,
-            hmf_data.gc_profile,
-            hmf_data.diploid_bed,
-            [],  // panel_target_region_normalisation
-        )
-
-        ch_versions = ch_versions.mix(COBALT_PROFILING.out.versions)
-
-        ch_cobalt_out = ch_cobalt_out.mix(COBALT_PROFILING.out.cobalt_dir)
-
-    } else {
-
-        ch_cobalt_out = ch_inputs.map { meta -> [meta, []] }
-
-    }
+    ch_cobalt_out = ch_cobalt_out.mix(COBALT_PROFILING.out.cobalt_dir)
 
     //
     // SUBWORKFLOW: call SNV, MNV, and small INDELS with SAGE
     //
+    SAGE_CALLING(
+        ch_inputs,
+        ch_redux_dna_tumor_out,
+        ch_redux_dna_normal_out,
+        ch_redux_dna_donor_out,
+        ch_redux_dna_tumor_tsv_out,
+        ch_redux_dna_normal_tsv_out,
+        ch_redux_dna_donor_tsv_out,
+        ref_data.genome_fasta,
+        ref_data.genome_version,
+        ref_data.genome_fai,
+        ref_data.genome_dict,
+        hmf_data.sage_known_hotspots_somatic,
+        [],  //sage_known_hotspots_germline
+
+
+
+
+
+
+        // TODO(SW): this (and others need to be selected from CLI or config [i.e. params])
+        //params.sage_actionable_panel,
+        hmf_data.sage_actionable_panel,
+
+
+
+
+
+        [],  //sage_coverage_panel
+        hmf_data.sage_highconf_regions,
+        [],  // segment_mappability
+        [],  // driver_gene_panel
+        hmf_data.ensembl_data_resources,
+    )
+
+    ch_versions = ch_versions.mix(SAGE_CALLING.out.versions)
+
     // channel: [ meta, sage_vcf, sage_tbi ]
-    ch_sage_somatic_vcf_out = Channel.empty()
-    if (run_config.stages.sage) {
-
-        SAGE_CALLING(
-            ch_inputs,
-            ch_redux_dna_tumor_out,
-            ch_redux_dna_normal_out,
-            ch_redux_dna_donor_out,
-            ch_redux_dna_tumor_tsv_out,
-            ch_redux_dna_normal_tsv_out,
-            ch_redux_dna_donor_tsv_out,
-            ref_data.genome_fasta,
-            ref_data.genome_version,
-            ref_data.genome_fai,
-            ref_data.genome_dict,
-            hmf_data.sage_known_hotspots_somatic,
-            [],  //sage_known_hotspots_germline
-
-
-
-
-
-
-            // TODO(SW): this (and others need to be selected from CLI or config [i.e. params])
-            //params.sage_actionable_panel,
-            hmf_data.sage_actionable_panel,
-
-
-
-
-
-            [],  //sage_coverage_panel
-            hmf_data.sage_highconf_regions,
-            [],  // segment_mappability
-            [],  // driver_gene_panel
-            hmf_data.ensembl_data_resources,
-        )
-
-        ch_versions = ch_versions.mix(SAGE_CALLING.out.versions)
-
-        ch_sage_somatic_vcf_out = ch_sage_somatic_vcf_out.mix(SAGE_CALLING.out.somatic_vcf)
-
-    } else {
-
-        ch_sage_somatic_vcf_out = ch_inputs.map { meta -> [meta, [], []] }
-
-    }
+    ch_sage_somatic_vcf_out = ch_sage_somatic_vcf_out.mix(SAGE_CALLING.out.somatic_vcf)
 
     //
     // SUBWORKFLOW: Run COBALT normalisation
     //
-    if (run_config.stages.cobalt) {
+    COBALT_NORMALISATION(
+        ch_inputs,
+        ch_amber_out,
+        ch_cobalt_out,
+        params.sample_ids,
+        hmf_data.gc_profile,
+        panel_data.target_region_normalisation,
+    )
 
-        COBALT_NORMALISATION(
-            ch_inputs,
-            ch_amber_out,
-            ch_cobalt_out,
-            params.sample_ids,
-            hmf_data.gc_profile,
-            panel_data.target_region_normalisation,
-        )
-
-        ch_versions = ch_versions.mix(COBALT_NORMALISATION.out.versions)
-    }
+    ch_versions = ch_versions.mix(COBALT_NORMALISATION.out.versions)
 
     //
     // SUBWORKFLOW: Run PAVE panel of normals creation
     //
-    if (run_config.stages.sage) {
+    //PAVE_PON_CREATION (
+    //    ch_inputs,
+    //    ch_sage_somatic_vcf_out,
+    //    params.sample_ids,
+    //    ref_data.genome_version,
+    //)
 
-        PAVE_PON_BUILD(
-            ch_inputs,
-            ch_sage_somatic_vcf_out,
-            params.sample_ids,
-            ref_data.genome_version,
-        )
-
-        ch_versions = ch_versions.mix(PAVE_PON_BUILDER.out.versions)
-    }
+    //ch_versions = ch_versions.mix(PAVE_PON_BUILDER.out.versions)
 
     //
     // SUBWORKFLOW: Run Isofox TPM normalisation
     //
-    if (run_config.stages.isofox) {
+    //ISOFOX_NORMALISATION(
+    //    ch_inputs,
+    //    ch_isofox_out,
+    //    params.sample_ids,
+    //    params.gene_ids,
+    //    params.gene_dist_file,
+    //)
 
-        ISOFOX_NORMALISATION(
-            ch_inputs,
-            ch_isofox_out,
-            params.sample_ids,
-            params.gene_ids,
-            params.gene_dist_file,
-        )
-
-        ch_versions = ch_versions.mix(ISOFOX_NORMALISATION.out.versions)
-    }
+    //ch_versions = ch_versions.mix(ISOFOX_NORMALISATION.out.versions)
 
     //
     // TASK: Aggregate software versions

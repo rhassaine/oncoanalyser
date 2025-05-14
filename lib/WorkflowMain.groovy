@@ -62,7 +62,7 @@ class WorkflowMain {
             return
         }
 
-        if (run_mode === Constants.RunMode.TARGETED) {
+        if (run_mode === Constants.RunMode.TARGETED || run_mode === run_mode.PANEL_RESOURCE_CREATION) {
 
             // Attempt to set default panel data path; make no assumption on valid 'panel' value
             if (params.containsKey('panel')) {
@@ -193,14 +193,14 @@ class WorkflowMain {
 
         def run_mode = Utils.getRunMode(params.mode, log)
 
-        if (run_mode === Constants.RunMode.TARGETED) {
+        if (run_mode === Constants.RunMode.TARGETED || run_mode === Constants.RunMode.PANEL_RESOURCE_CREATION) {
 
             if (!params.containsKey('panel') || params.panel === null) {
 
                 def panels = Constants.PANELS_DEFINED.join('\n    - ')
                 log.error "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
                     "  A panel is required to be set using the --panel CLI argument or in a\n" +
-                    "  configuration file when running in targeted mode.\n" +
+                    "  configuration file when running in targeted mode or panel resource creation mode.\n" +
                     "  Currently, the available built-in panels are:\n" +
                     "    - ${panels}\n" +
                     "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
