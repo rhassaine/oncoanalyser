@@ -35,7 +35,6 @@ workflow COBALT_NORMALISATION {
                 Utils.selectCurrentOrExisting(amber_dir, meta, Constants.INPUT.AMBER_DIR),
                 Utils.selectCurrentOrExisting(cobalt_dir, meta, Constants.INPUT.COBALT_DIR),
             ]
-
         }
         .collect(flat: false)
         .map { d -> d.transpose() }

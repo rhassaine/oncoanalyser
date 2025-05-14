@@ -1,5 +1,4 @@
 process ISOFOX_PANEL_NORMALISATION {
-    tag "${meta.id}"
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
@@ -8,7 +7,7 @@ process ISOFOX_PANEL_NORMALISATION {
         'biocontainers/hmftools-isofox:1.7.1--hdfd78af_0' }"
 
     input:
-    tuple val(meta), path(sample_ids), path('isofox_dirs.*')
+    tuple path(sample_ids), path('isofox_dirs.*')
     path gene_ids
     path gene_dist_file
 
