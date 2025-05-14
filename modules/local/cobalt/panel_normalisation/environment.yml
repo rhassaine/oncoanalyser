@@ -1,4 +1,4 @@
-name: cobalt_update
+name: cobalt_panel_normalisation
 channels:
   - conda-forge
   - bioconda

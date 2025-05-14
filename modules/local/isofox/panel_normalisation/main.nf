@@ -8,22 +8,12 @@ process ISOFOX_PANEL_NORMALISATION {
         'biocontainers/hmftools-isofox:1.7.1--hdfd78af_0' }"
 
     input:
-    tuple val(meta), path(sample_data), path(isofox_dirs)
+    tuple val(meta), path(sample_ids), path('isofox_dirs.*')
     path gene_ids
     path gene_dist_file
 
-
     output:
-
-
-
-
-    // NOTE(SW): this should be changed so that genome_ver is encoded in filename for consistency
-
-
-
-    tuple val(meta), path('panel_gene_normalisation.csv'), emit: tmp_normalisation
-    path 'versions.yml'                                  , emit: versions
+    path 'versions.yml', emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -38,11 +28,19 @@ process ISOFOX_PANEL_NORMALISATION {
     isofox com.hartwig.hmftools.isofox.cohort.CohortAnalyser \\
         -Xmx${Math.round(task.memory.bytes * 0.95)} \\
         ${args} \\
-        -sample_data_file ${sample_data} \\
+        -sample_data_file ${sample_ids} \\
         -root_data_dir isofox__prepared/ \\
         -analysis_types panel_tpm_normalisation \\
         -gene_id_file ${gene_id_file} \\
         -gene_dist_file ${gene_dist_file}
+
+
+
+
+    # NOTE(SW): output filename should be changed so that genome_ver is encoded in filename for consistency
+
+
+
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

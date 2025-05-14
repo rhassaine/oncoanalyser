@@ -1,5 +1,4 @@
 process COBALT_PANEL_NORMALISATION {
-    tag "${meta.id}"
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
@@ -8,14 +7,13 @@ process COBALT_PANEL_NORMALISATION {
         'biocontainers/hmftools-cobalt:2.0_beta--hdfd78af_0' }"
 
     input:
-    tuple val(meta), path(sample_ids), path(amber_dir), path(cobalt_dir)
+    tuple path(sample_ids), path('amber_dir.*'), path('cobalt_dir.*')
     val genome_ver
     path gc_profile
     path target_region_bed
 
     output:
-    tuple val(meta), path('*tsv'), emit: cobalt_normalisation
-    path 'versions.yml'          , emit: versions
+    path 'versions.yml', emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -38,7 +36,7 @@ process COBALT_PANEL_NORMALISATION {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        cobalt: \$(cobalt -version | sed 's/^.* //')
+        cobalt_panel_normalisation: \$(cobalt -version | sed 's/^.* //')
     END_VERSIONS
     """
 

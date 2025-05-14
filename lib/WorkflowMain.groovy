@@ -16,7 +16,6 @@ class WorkflowMain {
         def default_invalid = false
 
         // Set defaults common to all run configuration
-
         if (!params.containsKey('genome_version')) {
             if (Constants.GENOMES_VERSION_37.contains(params.genome)) {
                 params.genome_version = '37'

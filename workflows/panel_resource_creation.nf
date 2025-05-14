@@ -115,10 +115,10 @@ workflow PANEL_RESOURCE_CREATION {
     )
 
     // channel: [ meta, [bam, ...], [bai, ...] ]
-    ch_align_dna_tumor_out = ch_align_dna_tumor_out.mix(READ_ALIGNMENT_DNA.out.dna_tumor)
-    ch_align_dna_normal_out = ch_align_dna_normal_out.mix(READ_ALIGNMENT_DNA.out.dna_normal)
-    ch_align_dna_donor_out = ch_align_dna_donor_out.mix(READ_ALIGNMENT_DNA.out.dna_donor)
-    ch_align_rna_tumor_out = ch_align_rna_tumor_out.mix(READ_ALIGNMENT_RNA.out.rna_tumor)
+    ch_align_dna_tumor_out = READ_ALIGNMENT_DNA.out.dna_tumor
+    ch_align_dna_normal_out = READ_ALIGNMENT_DNA.out.dna_normal
+    ch_align_dna_donor_out = READ_ALIGNMENT_DNA.out.dna_donor
+    ch_align_rna_tumor_out = READ_ALIGNMENT_RNA.out.rna_tumor
 
     //
     // SUBWORKFLOW: Run REDUX for DNA BAMs
@@ -141,14 +141,14 @@ workflow PANEL_RESOURCE_CREATION {
     ch_versions = ch_versions.mix(REDUX_PROCESSING.out.versions)
 
     // channel: [ meta, bam, bai ]
-    ch_redux_dna_tumor_out = ch_redux_dna_tumor_out.mix(REDUX_PROCESSING.out.dna_tumor)
-    ch_redux_dna_normal_out = ch_redux_dna_normal_out.mix(REDUX_PROCESSING.out.dna_normal)
-    ch_redux_dna_donor_out = ch_redux_dna_donor_out.mix(REDUX_PROCESSING.out.dna_donor)
+    ch_redux_dna_tumor_out = REDUX_PROCESSING.out.dna_tumor
+    ch_redux_dna_normal_out = REDUX_PROCESSING.out.dna_normal
+    ch_redux_dna_donor_out = REDUX_PROCESSING.out.dna_donor
 
     // channel: [ meta, dup_freq_tsv, jitter_tsv, ms_tsv, repeat_tsv ]
-    ch_redux_dna_tumor_tsv_out = ch_redux_dna_tumor_tsv_out.mix(REDUX_PROCESSING.out.dna_tumor_tsv)
-    ch_redux_dna_normal_tsv_out = ch_redux_dna_normal_tsv_out.mix(REDUX_PROCESSING.out.dna_normal_tsv)
-    ch_redux_dna_donor_tsv_out = ch_redux_dna_donor_tsv_out.mix(REDUX_PROCESSING.out.dna_donor_tsv)
+    ch_redux_dna_tumor_tsv_out = REDUX_PROCESSING.out.dna_tumor_tsv
+    ch_redux_dna_normal_tsv_out = REDUX_PROCESSING.out.dna_normal_tsv
+    ch_redux_dna_donor_tsv_out = REDUX_PROCESSING.out.dna_donor_tsv
 
     //
     // MODULE: Run Isofox to analyse RNA data
@@ -178,7 +178,7 @@ workflow PANEL_RESOURCE_CREATION {
     ch_versions = ch_versions.mix(ISOFOX_QUANTIFICATION.out.versions)
 
     // channel: [ meta, isofox_dir ]
-    ch_isofox_out = ch_isofox_out.mix(ISOFOX_QUANTIFICATION.out.isofox_dir)
+    ch_isofox_out = ISOFOX_QUANTIFICATION.out.isofox_dir
 
     //
     // SUBWORKFLOW: Run AMBER to obtain b-allele frequencies
@@ -196,7 +196,7 @@ workflow PANEL_RESOURCE_CREATION {
     ch_versions = ch_versions.mix(AMBER_PROFILING.out.versions)
 
     // channel: [ meta, amber_dir ]
-    ch_amber_out = ch_amber_out.mix(AMBER_PROFILING.out.amber_dir)
+    ch_amber_out = AMBER_PROFILING.out.amber_dir
 
     //
     // SUBWORKFLOW: Run COBALT to obtain read ratios
@@ -213,7 +213,7 @@ workflow PANEL_RESOURCE_CREATION {
     ch_versions = ch_versions.mix(COBALT_PROFILING.out.versions)
 
     // channel: [ meta, cobalt_dir ]
-    ch_cobalt_out = ch_cobalt_out.mix(COBALT_PROFILING.out.cobalt_dir)
+    ch_cobalt_out = COBALT_PROFILING.out.cobalt_dir
 
     //
     // SUBWORKFLOW: call SNV, MNV, and small INDELS with SAGE
@@ -256,16 +256,30 @@ workflow PANEL_RESOURCE_CREATION {
     ch_versions = ch_versions.mix(SAGE_CALLING.out.versions)
 
     // channel: [ meta, sage_vcf, sage_tbi ]
-    ch_sage_somatic_vcf_out = ch_sage_somatic_vcf_out.mix(SAGE_CALLING.out.somatic_vcf)
+    ch_sage_somatic_vcf_out = SAGE_CALLING.out.somatic_vcf
 
     //
     // SUBWORKFLOW: Run COBALT normalisation
     //
+
+
+
+
+    params.sample_ids = 'foo.sample_ids.csv'
+
+
+
+
+    ch_sample_ids = Channel.fromPath(params.sample_ids)
+
+
+
+
     COBALT_NORMALISATION(
-        ch_inputs,
+        ch_sample_ids,
         ch_amber_out,
         ch_cobalt_out,
-        params.sample_ids,
+        ref_data.genome_version,
         hmf_data.gc_profile,
         panel_data.target_region_normalisation,
     )
@@ -275,27 +289,39 @@ workflow PANEL_RESOURCE_CREATION {
     //
     // SUBWORKFLOW: Run PAVE panel of normals creation
     //
-    //PAVE_PON_CREATION (
-    //    ch_inputs,
-    //    ch_sage_somatic_vcf_out,
-    //    params.sample_ids,
-    //    ref_data.genome_version,
-    //)
+    PAVE_PON_CREATION(
+        ch_sample_ids,
+        ch_sage_somatic_vcf_out,
+        ref_data.genome_version,
+    )
 
-    //ch_versions = ch_versions.mix(PAVE_PON_BUILDER.out.versions)
+    ch_versions = ch_versions.mix(PAVE_PON_CREATION.out.versions)
 
     //
     // SUBWORKFLOW: Run Isofox TPM normalisation
     //
-    //ISOFOX_NORMALISATION(
-    //    ch_inputs,
-    //    ch_isofox_out,
-    //    params.sample_ids,
-    //    params.gene_ids,
-    //    params.gene_dist_file,
-    //)
 
-    //ch_versions = ch_versions.mix(ISOFOX_NORMALISATION.out.versions)
+
+
+
+    params.isofox_gene_dist = file('isofox_gene_dist.txt')
+
+
+
+
+    isofox_gene_dist = params.isofox_gene_dist ? file(params.isofox_gene_dist) : panel_data.isofox_gene_dist
+
+
+
+
+    ISOFOX_NORMALISATION(
+        ch_sample_ids,
+        ch_isofox_out,
+        isofox_gene_ids,
+        isofox_gene_dist,
+    )
+
+    ch_versions = ch_versions.mix(ISOFOX_NORMALISATION.out.versions)
 
     //
     // TASK: Aggregate software versions

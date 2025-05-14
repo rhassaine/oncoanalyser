@@ -1,5 +1,5 @@
 //
-// Isofox normalisation
+// ISOFOX normalisation prepares panel-specific TPM normalisation resource
 //
 
 import Constants
