@@ -1,4 +1,4 @@
-process PAVE_PON_BUILDER {
+process PAVE_PON_PANEL_CREATION {
     label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
