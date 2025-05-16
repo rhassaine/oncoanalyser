@@ -85,7 +85,6 @@ workflow PANEL_RESOURCE_CREATION {
     )
     ref_data = PREPARE_REFERENCE.out
     hmf_data = PREPARE_REFERENCE.out.hmf_data
-    panel_data = PREPARE_REFERENCE.out.panel_data
 
     ch_versions = ch_versions.mix(PREPARE_REFERENCE.out.versions)
 
@@ -116,8 +115,6 @@ workflow PANEL_RESOURCE_CREATION {
 
     // channel: [ meta, [bam, ...], [bai, ...] ]
     ch_align_dna_tumor_out = READ_ALIGNMENT_DNA.out.dna_tumor
-    ch_align_dna_normal_out = READ_ALIGNMENT_DNA.out.dna_normal
-    ch_align_dna_donor_out = READ_ALIGNMENT_DNA.out.dna_donor
     ch_align_rna_tumor_out = READ_ALIGNMENT_RNA.out.rna_tumor
 
     //
@@ -126,8 +123,8 @@ workflow PANEL_RESOURCE_CREATION {
     REDUX_PROCESSING(
         ch_inputs,
         ch_align_dna_tumor_out,
-        ch_align_dna_normal_out,
-        ch_align_dna_donor_out,
+        ch_inputs.map { meta -> [meta, [], []] },  // ch_dna_normal
+        ch_inputs.map { meta -> [meta, [], []] },  // ch_dna_donor
         ref_data.genome_fasta,
         ref_data.genome_version,
         ref_data.genome_fai,
@@ -142,22 +139,15 @@ workflow PANEL_RESOURCE_CREATION {
 
     // channel: [ meta, bam, bai ]
     ch_redux_dna_tumor_out = REDUX_PROCESSING.out.dna_tumor
-    ch_redux_dna_normal_out = REDUX_PROCESSING.out.dna_normal
-    ch_redux_dna_donor_out = REDUX_PROCESSING.out.dna_donor
 
     // channel: [ meta, dup_freq_tsv, jitter_tsv, ms_tsv, repeat_tsv ]
     ch_redux_dna_tumor_tsv_out = REDUX_PROCESSING.out.dna_tumor_tsv
-    ch_redux_dna_normal_tsv_out = REDUX_PROCESSING.out.dna_normal_tsv
-    ch_redux_dna_donor_tsv_out = REDUX_PROCESSING.out.dna_donor_tsv
 
     //
     // MODULE: Run Isofox to analyse RNA data
     //
-    isofox_counts = params.isofox_counts ? file(params.isofox_counts) : panel_data.isofox_counts
-    isofox_gc_ratios = params.isofox_gc_ratios ? file(params.isofox_gc_ratios) : panel_data.isofox_gc_ratios
-
-    isofox_gene_ids = params.isofox_gene_ids ? file(params.isofox_gene_ids) : panel_data.isofox_gene_ids
-    isofox_tpm_norm = params.isofox_tpm_norm ? file(params.isofox_tpm_norm) : panel_data.isofox_tpm_norm
+    isofox_counts = params.isofox_counts ? file(params.isofox_counts) : hmf_data.isofox_counts
+    isofox_gc_ratios = params.isofox_gc_ratios ? file(params.isofox_gc_ratios) : hmf_data.isofox_gc_ratios
 
     ISOFOX_QUANTIFICATION(
         ch_inputs,
@@ -169,9 +159,9 @@ workflow PANEL_RESOURCE_CREATION {
         hmf_data.known_fusion_data,
         isofox_counts,
         isofox_gc_ratios,
-        isofox_gene_ids,
-        isofox_tpm_norm,
-        params.isofox_functions,
+        [],  // isofox_gene_ids
+        [],  // isofox_tpm_norm
+        'TRANSCRIPT_COUNTS',
         isofox_read_length,
     )
 
@@ -186,8 +176,8 @@ workflow PANEL_RESOURCE_CREATION {
     AMBER_PROFILING(
         ch_inputs,
         ch_redux_dna_tumor_out,
-        ch_redux_dna_normal_out,
-        ch_redux_dna_donor_out,
+        ch_inputs.map { meta -> [meta, [], []] },  // ch_normal_bam
+        ch_inputs.map { meta -> [meta, [], []] },  // ch_donor_bam
         ref_data.genome_version,
         hmf_data.heterozygous_sites,
         [],  // target_region_bed
@@ -204,7 +194,7 @@ workflow PANEL_RESOURCE_CREATION {
     COBALT_PROFILING(
         ch_inputs,
         ch_redux_dna_tumor_out,
-        ch_redux_dna_normal_out,
+        ch_inputs.map { meta -> [meta, [], []] },  // ch_normal_bam
         hmf_data.gc_profile,
         hmf_data.diploid_bed,
         [],  // panel_target_region_normalisation
@@ -221,32 +211,19 @@ workflow PANEL_RESOURCE_CREATION {
     SAGE_CALLING(
         ch_inputs,
         ch_redux_dna_tumor_out,
-        ch_redux_dna_normal_out,
-        ch_redux_dna_donor_out,
-        ch_redux_dna_tumor_tsv_out,
-        ch_redux_dna_normal_tsv_out,
-        ch_redux_dna_donor_tsv_out,
+        ch_inputs.map { meta -> [meta, [], []] },  // ch_normal_bam
+        ch_inputs.map { meta -> [meta, [], []] },  // ch_donor_bam
+        ch_inputs.map { meta -> [meta, [], [], []] },  // ch_tumor_tsv
+        ch_inputs.map { meta -> [meta, [], [], []] },  // ch_normal_tsv
+        ch_inputs.map { meta -> [meta, [], [], []] },  // ch_donor_tsv
         ref_data.genome_fasta,
         ref_data.genome_version,
         ref_data.genome_fai,
         ref_data.genome_dict,
         hmf_data.sage_known_hotspots_somatic,
-        [],  //sage_known_hotspots_germline
-
-
-
-
-
-
-        // TODO(SW): this (and others need to be selected from CLI or config [i.e. params])
-        //params.sage_actionable_panel,
+        [],  // sage_known_hotspots_germline
         hmf_data.sage_actionable_panel,
-
-
-
-
-
-        [],  //sage_coverage_panel
+        [],  // sage_coverage_panel
         hmf_data.sage_highconf_regions,
         [],  // segment_mappability
         [],  // driver_gene_panel
@@ -275,13 +252,23 @@ workflow PANEL_RESOURCE_CREATION {
 
 
 
+    params.target_region_normalisation = 'target_region_normalisation.txt'
+
+
+
+
+    target_region_normalisation = file('target_region_normalisation.txt')
+
+
+
+
     COBALT_NORMALISATION(
         ch_sample_ids,
         ch_amber_out,
         ch_cobalt_out,
         ref_data.genome_version,
         hmf_data.gc_profile,
-        panel_data.target_region_normalisation,
+        target_region_normalisation,
     )
 
     ch_versions = ch_versions.mix(COBALT_NORMALISATION.out.versions)
@@ -304,12 +291,25 @@ workflow PANEL_RESOURCE_CREATION {
 
 
 
+    // TODO(SW): have this encoded in Constants and pulled in similar to HLA BED used in LILAC remapping
+    // This will not be something the user has to set, it can be done optionally instead
     params.isofox_gene_dist = file('isofox_gene_dist.txt')
 
 
 
 
-    isofox_gene_dist = params.isofox_gene_dist ? file(params.isofox_gene_dist) : panel_data.isofox_gene_dist
+    isofox_gene_dist = file(params.isofox_gene_dist)
+
+
+
+
+    //params.isofox_gene_ids = file('isofox_gene_ids.txt')
+
+
+
+
+    //isofox_gene_ids = file(params.isofox_gene_ids)
+    isofox_gene_ids = file('isofox_gene_ids.txt')
 
 
 

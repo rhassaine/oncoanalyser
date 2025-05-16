@@ -11,6 +11,7 @@ process PAVE_PON_PANEL_CREATION {
     val genome_ver
 
     output:
+    path 'sage.pave_somatic.vcf.gz'
     path 'versions.yml', emit: versions
 
     when:

@@ -12,6 +12,7 @@ process ISOFOX_PANEL_NORMALISATION {
     path gene_dist_file
 
     output:
+    path 'panel_tpm_gene_normalisation.csv'
     path 'versions.yml', emit: versions
 
     when:
@@ -31,7 +32,8 @@ process ISOFOX_PANEL_NORMALISATION {
         -root_data_dir isofox__prepared/ \\
         -analysis_types panel_tpm_normalisation \\
         -gene_id_file ${gene_id_file} \\
-        -gene_dist_file ${gene_dist_file}
+        -gene_dist_file ${gene_dist_file} \\
+        -output_dir ./
 
 
 
@@ -49,7 +51,7 @@ process ISOFOX_PANEL_NORMALISATION {
 
     stub:
     """
-    touch panel_gene_normalisation.csv
+    touch panel_tpm_gene_normalisation.csv
 
     echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
     """

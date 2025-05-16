@@ -13,6 +13,7 @@ process COBALT_PANEL_NORMALISATION {
     path target_region_bed
 
     output:
+    path 'target_regions.cobalt_normalisation.tsv'
     path 'versions.yml', emit: versions
 
     when:
@@ -32,7 +33,7 @@ process COBALT_PANEL_NORMALISATION {
         -gc_profile ${gc_profile} \\
         -target_regions_bed ${target_region_bed} \\
         -threads ${task.cpus} \\
-        -output_file target_regions.cobalt_normalisation.${genome_ver}.tsv
+        -output_file target_regions.cobalt_normalisation.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -42,7 +43,7 @@ process COBALT_PANEL_NORMALISATION {
 
     stub:
     """
-    touch target_regions.cobalt_normalisation.${genome_ver}.tsv
+    touch target_regions.cobalt_normalisation.tsv
 
     echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
     """
