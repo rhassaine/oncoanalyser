@@ -905,13 +905,13 @@ on the presence/format of your UMI strings, you may need to configure one or mor
 ```groovy title='umi.config'
 params {
     // For FASTQ files
-    fastp_umi = true                // Enable UMI processing by fastp
+    fastp_umi_enabled = true        // Enable UMI processing by fastp
     fastp_umi_location = "per_read" // --umi_loc fastp arg
     fastp_umi_length = 7            // --umi_len fastp arg
     fastp_umi_skip = 0              // --umi_skip fastp arg
 
     // For BAM files
-    redux_umi = true                // Enable UMI processing by REDUX
+    redux_umi_enabled = true        // Enable UMI processing by REDUX
     redux_umi_duplex_delim = "_"    // Duplex UMI delimiter
 }
 ```
