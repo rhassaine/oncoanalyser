@@ -1,7 +1,3 @@
-// NOTE(SW): use of tumor sample name here is consistent with Pipeline5
-//  - https://github.com/hartwigmedical/pipeline5/blob/v5.33/cluster/src/main/java/com/hartwig/pipeline/tertiary/pave/PaveGermline.java#L36-L41
-//  - https://github.com/hartwigmedical/pipeline5/blob/v5.33/cluster/src/main/java/com/hartwig/pipeline/tertiary/pave/PaveArguments.java#L31-L43
-
 process PAVE_GERMLINE {
     tag "${meta.id}"
     label 'process_medium'
@@ -40,6 +36,7 @@ process PAVE_GERMLINE {
         ${args} \\
         -sample ${meta.sample_id} \\
         -vcf_file ${sage_vcf} \\
+        -output_vcf_file ${meta.sample_id}.pave.germline.vcf.gz \\
         -ref_genome ${genome_fasta} \\
         -ref_genome_version ${genome_ver} \\
         -clinvar_vcf ${clinvar_annotations} \\
@@ -61,7 +58,7 @@ process PAVE_GERMLINE {
 
     stub:
     """
-    touch ${meta.sample_id}.sage.pave_germline.vcf.gz{,.tbi}
+    touch ${meta.sample_id}.pave.germline.vcf.gz{,.tbi}
 
     echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
     """

@@ -54,6 +54,7 @@ process PAVE_SOMATIC {
         ${args} \\
         -sample ${meta.sample_id} \\
         -vcf_file ${sage_vcf} \\
+        -output_vcf_file ${meta.sample_id}.pave.somatic.vcf.gz \\
         -ref_genome ${genome_fasta} \\
         -ref_genome_version ${genome_ver} \\
         -pon_filters "${pon_filters}" \\
@@ -76,7 +77,7 @@ process PAVE_SOMATIC {
 
     stub:
     """
-    touch ${meta.sample_id}.sage.pave_somatic.vcf.gz{,.tbi}
+    touch ${meta.sample_id}.pave.somatic.vcf.gz{,.tbi}
 
     echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
     """
