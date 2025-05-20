@@ -49,17 +49,18 @@ isofox_read_length = params.isofox_read_length !== null ? params.isofox_read_len
 
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 
-include { AMBER_PROFILING       } from '../subworkflows/local/amber_profiling'
-include { COBALT_NORMALISATION  } from '../subworkflows/local/cobalt_normalisation'
-include { COBALT_PROFILING      } from '../subworkflows/local/cobalt_profiling'
-include { ISOFOX_NORMALISATION  } from '../subworkflows/local/isofox_normalisation'
-include { ISOFOX_QUANTIFICATION } from '../subworkflows/local/isofox_quantification'
-include { PAVE_PON_CREATION     } from '../subworkflows/local/pave_pon_creation'
-include { PREPARE_REFERENCE     } from '../subworkflows/local/prepare_reference'
-include { READ_ALIGNMENT_DNA    } from '../subworkflows/local/read_alignment_dna'
-include { READ_ALIGNMENT_RNA    } from '../subworkflows/local/read_alignment_rna'
-include { REDUX_PROCESSING      } from '../subworkflows/local/redux_processing'
-include { SAGE_CALLING          } from '../subworkflows/local/sage_calling'
+include { AMBER_PROFILING            } from '../subworkflows/local/amber_profiling'
+include { COBALT_NORMALISATION       } from '../subworkflows/local/cobalt_normalisation'
+include { COBALT_PROFILING           } from '../subworkflows/local/cobalt_profiling'
+include { ISOFOX_NORMALISATION       } from '../subworkflows/local/isofox_normalisation'
+include { ISOFOX_QUANTIFICATION      } from '../subworkflows/local/isofox_quantification'
+include { PAVE_PON_CREATION          } from '../subworkflows/local/pave_pon_creation'
+include { PREPARE_REFERENCE          } from '../subworkflows/local/prepare_reference'
+include { READ_ALIGNMENT_DNA         } from '../subworkflows/local/read_alignment_dna'
+include { READ_ALIGNMENT_RNA         } from '../subworkflows/local/read_alignment_rna'
+include { REDUX_PROCESSING           } from '../subworkflows/local/redux_processing'
+include { SAGE_CALLING               } from '../subworkflows/local/sage_calling'
+include { GENE_UTILS_REGION_CREATION } from '../subworkflows/local/gene_utils_region_creation'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -205,7 +206,7 @@ workflow PANEL_RESOURCE_CREATION {
     // channel: [ meta, cobalt_dir ]
     ch_cobalt_out = COBALT_PROFILING.out.cobalt_dir
 
-    //
+
     // SUBWORKFLOW: call SNV, MNV, and small INDELS with SAGE
     //
     SAGE_CALLING(
@@ -213,7 +214,7 @@ workflow PANEL_RESOURCE_CREATION {
         ch_redux_dna_tumor_out,
         ch_inputs.map { meta -> [meta, [], []] },  // ch_normal_bam
         ch_inputs.map { meta -> [meta, [], []] },  // ch_donor_bam
-        ch_inputs.map { meta -> [meta, [], [], []] },  // ch_tumor_tsv
+        ch_redux_dna_tumor_tsv_out,
         ch_inputs.map { meta -> [meta, [], [], []] },  // ch_normal_tsv
         ch_inputs.map { meta -> [meta, [], [], []] },  // ch_donor_tsv
         ref_data.genome_fasta,
@@ -242,7 +243,7 @@ workflow PANEL_RESOURCE_CREATION {
 
 
 
-    params.sample_ids = 'foo.sample_ids.csv'
+    //params.sample_ids = 'foo.sample_ids.csv'
 
 
 
@@ -252,12 +253,13 @@ workflow PANEL_RESOURCE_CREATION {
 
 
 
-    params.target_region_normalisation = 'target_region_normalisation.txt'
+    //params.target_region_normalisation = 'target_region_normalisation.txt'
 
 
 
 
-    target_region_normalisation = file('target_region_normalisation.txt')
+    //target_region_normalisation = file('target_region_normalisation.txt')
+    target_region_normalisation = file(params.target_region_normalisation)
 
 
 
@@ -322,6 +324,12 @@ workflow PANEL_RESOURCE_CREATION {
     )
 
     ch_versions = ch_versions.mix(ISOFOX_NORMALISATION.out.versions)
+
+
+
+
+
+
 
     //
     // TASK: Aggregate software versions

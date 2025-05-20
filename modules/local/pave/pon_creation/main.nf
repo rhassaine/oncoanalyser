@@ -4,14 +4,14 @@ process PAVE_PON_PANEL_CREATION {
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/hmftools-pave:1.7_beta--hdfd78af_1' :
-        'biocontainers/hmftools-pave:1.7_beta--hdfd78af_1' }"
+        'biocontainers/hmftools-pave:1.7--hdfd78af_0' }"
 
     input:
     tuple path(sample_ids), path(sage_vcf), path(sage_tbi)
     val genome_ver
 
     output:
-    path 'sage.pave_somatic.vcf.gz'
+    path 'sage.pave_somatic_artefacts.tsv'
     path 'versions.yml', emit: versions
 
     when:
@@ -21,13 +21,16 @@ process PAVE_PON_PANEL_CREATION {
     def args = task.ext.args ?: ''
 
     """
-    pave com.hartwig.hmftools.pave.pon_gen.PonBuilder \\
+    java -cp /usr/local/share/hmftools-pave-1.7-0/pave.jar \\
         -Xmx${Math.round(task.memory.bytes * 0.95)} \\
-        ${args} \\
-        -sample_id_file ${sample_ids} \\
-        -vcf_path ${sage_vcf} \\
-        -ref_genome_version ${genome_ver} \\
-        -output_dir ./
+        com.hartwig.hmftools.pave.resources.PonBuilder \\
+            ${args} \\
+            -sample_id_file ${sample_ids} \\
+            -vcf_path '*.sage.somatic.vcf.gz' \\
+            -ref_genome_version ${genome_ver} \\
+            -output_dir ./
+
+    mv somatic_pon_*.tsv sage.pave_somatic_artefacts.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -37,7 +40,7 @@ process PAVE_PON_PANEL_CREATION {
 
     stub:
     """
-    touch sage.pave_somatic.vcf.gz{,.tbi}
+    touch sage.pave_somatic_artefacts.tsv
 
     echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
     """
