@@ -52,6 +52,7 @@ include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pi
 include { AMBER_PROFILING            } from '../subworkflows/local/amber_profiling'
 include { COBALT_NORMALISATION       } from '../subworkflows/local/cobalt_normalisation'
 include { COBALT_PROFILING           } from '../subworkflows/local/cobalt_profiling'
+include { GENE_UTILS_REGION_CREATION } from '../subworkflows/local/gene_utils_region_creation'
 include { ISOFOX_NORMALISATION       } from '../subworkflows/local/isofox_normalisation'
 include { ISOFOX_QUANTIFICATION      } from '../subworkflows/local/isofox_quantification'
 include { PAVE_PON_CREATION          } from '../subworkflows/local/pave_pon_creation'
@@ -60,7 +61,6 @@ include { READ_ALIGNMENT_DNA         } from '../subworkflows/local/read_alignmen
 include { READ_ALIGNMENT_RNA         } from '../subworkflows/local/read_alignment_rna'
 include { REDUX_PROCESSING           } from '../subworkflows/local/redux_processing'
 include { SAGE_CALLING               } from '../subworkflows/local/sage_calling'
-include { GENE_UTILS_REGION_CREATION } from '../subworkflows/local/gene_utils_region_creation'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -325,11 +325,28 @@ workflow PANEL_RESOURCE_CREATION {
 
     ch_versions = ch_versions.mix(ISOFOX_NORMALISATION.out.versions)
 
+    //
+    // SUBWORKFLOW: Run gene-utils SAGE region creation
+    //
+
+
+
+    //params.driver_gene_panel = 'driver_gene_panel.txt'
 
 
 
 
+    //driver_gene_panel = file('driver_gene_panel.txt')
+    driver_gene_panel = file(params.driver_gene_panel)
 
+    GENE_UTILS_REGION_CREATION(
+        driver_gene_panel,
+        ref_data.genome_version,
+        hmf_data.clinvar_annotations,
+        hmf_data.ensembl_data_resources,
+    )
+
+    ch_versions = ch_versions.mix(ISOFOX_NORMALISATION.out.versions)
 
     //
     // TASK: Aggregate software versions
