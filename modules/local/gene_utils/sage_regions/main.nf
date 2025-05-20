@@ -1,7 +1,7 @@
 process GENE_UTILS_SAGE_REGIONS {
     label 'process_single'
 
-    container 'docker://docker.io/scwatts/hmftools-gene-utils:1.2--0'
+    container 'docker.io/scwatts/hmftools-gene-utils:1.2--0'
 
     input:
     path driver_gene_panel
@@ -25,13 +25,13 @@ process GENE_UTILS_SAGE_REGIONS {
     """
     mkdir -p resources/{ensembl_data_cache,sage}/${genome_ver}/
 
-    ln -s $(pwd)/${clinvar_annotations} resources/sage/${genome_ver}/
-    ln -s $(pwd)/${ensembl_data_resources}/* resources/ensembl_data_cache/${genome_ver}/
+    ln -s \$(pwd)/${clinvar_annotations} resources/sage/${genome_ver}/
+    ln -s \$(pwd)/${ensembl_data_resources}/* resources/ensembl_data_cache/${genome_ver}/
 
-    java -cp java -jar /opt/gene-utils/gene-utils.jar \\
+    java -cp /opt/gene-utils/gene-utils.jar \\
         -Xmx${Math.round(task.memory.bytes * xmx_mod)} \\
         com.hartwig.hmftools.geneutils.drivers.GenerateDriverGeneFiles \\
-            -ref_genome_version ${genome_Ver} \\
+            -ref_genome_version ${genome_ver} \\
             -resource_repo_dir resources/ \\
             -driver_gene_panel ${driver_gene_panel} \\
             -log_debug \\

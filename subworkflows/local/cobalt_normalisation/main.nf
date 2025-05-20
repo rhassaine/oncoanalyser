@@ -10,7 +10,6 @@ include { COBALT_PANEL_NORMALISATION } from '../../../modules/local/cobalt/panel
 workflow COBALT_NORMALISATION {
     take:
     // Sample data
-    ch_sample_ids     // channel: [mandatory] [ sample_ids ]
     ch_amber          // channel: [mandatory] [ meta, amber_dir ]
     ch_cobalt         // channel: [mandatory] [ meta, cobalt_dir ]
 
@@ -24,9 +23,9 @@ workflow COBALT_NORMALISATION {
     // channel: [ versions.yml ]
     ch_versions = Channel.empty()
 
-    // Select runnable inputs
+    // Create process input channel
     // channel: [ [amber_dir, ...], [cobalt_dir, ...] ]
-    ch_inputs_runnable = WorkflowOncoanalyser.groupByMeta(
+    ch_cobalt_inputs = WorkflowOncoanalyser.groupByMeta(
         ch_amber,
         ch_cobalt,
     )
@@ -39,9 +38,6 @@ workflow COBALT_NORMALISATION {
         .collect(flat: false)
         .map { d -> d.transpose() }
 
-    // Create process input channel
-    // channel: [ sample_ids, [amber_dir, ...], [cobalt_dir, ...] ]
-    ch_cobalt_inputs = ch_sample_ids.combine(ch_inputs_runnable)
 
     // Run process
     COBALT_PANEL_NORMALISATION(

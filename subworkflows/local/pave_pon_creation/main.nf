@@ -11,7 +11,6 @@ include { PAVE_PON_PANEL_CREATION } from '../../../modules/local/pave/pon_creati
 workflow PAVE_PON_CREATION {
     take:
     // Sample data
-    ch_sample_ids       // channel: [mandatory] [ sample_ids ]
     ch_sage_somatic_vcf // channel: [mandatory] [ meta, sage_somatic_vcf, sage_somatic_tbi ]
 
     // Reference data
@@ -22,9 +21,9 @@ workflow PAVE_PON_CREATION {
     // channel: [ versions.yml ]
     ch_versions = Channel.empty()
 
-    // Select runnable inputs
-    // channel: runnable: [ [sage_vcf, ...], [sage_tbi, ...] ]
-    ch_inputs_runnable = ch_sage_somatic_vcf
+    // Create process input channel
+    // channel: [ [sage_vcf, ...], [sage_tbi, ...] ]
+    ch_pave_inputs = ch_sage_somatic_vcf
         .map { meta, sage_vcf, sage_tbi ->
             return [
                 Utils.selectCurrentOrExisting(sage_vcf, meta, Constants.INPUT.SAGE_VCF_TUMOR),
@@ -33,10 +32,6 @@ workflow PAVE_PON_CREATION {
         }
         .collect(flat: false)
         .map { d -> d.transpose() }
-
-    // Create process input channel
-    // channel: [ sample_ids, [sage_vcf, ...], [sage_tbi, ...] ]
-    ch_pave_inputs = ch_sample_ids.combine(ch_inputs_runnable)
 
     // Run process
     PAVE_PON_PANEL_CREATION(

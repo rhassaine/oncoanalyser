@@ -10,7 +10,6 @@ include { ISOFOX_PANEL_NORMALISATION } from '../../../modules/local/isofox/panel
 workflow ISOFOX_NORMALISATION {
     take:
     // Sample data
-    ch_sample_ids    // channel: [mandatory] [ sample_ids ]
     ch_isofox        // channel: [mandatory] [ meta, isofox_dir ]
 
     // Reference data
@@ -22,18 +21,15 @@ workflow ISOFOX_NORMALISATION {
     // channel: [ versions.yml ]
     ch_versions = Channel.empty()
 
-    // Select runnable inputs
+    // Create process input channel
     // channel: [ [isofox_dir, ...] ]
-    ch_inputs_runnable = ch_isofox
+    ch_isofox_inputs = ch_isofox
         .map { meta, isofox_dir ->
             return Utils.selectCurrentOrExisting(isofox_dir, meta, Constants.INPUT.ISOFOX_DIR)
         }
         .collect()
         .map { [it] }
 
-    // Create process input channel
-    // channel: [ sample_ids, [isofox_dir, ...] ]
-    ch_isofox_inputs = ch_sample_ids.combine(ch_inputs_runnable)
 
     // Run process
     ISOFOX_PANEL_NORMALISATION(

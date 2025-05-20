@@ -7,7 +7,7 @@ process COBALT_PANEL_NORMALISATION {
         'biocontainers/hmftools-cobalt:2.0--hdfd78af_0' }"
 
     input:
-    tuple path(sample_ids), path('amber_dir.*'), path('cobalt_dir.*')
+    tuple path('amber_dir.*'), path('cobalt_dir.*')
     val genome_ver
     path gc_profile
     path target_region_bed
@@ -29,11 +29,16 @@ process COBALT_PANEL_NORMALISATION {
         ln -s ../\${fp} inputs/\${fp##*/};
     done
 
+    (
+        echo SampleId;
+        find -L inputs/ -type f | sed 's#inputs/##; s#\\.amber\\..*\$##; s#\\.cobalt\\..*\$##' | sort -V | uniq;
+    ) > sample_ids.txt
+
     java -cp /usr/local/share/hmftools-cobalt-2.0-0/cobalt.jar \\
         -Xmx${Math.round(task.memory.bytes * 0.95)} \\
         com.hartwig.hmftools.cobalt.norm.NormalisationFileBuilder \\
             ${args} \\
-            -sample_id_file ${sample_ids} \\
+            -sample_id_file sample_ids.txt \\
             -amber_dir inputs/ \\
             -cobalt_dir inputs/ \\
             -ref_genome_version ${genome_ver} \\

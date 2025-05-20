@@ -248,7 +248,7 @@ workflow PANEL_RESOURCE_CREATION {
 
 
 
-    ch_sample_ids = Channel.fromPath(params.sample_ids)
+    //ch_sample_ids = Channel.fromPath(params.sample_ids)
 
 
 
@@ -265,7 +265,6 @@ workflow PANEL_RESOURCE_CREATION {
 
 
     COBALT_NORMALISATION(
-        ch_sample_ids,
         ch_amber_out,
         ch_cobalt_out,
         ref_data.genome_version,
@@ -279,7 +278,6 @@ workflow PANEL_RESOURCE_CREATION {
     // SUBWORKFLOW: Run PAVE panel of normals creation
     //
     PAVE_PON_CREATION(
-        ch_sample_ids,
         ch_sage_somatic_vcf_out,
         ref_data.genome_version,
     )
@@ -300,7 +298,7 @@ workflow PANEL_RESOURCE_CREATION {
 
 
 
-    isofox_gene_dist = file(params.isofox_gene_dist)
+    //isofox_gene_dist = params.isofox_gene_dist ? file(params.isofox_gene_dist) : hmf_data.gene_exp_distribution
 
 
 
@@ -310,17 +308,16 @@ workflow PANEL_RESOURCE_CREATION {
 
 
 
-    //isofox_gene_ids = file(params.isofox_gene_ids)
-    isofox_gene_ids = file('isofox_gene_ids.txt')
+    isofox_gene_ids = file(params.isofox_gene_ids)
+    //isofox_gene_ids = file('isofox_gene_ids.txt')
 
 
 
 
     ISOFOX_NORMALISATION(
-        ch_sample_ids,
         ch_isofox_out,
         isofox_gene_ids,
-        isofox_gene_dist,
+        hmf_data.gene_exp_distribution,
     )
 
     ch_versions = ch_versions.mix(ISOFOX_NORMALISATION.out.versions)
@@ -346,7 +343,7 @@ workflow PANEL_RESOURCE_CREATION {
         hmf_data.ensembl_data_resources,
     )
 
-    ch_versions = ch_versions.mix(ISOFOX_NORMALISATION.out.versions)
+    ch_versions = ch_versions.mix(GENE_UTILS_REGION_CREATION.out.versions)
 
     //
     // TASK: Aggregate software versions

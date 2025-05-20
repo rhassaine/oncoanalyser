@@ -7,7 +7,7 @@ process PAVE_PON_PANEL_CREATION {
         'biocontainers/hmftools-pave:1.7--hdfd78af_0' }"
 
     input:
-    tuple path(sample_ids), path(sage_vcf), path(sage_tbi)
+    tuple path(sage_vcf), path(sage_tbi)
     val genome_ver
 
     output:
@@ -21,11 +21,16 @@ process PAVE_PON_PANEL_CREATION {
     def args = task.ext.args ?: ''
 
     """
+    (
+       echo SampleId;
+       find ${sage_vcf} | sed 's#.sage.somatic.vcf.gz##';
+    ) > sample_ids.txt
+
     java -cp /usr/local/share/hmftools-pave-1.7-0/pave.jar \\
         -Xmx${Math.round(task.memory.bytes * 0.95)} \\
         com.hartwig.hmftools.pave.resources.PonBuilder \\
             ${args} \\
-            -sample_id_file ${sample_ids} \\
+            -sample_id_file sample_ids.txt \\
             -vcf_path '*.sage.somatic.vcf.gz' \\
             -ref_genome_version ${genome_ver} \\
             -output_dir ./

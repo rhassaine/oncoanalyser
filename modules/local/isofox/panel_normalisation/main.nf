@@ -7,12 +7,12 @@ process ISOFOX_PANEL_NORMALISATION {
         'biocontainers/hmftools-isofox:1.7.1--hdfd78af_0' }"
 
     input:
-    tuple path(sample_ids), path('isofox_dirs.*')
+    tuple path('isofox_dirs.*')
     path gene_ids
-    path gene_dist_file
+    path gene_dists
 
     output:
-    path 'panel_tpm_gene_normalisation.csv'
+    path 'isofox.panel_gene_normalisation.csv'
     path 'versions.yml', emit: versions
 
     when:
@@ -22,18 +22,24 @@ process ISOFOX_PANEL_NORMALISATION {
     def args = task.ext.args ?: ''
 
     """
-    mkdir -p isofox__prepared/
-    for fp in \$(find ${isofox_dirs} -name '*.gene_data.csv'); do ln -s ../\${fp} isofox__prepared/; done
+    mkdir -p inputs/
+    for fp in \$(find -L isofox_dirs.* -name '*.gene_data.csv'); do ln -s ../\${fp} inputs/; done
 
-    isofox com.hartwig.hmftools.isofox.cohort.CohortAnalyser \\
+    (
+       echo SampleId;
+       find inputs/ -name '*csv' | sed 's#^.*/\\(.*\\).isf.gene_data.csv#\\1#';
+    ) > sample_ids.txt
+
+    java -cp /usr/local/share/hmftools-isofox-1.7.1-0/isofox.jar \\
         -Xmx${Math.round(task.memory.bytes * 0.95)} \\
-        ${args} \\
-        -sample_data_file ${sample_ids} \\
-        -root_data_dir isofox__prepared/ \\
-        -analysis_types panel_tpm_normalisation \\
-        -gene_id_file ${gene_id_file} \\
-        -gene_dist_file ${gene_dist_file} \\
-        -output_dir ./
+        com.hartwig.hmftools.isofox.cohort.CohortAnalyser \\
+            ${args} \\
+            -sample_data_file sample_ids.txt \\
+            -root_data_dir inputs/ \\
+            -analyses PANEL_TPM_NORMALISATION \\
+            -gene_id_file ${gene_ids} \\
+            -gene_distribution_file ${gene_dists} \\
+            -output_dir ./
 
 
 
@@ -51,7 +57,7 @@ process ISOFOX_PANEL_NORMALISATION {
 
     stub:
     """
-    touch panel_tpm_gene_normalisation.csv
+    touch isofox.panel_gene_normalisation.csv
 
     echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
     """
