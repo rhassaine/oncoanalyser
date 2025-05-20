@@ -28,8 +28,6 @@ workflow ISOFOX_NORMALISATION {
             return Utils.selectCurrentOrExisting(isofox_dir, meta, Constants.INPUT.ISOFOX_DIR)
         }
         .collect()
-        .map { [it] }
-
 
     // Run process
     ISOFOX_PANEL_NORMALISATION(

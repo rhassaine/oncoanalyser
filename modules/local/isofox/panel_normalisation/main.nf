@@ -7,7 +7,7 @@ process ISOFOX_PANEL_NORMALISATION {
         'biocontainers/hmftools-isofox:1.7.1--hdfd78af_0' }"
 
     input:
-    tuple path('isofox_dirs.*')
+    path 'isofox_dirs.*'
     path gene_ids
     path gene_dists
 
