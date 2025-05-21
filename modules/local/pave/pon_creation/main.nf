@@ -11,8 +11,8 @@ process PAVE_PON_PANEL_CREATION {
     val genome_ver
 
     output:
-    path 'pave.somatic_artefacts.*.tsv'
-    path 'versions.yml', emit: versions
+    path 'pave.somatic_artefacts.*.tsv', emit: pave_artefacts
+    path 'versions.yml'                , emit: versions
 
     when:
     task.ext.when == null || task.ext.when

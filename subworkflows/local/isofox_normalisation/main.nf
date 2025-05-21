@@ -10,12 +10,12 @@ include { ISOFOX_PANEL_NORMALISATION } from '../../../modules/local/isofox/panel
 workflow ISOFOX_NORMALISATION {
     take:
     // Sample data
-    ch_isofox        // channel: [mandatory] [ meta, isofox_dir ]
+    ch_isofox                // channel: [mandatory] [ meta, isofox_dir ]
 
     // Reference data
-    genome_version   // channel: [mandatory] genome version
-    isofox_gene_ids  // channel: [mandatory]  /path/to/gene_ids
-    isofox_gene_dist // channel: [mandatory]  /path/to/gene_dist
+    genome_version           // channel: [mandatory] genome version
+    isofox_gene_ids          // channel: [mandatory]  /path/to/gene_ids
+    isofox_gene_distribution // channel: [optional]  /path/to/isofox_gene_distribution
 
     main:
     // Channel for version.yml files
@@ -35,7 +35,7 @@ workflow ISOFOX_NORMALISATION {
         ch_isofox_inputs,
         genome_version,
         isofox_gene_ids,
-        isofox_gene_dist,
+        isofox_gene_distribution,
     )
 
     ch_versions = ch_versions.mix(ISOFOX_PANEL_NORMALISATION.out.versions)

@@ -10,11 +10,11 @@ process ISOFOX_PANEL_NORMALISATION {
     path 'isofox_dirs.*'
     val genome_ver
     path gene_ids
-    path gene_dists
+    path gene_distribution
 
     output:
-    path 'isofox.gene_normalisation.*.csv'
-    path 'versions.yml', emit: versions
+    path 'isofox.gene_normalisation.*.csv', emit: isofox_normalisation
+    path 'versions.yml'                   , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -39,7 +39,7 @@ process ISOFOX_PANEL_NORMALISATION {
             -root_data_dir inputs/ \\
             -analyses PANEL_TPM_NORMALISATION \\
             -gene_id_file ${gene_ids} \\
-            -gene_distribution_file ${gene_dists} \\
+            -gene_distribution_file ${gene_distribution} \\
             -output_dir ./
 
     mv isofox.panel_gene_normalisation.csv isofox.gene_normalisation.${genome_ver}.csv

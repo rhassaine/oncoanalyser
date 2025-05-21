@@ -29,14 +29,10 @@ input:
       description: Target regions BED file
       pattern: "*.{bed}"
 output:
-  - meta:
-      type: map
-      description: |
-        Groovy Map containing sample information
-        e.g. [id: 'sample_id', tumor_id: 'tumor_name', normal_id: 'normal_name']
-  - cobalt_dir:
-      type: directory
-      description: COBALT output directory
+  - cobalt_normalisation:
+      type: file
+      description: COBALT normalisation file
+      pattern: "*.{tsv}"
   - versions:
       type: file
       description: File containing software versions
