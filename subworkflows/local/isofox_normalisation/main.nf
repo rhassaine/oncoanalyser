@@ -13,6 +13,7 @@ workflow ISOFOX_NORMALISATION {
     ch_isofox        // channel: [mandatory] [ meta, isofox_dir ]
 
     // Reference data
+    genome_version   // channel: [mandatory] genome version
     isofox_gene_ids  // channel: [mandatory]  /path/to/gene_ids
     isofox_gene_dist // channel: [mandatory]  /path/to/gene_dist
 
@@ -32,6 +33,7 @@ workflow ISOFOX_NORMALISATION {
     // Run process
     ISOFOX_PANEL_NORMALISATION(
         ch_isofox_inputs,
+        genome_version,
         isofox_gene_ids,
         isofox_gene_dist,
     )

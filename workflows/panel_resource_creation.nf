@@ -270,6 +270,7 @@ workflow PANEL_RESOURCE_CREATION {
 
     ISOFOX_NORMALISATION(
         ch_isofox_out,
+        ref_data.genome_version,
         isofox_gene_ids,
         hmf_data.gene_exp_distribution,
     )

@@ -11,7 +11,7 @@ process PAVE_PON_PANEL_CREATION {
     val genome_ver
 
     output:
-    path 'sage.pave_somatic_artefacts.tsv'
+    path 'pave.somatic_artefacts.*.tsv'
     path 'versions.yml', emit: versions
 
     when:
@@ -35,7 +35,7 @@ process PAVE_PON_PANEL_CREATION {
             -ref_genome_version ${genome_ver} \\
             -output_dir ./
 
-    mv somatic_pon_*.tsv sage.pave_somatic_artefacts.tsv
+    mv somatic_pon_*.tsv pave.somatic_artefacts.${genome_ver}.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -45,7 +45,7 @@ process PAVE_PON_PANEL_CREATION {
 
     stub:
     """
-    touch sage.pave_somatic_artefacts.tsv
+    touch pave.somatic_artefacts.${genome_ver}.tsv
 
     echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
     """

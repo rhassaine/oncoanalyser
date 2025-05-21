@@ -8,11 +8,12 @@ process ISOFOX_PANEL_NORMALISATION {
 
     input:
     path 'isofox_dirs.*'
+    val genome_ver
     path gene_ids
     path gene_dists
 
     output:
-    path 'isofox.panel_gene_normalisation.csv'
+    path 'isofox.gene_normalisation.*.csv'
     path 'versions.yml', emit: versions
 
     when:
@@ -41,13 +42,7 @@ process ISOFOX_PANEL_NORMALISATION {
             -gene_distribution_file ${gene_dists} \\
             -output_dir ./
 
-
-
-
-    # NOTE(SW): output filename should be changed so that genome_ver is encoded in filename for consistency
-
-
-
+    mv isofox.panel_gene_normalisation.csv isofox.gene_normalisation.${genome_ver}.csv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -57,7 +52,7 @@ process ISOFOX_PANEL_NORMALISATION {
 
     stub:
     """
-    touch isofox.panel_gene_normalisation.csv
+    touch isofox.gene_normalisation.${genome_ver}.csv
 
     echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
     """
