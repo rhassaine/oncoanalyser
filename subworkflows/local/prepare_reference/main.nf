@@ -184,7 +184,7 @@ workflow PREPARE_REFERENCE {
     // Set panel reference data, unpack if required
     //
     ch_panel_data = Channel.empty()
-    if (run_config.mode === Constants.RunMode.TARGETED || run_config.mode === Constants.RunMode.PANEL_RESOURCE_CREATION) {
+    if (run_config.mode === Constants.RunMode.TARGETED) {
 
         panel_data_paths_versions = params.panel_data_paths[params.panel]
         panel_data_paths = panel_data_paths_versions[params.genome_version.toString()]

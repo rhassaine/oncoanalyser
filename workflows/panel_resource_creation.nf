@@ -24,6 +24,8 @@ def checkPathParamList = [
     params.isofox_gc_ratios,
     params.isofox_gene_ids,
     params.isofox_tpm_norm,
+    params.driver_gene_panel,
+    params.target_regions_bed,
 ]
 
 if (run_config.stages.lilac) {
@@ -181,7 +183,7 @@ workflow PANEL_RESOURCE_CREATION {
         ch_inputs.map { meta -> [meta, [], []] },  // ch_donor_bam
         ref_data.genome_version,
         hmf_data.heterozygous_sites,
-        [],  // target_region_bed
+        [],  // target_regions_bed
     )
 
     ch_versions = ch_versions.mix(AMBER_PROFILING.out.versions)
@@ -239,37 +241,14 @@ workflow PANEL_RESOURCE_CREATION {
     //
     // SUBWORKFLOW: Run COBALT normalisation
     //
-
-
-
-
-    //params.sample_ids = 'foo.sample_ids.csv'
-
-
-
-
-    //ch_sample_ids = Channel.fromPath(params.sample_ids)
-
-
-
-
-    //params.target_region_normalisation = 'target_region_normalisation.txt'
-
-
-
-
-    //target_region_normalisation = file('target_region_normalisation.txt')
-    target_region_normalisation = file(params.target_region_normalisation)
-
-
-
+    target_regions_bed = params.target_regions_bed ? file(params.target_regions_bed) : []
 
     COBALT_NORMALISATION(
         ch_amber_out,
         ch_cobalt_out,
         ref_data.genome_version,
         hmf_data.gc_profile,
-        target_region_normalisation,
+        target_regions_bed,
     )
 
     ch_versions = ch_versions.mix(COBALT_NORMALISATION.out.versions)
@@ -287,32 +266,7 @@ workflow PANEL_RESOURCE_CREATION {
     //
     // SUBWORKFLOW: Run Isofox TPM normalisation
     //
-
-
-
-
-    // TODO(SW): have this encoded in Constants and pulled in similar to HLA BED used in LILAC remapping
-    // This will not be something the user has to set, it can be done optionally instead
-    params.isofox_gene_dist = file('isofox_gene_dist.txt')
-
-
-
-
-    //isofox_gene_dist = params.isofox_gene_dist ? file(params.isofox_gene_dist) : hmf_data.gene_exp_distribution
-
-
-
-
-    //params.isofox_gene_ids = file('isofox_gene_ids.txt')
-
-
-
-
-    isofox_gene_ids = file(params.isofox_gene_ids)
-    //isofox_gene_ids = file('isofox_gene_ids.txt')
-
-
-
+    isofox_gene_ids = params.isofox_gene_ids ? file(params.isofox_gene_ids) : []
 
     ISOFOX_NORMALISATION(
         ch_isofox_out,
@@ -325,16 +279,7 @@ workflow PANEL_RESOURCE_CREATION {
     //
     // SUBWORKFLOW: Run gene-utils SAGE region creation
     //
-
-
-
-    //params.driver_gene_panel = 'driver_gene_panel.txt'
-
-
-
-
-    //driver_gene_panel = file('driver_gene_panel.txt')
-    driver_gene_panel = file(params.driver_gene_panel)
+    driver_gene_panel = params.driver_gene_panel ? file(params.driver_gene_panel) : []
 
     GENE_UTILS_REGION_CREATION(
         driver_gene_panel,

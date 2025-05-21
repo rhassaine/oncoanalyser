@@ -61,7 +61,7 @@ class WorkflowMain {
             return
         }
 
-        if (run_mode === Constants.RunMode.TARGETED || run_mode === run_mode.PANEL_RESOURCE_CREATION) {
+        if (run_mode === Constants.RunMode.TARGETED) {
 
             // Attempt to set default panel data path; make no assumption on valid 'panel' value
             if (params.containsKey('panel')) {
@@ -192,7 +192,7 @@ class WorkflowMain {
 
         def run_mode = Utils.getRunMode(params.mode, log)
 
-        if (run_mode === Constants.RunMode.TARGETED || run_mode === Constants.RunMode.PANEL_RESOURCE_CREATION) {
+        if (run_mode === Constants.RunMode.TARGETED) {
 
             if (!params.containsKey('panel') || params.panel === null) {
 
