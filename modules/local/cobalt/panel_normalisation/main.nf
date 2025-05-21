@@ -10,11 +10,11 @@ process COBALT_PANEL_NORMALISATION {
     tuple path('amber_dir.*'), path('cobalt_dir.*')
     val genome_ver
     path gc_profile
-    path target_region_bed
+    path target_regions_bed
 
     output:
-    path 'target_regions.cobalt_normalisation.tsv'
-    path 'versions.yml', emit: versions
+    path 'target_regions.cobalt_normalisation.tsv', emit: cobalt_normalisation
+    path 'versions.yml'                           , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -43,7 +43,7 @@ process COBALT_PANEL_NORMALISATION {
             -cobalt_dir inputs/ \\
             -ref_genome_version ${genome_ver} \\
             -gc_profile ${gc_profile} \\
-            -target_regions_bed ${target_region_bed} \\
+            -target_regions_bed ${target_regions_bed} \\
             -output_file target_regions.cobalt_normalisation.tsv
 
     cat <<-END_VERSIONS > versions.yml
