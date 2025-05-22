@@ -40,7 +40,7 @@ process BAMTOOLS {
         -driver_gene_panel ${driver_gene_panel} \\
         -ensembl_data_dir ${ensembl_data_resources} \\
         -threads ${task.cpus} \\
-        -log_level INFO \\
+        -log_level ${params.module_log_level} \\
         -output_dir ${meta.id}_bamtools/
 
     cat <<-END_VERSIONS > versions.yml

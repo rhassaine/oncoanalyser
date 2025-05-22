@@ -169,6 +169,13 @@
                     "description": "Semicolon-separated list of Isofox functions to run",
                     "default": "TRANSCRIPT_COUNTS;ALT_SPLICE_JUNCTIONS;FUSIONS;RETAINED_INTRONS",
                     "fa_icon": "fas fa-cog"
+                },
+                "module_log_level": {
+                    "type": "string",
+                    "enum": ["ALL", "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL", "OFF"],
+                    "description": "Log level filter for WiGiTS modules",
+                    "default": "DEBUG",
+                    "fa_icon": "fas fa-cog"
                 }
             }
         },

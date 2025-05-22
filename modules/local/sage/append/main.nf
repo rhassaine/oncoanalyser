@@ -38,7 +38,8 @@ process SAGE_APPEND {
         -ref_genome_version ${genome_ver} \\
         -skip_msi_jitter \\
         -threads ${task.cpus} \\
-        -output_vcf ${meta.dna_id}.sage.append.vcf.gz
+        -output_vcf ${meta.dna_id}.sage.append.vcf.gz \\
+        -log_level ${params.module_log_level}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

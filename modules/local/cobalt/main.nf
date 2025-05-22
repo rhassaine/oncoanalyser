@@ -43,7 +43,8 @@ process COBALT {
         -gc_profile ${gc_profile} \\
         ${diploid_regions_arg} \\
         ${target_region_arg} \\
-        -output_dir cobalt/
+        -output_dir cobalt/ \\
+        -log_level ${params.module_log_level}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

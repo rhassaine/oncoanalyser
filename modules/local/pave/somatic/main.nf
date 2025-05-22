@@ -67,7 +67,8 @@ process PAVE_SOMATIC {
         -ensembl_data_dir ${ensembl_data_resources} \\
         -read_pass_only \\
         -threads ${task.cpus} \\
-        -output_dir ./
+        -output_dir ./ \\
+        -log_level ${params.module_log_level}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
