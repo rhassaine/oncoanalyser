@@ -12,7 +12,6 @@ import Utils
 run_mode = Utils.getRunMode(params.mode, log)
 
 if(run_mode === Constants.RunMode.TARGETED) {
-
     // Parse input samplesheet
     // NOTE(SW): this is done early and outside of gpars so that we can access synchronously and prior to pipeline execution
     inputs = Utils.parseInput(params.input, workflow.stubRun, log)
@@ -53,7 +52,6 @@ if(run_mode === Constants.RunMode.TARGETED) {
 
     // Used in Isofox subworkflow only
     isofox_read_length = params.isofox_read_length !== null ? params.isofox_read_length : Constants.DEFAULT_ISOFOX_READ_LENGTH_TARGETED
-
 }
 
 /*

@@ -76,7 +76,6 @@ class Constants {
         REDUX_DUP_FREQ_TSV,
         REDUX_JITTER_TSV,
         REDUX_MS_TSV,
-        REDUX_REPEAT_TSV,
         // Process
         AMBER_DIR,
         BAMTOOLS,
@@ -200,12 +199,6 @@ class Constants {
             SequenceType.DNA,
         ],
 
-        REDUX_REPEAT_TSV_TUMOR: [
-            FileType.REDUX_REPEAT_TSV,
-            SampleType.TUMOR,
-            SequenceType.DNA,
-        ],
-
         BAM_REDUX_DNA_NORMAL: [
             FileType.BAM_REDUX,
             SampleType.NORMAL,
@@ -226,12 +219,6 @@ class Constants {
 
         REDUX_MS_TSV_NORMAL: [
             FileType.REDUX_MS_TSV,
-            SampleType.NORMAL,
-            SequenceType.DNA,
-        ],
-
-        REDUX_REPEAT_TSV_NORMAL: [
-            FileType.REDUX_REPEAT_TSV,
             SampleType.NORMAL,
             SequenceType.DNA,
         ],
@@ -260,12 +247,6 @@ class Constants {
             SequenceType.DNA,
         ],
 
-        REDUX_REPEAT_TSV_DONOR: [
-            FileType.REDUX_REPEAT_TSV,
-            SampleType.DONOR,
-            SequenceType.DNA,
-        ],
-
 
         // Other tools
         ISOFOX_DIR: [
@@ -285,18 +266,13 @@ class Constants {
             SequenceType.DNA,
         ],
 
-        BAMTOOLS_DIR: [
+        BAMTOOLS_DIR_TUMOR: [
             FileType.BAMTOOLS_DIR,
-            [SampleType.TUMOR, SampleType.TUMOR_NORMAL],
-            SequenceType.DNA,
-        ],
-        BAMTOOLS_TUMOR: [
-            FileType.BAMTOOLS,
             SampleType.TUMOR,
             SequenceType.DNA,
         ],
-        BAMTOOLS_NORMAL: [
-            FileType.BAMTOOLS,
+        BAMTOOLS_DIR_NORMAL: [
+            FileType.BAMTOOLS_DIR,
             SampleType.NORMAL,
             SequenceType.DNA,
         ],

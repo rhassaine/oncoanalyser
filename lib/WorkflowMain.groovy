@@ -4,6 +4,8 @@
 
 import nextflow.Nextflow
 
+import Utils
+
 class WorkflowMain {
 
     //

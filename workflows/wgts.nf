@@ -27,11 +27,6 @@ if(run_mode === Constants.RunMode.WGTS) {
         params.isofox_gc_ratios,
     ]
 
-    // Mode check required as evaluated regardless of workflow selection
-    if (run_config.stages.virusinterpreter && run_config.mode !== Constants.RunMode.TARGETED) {
-        checkPathParamList.add(params.ref_data_virusbreakenddb_path)
-    }
-
     if (run_config.stages.lilac) {
         if (params.genome_version.toString() == '38' && params.genome_type == 'alt' && params.containsKey('ref_data_hla_slice_bed')) {
             checkPathParamList.add(params.ref_data_hla_slice_bed)
@@ -39,16 +34,21 @@ if(run_mode === Constants.RunMode.WGTS) {
     }
 
     // TODO(SW): consider whether we should check for null entries here for errors to be more informative
-    for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
+    for (param in checkPathParamList) {
+        if (param) {
+            file(param, checkIfExists: true)
+        }
+    }
 
     // Check mandatory parameters
-    if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
+    if (params.input) {
+        ch_input = file(params.input)
+    } else {
+        exit 1, 'Input samplesheet not specified!'
+    }
 
     // Used in Isofox and Neo subworkflows
     isofox_read_length = params.isofox_read_length !== null ? params.isofox_read_length : Constants.DEFAULT_ISOFOX_READ_LENGTH_WTS
-
-    // Get absolute file paths
-    samplesheet = Utils.getFileObject(params.input)
 }
 
 /*
@@ -87,6 +87,9 @@ include { VIRUSBREAKEND_CALLING } from '../subworkflows/local/virusbreakend_call
     RUN MAIN WORKFLOW
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+
+// Get absolute file paths
+samplesheet = Utils.getFileObject(params.input)
 
 workflow WGTS {
     // Create channel for versions
@@ -163,7 +166,7 @@ workflow WGTS {
     ch_redux_dna_normal_out = Channel.empty()
     ch_redux_dna_donor_out = Channel.empty()
 
-    // channel: [ meta, dup_freq_tsv, jitter_tsv, ms_tsv, repeat_tsv ]
+    // channel: [ meta, dup_freq_tsv, jitter_tsv, ms_tsv ]
     ch_redux_dna_tumor_tsv_out = Channel.empty()
     ch_redux_dna_normal_tsv_out = Channel.empty()
     ch_redux_dna_donor_tsv_out = Channel.empty()
@@ -313,13 +316,11 @@ workflow WGTS {
             ref_data.genome_fai,
             ref_data.genome_dict,
             ref_data.genome_img,
-            hmf_data.sv_prep_blocklist,
             hmf_data.known_fusions,
             hmf_data.gridss_pon_breakends,
             hmf_data.gridss_pon_breakpoints,
             hmf_data.repeatmasker_annotations,
-            hmf_data.decoy_sequences_image,
-            hmf_data.unmap_regions,
+            hmf_data.unmap_regions
         )
 
         ch_versions = ch_versions.mix(ESVEE_CALLING.out.versions)
@@ -357,14 +358,14 @@ workflow WGTS {
             ref_data.genome_version,
             ref_data.genome_fai,
             ref_data.genome_dict,
+            hmf_data.sage_pon,
             hmf_data.sage_known_hotspots_somatic,
             hmf_data.sage_known_hotspots_germline,
-            hmf_data.sage_actionable_panel,
-            hmf_data.sage_coverage_panel,
             hmf_data.sage_highconf_regions,
             hmf_data.segment_mappability,
             hmf_data.driver_gene_panel,
             hmf_data.ensembl_data_resources,
+            hmf_data.gnomad_resource,
         )
 
         ch_versions = ch_versions.mix(SAGE_CALLING.out.versions)
@@ -398,8 +399,8 @@ workflow WGTS {
             ref_data.genome_fasta,
             ref_data.genome_version,
             ref_data.genome_fai,
-            hmf_data.sage_pon,
             [],  // sage_pon_artefacts
+            hmf_data.sage_pon,
             hmf_data.sage_blocklist_regions,
             hmf_data.sage_blocklist_sites,
             hmf_data.clinvar_annotations,
@@ -559,6 +560,8 @@ workflow WGTS {
             ch_redux_dna_normal_out,
             ref_data.genome_fasta,
             ref_data.genome_version,
+            hmf_data.driver_gene_panel,
+            hmf_data.ensembl_data_resources,
         )
 
         ch_versions = ch_versions.mix(BAMTOOLS_METRICS.out.versions)
@@ -673,7 +676,7 @@ workflow WGTS {
             hmf_data.virusbreakend_db,
             hmf_data.virus_taxonomy_db,
             hmf_data.virus_reporting_db,
-            hmf_data.virus_blacklist_db,
+            hmf_data.virus_blocklist_db,
             gridss_config,
         )
 
