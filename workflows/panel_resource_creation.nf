@@ -118,6 +118,7 @@ workflow PANEL_RESOURCE_CREATION {
 
     // channel: [ meta, [bam, ...], [bai, ...] ]
     ch_align_dna_tumor_out = READ_ALIGNMENT_DNA.out.dna_tumor
+    ch_align_dna_normal_out = READ_ALIGNMENT_DNA.out.dna_normal
     ch_align_rna_tumor_out = READ_ALIGNMENT_RNA.out.rna_tumor
 
     //
@@ -126,7 +127,7 @@ workflow PANEL_RESOURCE_CREATION {
     REDUX_PROCESSING(
         ch_inputs,
         ch_align_dna_tumor_out,
-        ch_inputs.map { meta -> [meta, [], []] },  // ch_dna_normal
+        ch_align_dna_normal_out,
         ch_inputs.map { meta -> [meta, [], []] },  // ch_dna_donor
         ref_data.genome_fasta,
         ref_data.genome_version,
@@ -142,9 +143,11 @@ workflow PANEL_RESOURCE_CREATION {
 
     // channel: [ meta, bam, bai ]
     ch_redux_dna_tumor_out = REDUX_PROCESSING.out.dna_tumor
+    ch_redux_dna_normal_out = REDUX_PROCESSING.out.dna_normal
 
     // channel: [ meta, dup_freq_tsv, jitter_tsv, ms_tsv, repeat_tsv ]
     ch_redux_dna_tumor_tsv_out = REDUX_PROCESSING.out.dna_tumor_tsv
+    ch_redux_dna_normal_tsv_out = REDUX_PROCESSING.out.dna_normal_tsv
 
     //
     // MODULE: Run Isofox to analyse RNA data
@@ -179,7 +182,7 @@ workflow PANEL_RESOURCE_CREATION {
     AMBER_PROFILING(
         ch_inputs,
         ch_redux_dna_tumor_out,
-        ch_inputs.map { meta -> [meta, [], []] },  // ch_normal_bam
+        ch_redux_dna_normal_out,
         ch_inputs.map { meta -> [meta, [], []] },  // ch_donor_bam
         ref_data.genome_version,
         hmf_data.heterozygous_sites,
@@ -197,7 +200,7 @@ workflow PANEL_RESOURCE_CREATION {
     COBALT_PROFILING(
         ch_inputs,
         ch_redux_dna_tumor_out,
-        ch_inputs.map { meta -> [meta, [], []] },  // ch_normal_bam
+        ch_redux_dna_normal_out,
         hmf_data.gc_profile,
         hmf_data.diploid_bed,
         [],  // panel_target_region_normalisation
@@ -214,10 +217,10 @@ workflow PANEL_RESOURCE_CREATION {
     SAGE_CALLING(
         ch_inputs,
         ch_redux_dna_tumor_out,
-        ch_inputs.map { meta -> [meta, [], []] },  // ch_normal_bam
+        ch_redux_dna_normal_out,
         ch_inputs.map { meta -> [meta, [], []] },  // ch_donor_bam
         ch_redux_dna_tumor_tsv_out,
-        ch_inputs.map { meta -> [meta, [], [], []] },  // ch_normal_tsv
+        ch_redux_dna_normal_tsv_out,
         ch_inputs.map { meta -> [meta, [], [], []] },  // ch_donor_tsv
         ref_data.genome_fasta,
         ref_data.genome_version,
