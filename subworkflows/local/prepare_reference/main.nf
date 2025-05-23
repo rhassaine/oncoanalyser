@@ -8,16 +8,25 @@ include { BWAMEM2_INDEX         } from '../../../modules/nf-core/bwamem2/index/m
 include { BWA_INDEX             } from '../../../modules/nf-core/bwa/index/main'
 include { SAMTOOLS_DICT         } from '../../../modules/nf-core/samtools/dict/main'
 include { SAMTOOLS_FAIDX        } from '../../../modules/nf-core/samtools/faidx/main'
+include { GATK4_BWA_INDEX_IMAGE } from '../../../modules/local/gatk4/bwaindeximage/main'
 include { STAR_GENOMEGENERATE   } from '../../../modules/nf-core/star/genomegenerate/main'
+include { GRIDSS_INDEX          } from '../../../modules/local/gridss/index/main'
 
-include { CUSTOM_EXTRACTTARBALL as DECOMP_BWAMEM2_INDEX    } from '../../../modules/local/custom/extract_tarball/main'
-include { CUSTOM_EXTRACTTARBALL as DECOMP_GRIDSS_INDEX     } from '../../../modules/local/custom/extract_tarball/main'
-include { CUSTOM_EXTRACTTARBALL as DECOMP_HMF_DATA         } from '../../../modules/local/custom/extract_tarball/main'
-include { CUSTOM_EXTRACTTARBALL as DECOMP_PANEL_DATA       } from '../../../modules/local/custom/extract_tarball/main'
-include { CUSTOM_EXTRACTTARBALL as DECOMP_STAR_INDEX       } from '../../../modules/local/custom/extract_tarball/main'
-include { GATK4_BWA_INDEX_IMAGE                            } from '../../../modules/local/gatk4/bwaindeximage/main'
-include { GRIDSS_INDEX                                     } from '../../../modules/local/gridss/index/main'
-include { WRITE_REFERENCE_DATA                             } from '../../../modules/local/custom/write_reference_data/main'
+include { CUSTOM_EXTRACTTARBALL as DECOMP_BWAMEM2_INDEX } from '../../../modules/local/custom/extract_tarball/main'
+include { CUSTOM_EXTRACTTARBALL as DECOMP_GRIDSS_INDEX  } from '../../../modules/local/custom/extract_tarball/main'
+include { CUSTOM_EXTRACTTARBALL as DECOMP_HMF_DATA      } from '../../../modules/local/custom/extract_tarball/main'
+include { CUSTOM_EXTRACTTARBALL as DECOMP_PANEL_DATA    } from '../../../modules/local/custom/extract_tarball/main'
+include { CUSTOM_EXTRACTTARBALL as DECOMP_STAR_INDEX    } from '../../../modules/local/custom/extract_tarball/main'
+
+include { WRITE_REFERENCE_DATA as WRITE_FASTA           } from '../../../modules/local/custom/write_reference_data/main'
+include { WRITE_REFERENCE_DATA as WRITE_FAI             } from '../../../modules/local/custom/write_reference_data/main'
+include { WRITE_REFERENCE_DATA as WRITE_DICT            } from '../../../modules/local/custom/write_reference_data/main'
+include { WRITE_REFERENCE_DATA as WRITE_IMG             } from '../../../modules/local/custom/write_reference_data/main'
+include { WRITE_REFERENCE_DATA as WRITE_BWA_INDEX       } from '../../../modules/local/custom/write_reference_data/main'
+include { WRITE_REFERENCE_DATA as WRITE_GRIDSS_INDEX    } from '../../../modules/local/custom/write_reference_data/main'
+include { WRITE_REFERENCE_DATA as WRITE_STAR_INDEX      } from '../../../modules/local/custom/write_reference_data/main'
+include { WRITE_REFERENCE_DATA as WRITE_HMF_DATA        } from '../../../modules/local/custom/write_reference_data/main'
+include { WRITE_REFERENCE_DATA as WRITE_PANEL_DATA      } from '../../../modules/local/custom/write_reference_data/main'
 
 workflow PREPARE_REFERENCE {
     take:
@@ -235,31 +244,17 @@ workflow PREPARE_REFERENCE {
     // Write prepared reference data if requested
     //
     if (prep_config.prepare_ref_data_only) {
+        
+        WRITE_FASTA(ch_genome_fasta, workflow.manifest.version)
+        WRITE_FAI(ch_genome_fai, workflow.manifest.version)
+        WRITE_DICT(ch_genome_dict, workflow.manifest.version)
+        WRITE_IMG(ch_genome_img, workflow.manifest.version)
+        WRITE_BWA_INDEX(ch_genome_bwamem2_index, workflow.manifest.version)
+        WRITE_GRIDSS_INDEX(ch_genome_gridss_index, workflow.manifest.version)
+        WRITE_STAR_INDEX(ch_genome_star_index, workflow.manifest.version)
 
-        // Create channel of data files to stage (if not already local) and write
-        ch_refdata = Channel.empty()
-            .mix(
-                ch_genome_fasta,
-                ch_genome_fai,
-                ch_genome_dict,
-                ch_genome_img,
-                ch_genome_bwamem2_index,
-                ch_genome_gridss_index,
-                ch_genome_star_index,
-                // Also include base paths for hmf_data and panel_data
-                Channel.empty()
-                    .mix(
-                        ch_hmf_data,
-                        ch_panel_data,
-                    )
-                    .map { getDataBaseDirectory(it) }
-            )
-
-        WRITE_REFERENCE_DATA(
-            ch_refdata,
-            workflow.manifest.version,
-        )
-
+        WRITE_HMF_DATA(ch_hmf_data.map { getDataBaseDirectory(it) }, workflow.manifest.version)
+        WRITE_PANEL_DATA(ch_panel_data.map { getDataBaseDirectory(it) }, workflow.manifest.version)
     }
 
     emit:
