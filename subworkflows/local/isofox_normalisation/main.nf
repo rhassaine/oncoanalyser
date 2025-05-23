@@ -15,7 +15,7 @@ workflow ISOFOX_NORMALISATION {
     // Reference data
     genome_version           // channel: [mandatory] genome version
     isofox_gene_ids          // channel: [mandatory]  /path/to/gene_ids
-    isofox_gene_distribution // channel: [optional]  /path/to/isofox_gene_distribution
+    isofox_gene_distribution // channel: [mandatory] /path/to/isofox_gene_distribution
 
     main:
     // Channel for version.yml files
