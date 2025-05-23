@@ -354,6 +354,7 @@ workflow WGTS {
             hmf_data.segment_mappability,
             hmf_data.driver_gene_panel,
             hmf_data.ensembl_data_resources,
+            true,  // enable_germline
         )
 
         ch_versions = ch_versions.mix(SAGE_CALLING.out.versions)

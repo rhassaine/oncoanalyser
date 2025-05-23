@@ -234,6 +234,7 @@ workflow PANEL_RESOURCE_CREATION {
         [],  // segment_mappability
         [],  // driver_gene_panel
         hmf_data.ensembl_data_resources,
+        false,  // enable_germline
     )
 
     ch_versions = ch_versions.mix(SAGE_CALLING.out.versions)
