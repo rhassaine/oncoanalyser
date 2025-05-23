@@ -468,7 +468,7 @@ workflow TARGETED {
             ref_data.genome_version,
             ref_data.genome_fai,
             ref_data.genome_dict,
-            true,  // run_germline
+            true,  // enable_germline
         )
 
         ch_versions = ch_versions.mix(SAGE_APPEND.out.versions)
