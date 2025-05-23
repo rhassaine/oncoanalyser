@@ -29,35 +29,49 @@ workflow PREPARE_REFERENCE {
     ch_versions = Channel.empty()
 
     //
-    // Set some variables for brevity
+    // Set .fasta and main genome indexes, create if required
     //
-    ch_genome_fasta = Channel.fromPath(params.ref_data_genome_fasta)
     ch_genome_version = Channel.value(params.genome_version)
-
-    //
-    // Set .fai and .dict indexes, create if required
-    //
-    ch_genome_fai = getRefFileChannel('ref_data_genome_fai')
-    if (!params.ref_data_genome_fai) {
-        SAMTOOLS_FAIDX(ch_genome_fasta)
-        ch_genome_fai = SAMTOOLS_FAIDX.out.fai
-        ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
+    
+    ch_genome_fasta = Channel.empty()
+    if(prep_config.require_fasta) {
+        ch_genome_fasta = Channel.fromPath(params.ref_data_genome_fasta)
     }
 
-    ch_genome_dict = getRefFileChannel('ref_data_genome_dict')
-    if (!params.ref_data_genome_dict) {
-        SAMTOOLS_DICT(ch_genome_fasta)
-        ch_genome_dict = SAMTOOLS_DICT.out.dict
-        ch_versions = ch_versions.mix(SAMTOOLS_DICT.out.versions)
+    ch_genome_fai = Channel.empty()
+    if(prep_config.require_fai) {
+
+        ch_genome_fai = getRefFileChannel('ref_data_genome_fai')
+        if (!params.ref_data_genome_fai) {
+            SAMTOOLS_FAIDX(ch_genome_fasta)
+            ch_genome_fai = SAMTOOLS_FAIDX.out.fai
+            ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
+        }
     }
 
-    ch_genome_img = getRefFileChannel('ref_data_genome_img')
-    if (!params.ref_data_genome_img) {
-        GATK4_BWA_INDEX_IMAGE(ch_genome_fasta)
-        ch_genome_img = GATK4_BWA_INDEX_IMAGE.out.img
-        ch_versions = ch_versions.mix(GATK4_BWA_INDEX_IMAGE.out.versions)
+    ch_genome_dict = Channel.empty()
+    if(prep_config.require_dict) {
+        
+        ch_genome_dict = getRefFileChannel('ref_data_genome_dict')
+        if (!params.ref_data_genome_dict) {
+            SAMTOOLS_DICT(ch_genome_fasta)
+            ch_genome_dict = SAMTOOLS_DICT.out.dict
+            ch_versions = ch_versions.mix(SAMTOOLS_DICT.out.versions)
+        }
     }
 
+
+    ch_genome_img = Channel.empty()
+    if(prep_config.require_img) {
+
+        ch_genome_img = getRefFileChannel('ref_data_genome_img')
+        if (!params.ref_data_genome_img) {
+            GATK4_BWA_INDEX_IMAGE(ch_genome_fasta)
+            ch_genome_img = GATK4_BWA_INDEX_IMAGE.out.img
+            ch_versions = ch_versions.mix(GATK4_BWA_INDEX_IMAGE.out.versions)
+        }
+    }
+    
     //
     // Set bwa-mem2 index, unpack or create if required
     //

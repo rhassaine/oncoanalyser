@@ -36,8 +36,14 @@ class Constants {
         WGS,
         WTS,
         TARGETED,
-
-        REF_GENOME,
+        DNA_ALIGNMENT,
+        RNA_ALIGNMENT,
+        
+        // Individual types
+        FASTA,
+        FAI,
+        DICT,
+        IMG,
         BWA_INDEX,
         GRIDSS_INDEX,
         STAR_INDEX,

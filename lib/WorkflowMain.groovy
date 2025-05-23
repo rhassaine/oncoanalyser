@@ -356,8 +356,10 @@ class WorkflowMain {
         if (ref_data_types.contains(Constants.RefDataType.WGS)) {
 
             ref_data_types += [
-                Constants.RefDataType.REF_GENOME,
-                Constants.RefDataType.BWA_INDEX,
+                Constants.RefDataType.FASTA,
+                Constants.RefDataType.FAI,
+                Constants.RefDataType.DICT,
+                Constants.RefDataType.IMG,
                 Constants.RefDataType.GRIDSS_INDEX,
                 Constants.RefDataType.HMFTOOLS
             ]
@@ -366,8 +368,10 @@ class WorkflowMain {
         if (ref_data_types.contains(Constants.RefDataType.WTS)) {
 
             ref_data_types += [
-                Constants.RefDataType.REF_GENOME,
-                Constants.RefDataType.STAR_INDEX,
+                Constants.RefDataType.FASTA,
+                Constants.RefDataType.FAI,
+                Constants.RefDataType.DICT,
+                Constants.RefDataType.IMG,
                 Constants.RefDataType.HMFTOOLS
             ]
         }
@@ -375,19 +379,25 @@ class WorkflowMain {
         if (ref_data_types.contains(Constants.RefDataType.TARGETED)) {
 
             ref_data_types += [
-                Constants.RefDataType.REF_GENOME,
-                Constants.RefDataType.BWA_INDEX,
+                Constants.RefDataType.FASTA,
+                Constants.RefDataType.FAI,
+                Constants.RefDataType.DICT,
+                Constants.RefDataType.IMG,
                 Constants.RefDataType.HMFTOOLS,
                 Constants.RefDataType.PANEL
             ]
         }
 
-        def require_genome = ref_data_types.contains(Constants.RefDataType.REF_GENOME)
-        def require_bwa_index = ref_data_types.contains(Constants.RefDataType.BWA_INDEX)
+        def require_fasta = ref_data_types.contains(Constants.RefDataType.FASTA)
+        def require_fai = ref_data_types.contains(Constants.RefDataType.FAI)
+        def require_dict = ref_data_types.contains(Constants.RefDataType.DICT)
+        def require_img = ref_data_types.contains(Constants.RefDataType.IMG)
+        
+        def require_bwa_index = ref_data_types.contains(Constants.RefDataType.BWA_INDEX) || ref_data_types.contains(Constants.RefDataType.DNA_ALIGNMENT)
+        def require_star_index = ref_data_types.contains(Constants.RefDataType.STAR_INDEX) || ref_data_types.contains(Constants.RefDataType.RNA_ALIGNMENT)
+        
         def require_gridss_index = ref_data_types.contains(Constants.RefDataType.GRIDSS_INDEX)
-        def require_star_index = ref_data_types.contains(Constants.RefDataType.STAR_INDEX)
         def require_hmftools_data = ref_data_types.contains(Constants.RefDataType.HMFTOOLS)
-
         def require_panel_data = ref_data_types.contains(Constants.RefDataType.PANEL)
 
         if(require_panel_data){
@@ -403,10 +413,15 @@ class WorkflowMain {
         return [
             prepare_ref_data_only: true,
 
-            require_genome: require_genome,
+            require_fasta: require_fasta,
+            require_fai: require_fai,
+            require_dict: require_dict,
+            require_img: require_img,
+
             require_bwa_index: require_bwa_index,
-            require_gridss_index: require_gridss_index,
             require_star_index: require_star_index,
+            
+            require_gridss_index: require_gridss_index,
             require_hmftools_data: require_hmftools_data,
             require_panel_data: require_panel_data,
         ]
