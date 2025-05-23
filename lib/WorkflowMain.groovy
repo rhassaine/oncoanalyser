@@ -341,7 +341,17 @@ class WorkflowMain {
     {
         def ref_data_types = params.ref_data_types
             .tokenize(',')
-            .collect { Utils.getEnumFromString(it, Constants.RefDataType) }
+            .collect { 
+                def ref_data_type_enum = Utils.getEnumFromString(it, Constants.RefDataType)
+
+                if(!ref_data_type_enum) {
+                    def ref_data_type_str = Utils.getEnumNames(Constants.RefDataType).join('\n  - ')
+                    log.error "received invalid ref data type: '${it}'. Valid options are:\n  - ${ref_data_type_str}"
+                    Nextflow.exit(1)
+                }
+
+                return ref_data_type_enum
+            }
 
         if (ref_data_types.contains(Constants.RefDataType.WGS)) {
 
