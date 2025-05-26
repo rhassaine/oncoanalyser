@@ -4,13 +4,45 @@ import Utils
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    VALIDATE INPUTS
+    IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-run_mode = Utils.getRunMode(params.mode, log)
+include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 
-if(run_mode === Constants.RunMode.WGTS) {
+include { AMBER_PROFILING       } from '../subworkflows/local/amber_profiling'
+include { BAMTOOLS_METRICS      } from '../subworkflows/local/bamtools_metrics'
+include { CHORD_PREDICTION      } from '../subworkflows/local/chord_prediction'
+include { COBALT_PROFILING      } from '../subworkflows/local/cobalt_profiling'
+include { CUPPA_PREDICTION      } from '../subworkflows/local/cuppa_prediction'
+include { ESVEE_CALLING         } from '../subworkflows/local/esvee_calling'
+include { ISOFOX_QUANTIFICATION } from '../subworkflows/local/isofox_quantification'
+include { LILAC_CALLING         } from '../subworkflows/local/lilac_calling'
+include { LINX_ANNOTATION       } from '../subworkflows/local/linx_annotation'
+include { LINX_PLOTTING         } from '../subworkflows/local/linx_plotting'
+include { NEO_PREDICTION        } from '../subworkflows/local/neo_prediction'
+include { ORANGE_REPORTING      } from '../subworkflows/local/orange_reporting'
+include { PAVE_ANNOTATION       } from '../subworkflows/local/pave_annotation'
+include { PREPARE_REFERENCE     } from '../subworkflows/local/prepare_reference'
+include { PURPLE_CALLING        } from '../subworkflows/local/purple_calling'
+include { READ_ALIGNMENT_DNA    } from '../subworkflows/local/read_alignment_dna'
+include { READ_ALIGNMENT_RNA    } from '../subworkflows/local/read_alignment_rna'
+include { REDUX_PROCESSING      } from '../subworkflows/local/redux_processing'
+include { SAGE_APPEND           } from '../subworkflows/local/sage_append'
+include { SAGE_CALLING          } from '../subworkflows/local/sage_calling'
+include { SIGS_FITTING          } from '../subworkflows/local/sigs_fitting'
+include { VIRUSBREAKEND_CALLING } from '../subworkflows/local/virusbreakend_calling'
+
+workflow WGTS {
+
+    /*
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        VALIDATE INPUTS
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    */
+
+    run_mode = Utils.getRunMode(params.mode, log)
+
     // Parse input samplesheet
     // NOTE(SW): this is done early and outside of gpars so that we can access synchronously and prior to pipeline execution
     inputs = Utils.parseInput(params.input, workflow.stubRun, log)
@@ -49,49 +81,16 @@ if(run_mode === Constants.RunMode.WGTS) {
 
     // Used in Isofox and Neo subworkflows
     isofox_read_length = params.isofox_read_length !== null ? params.isofox_read_length : Constants.DEFAULT_ISOFOX_READ_LENGTH_WTS
-}
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
+    /*
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        RUN MAIN WORKFLOW
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    */
 
-include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+    // Get absolute file paths
+    samplesheet = Utils.getFileObject(params.input)
 
-include { AMBER_PROFILING       } from '../subworkflows/local/amber_profiling'
-include { BAMTOOLS_METRICS      } from '../subworkflows/local/bamtools_metrics'
-include { CHORD_PREDICTION      } from '../subworkflows/local/chord_prediction'
-include { COBALT_PROFILING      } from '../subworkflows/local/cobalt_profiling'
-include { CUPPA_PREDICTION      } from '../subworkflows/local/cuppa_prediction'
-include { ESVEE_CALLING         } from '../subworkflows/local/esvee_calling'
-include { ISOFOX_QUANTIFICATION } from '../subworkflows/local/isofox_quantification'
-include { LILAC_CALLING         } from '../subworkflows/local/lilac_calling'
-include { LINX_ANNOTATION       } from '../subworkflows/local/linx_annotation'
-include { LINX_PLOTTING         } from '../subworkflows/local/linx_plotting'
-include { NEO_PREDICTION        } from '../subworkflows/local/neo_prediction'
-include { ORANGE_REPORTING      } from '../subworkflows/local/orange_reporting'
-include { PAVE_ANNOTATION       } from '../subworkflows/local/pave_annotation'
-include { PREPARE_REFERENCE     } from '../subworkflows/local/prepare_reference'
-include { PURPLE_CALLING        } from '../subworkflows/local/purple_calling'
-include { READ_ALIGNMENT_DNA    } from '../subworkflows/local/read_alignment_dna'
-include { READ_ALIGNMENT_RNA    } from '../subworkflows/local/read_alignment_rna'
-include { REDUX_PROCESSING      } from '../subworkflows/local/redux_processing'
-include { SAGE_APPEND           } from '../subworkflows/local/sage_append'
-include { SAGE_CALLING          } from '../subworkflows/local/sage_calling'
-include { SIGS_FITTING          } from '../subworkflows/local/sigs_fitting'
-include { VIRUSBREAKEND_CALLING } from '../subworkflows/local/virusbreakend_calling'
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    RUN MAIN WORKFLOW
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-// Get absolute file paths
-samplesheet = Utils.getFileObject(params.input)
-
-workflow WGTS {
     // Create channel for versions
     // channel: [ versions.yml ]
     ch_versions = Channel.empty()

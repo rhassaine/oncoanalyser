@@ -2,16 +2,42 @@ import Constants
 import Processes
 import Utils
 
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    VALIDATE INPUTS
+    IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-run_mode = Utils.getRunMode(params.mode, log)
+include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 
-if(run_mode === Constants.RunMode.TARGETED) {
+include { AMBER_PROFILING       } from '../subworkflows/local/amber_profiling'
+include { BAMTOOLS_METRICS      } from '../subworkflows/local/bamtools_metrics'
+include { COBALT_PROFILING      } from '../subworkflows/local/cobalt_profiling'
+include { ESVEE_CALLING         } from '../subworkflows/local/esvee_calling'
+include { ISOFOX_QUANTIFICATION } from '../subworkflows/local/isofox_quantification'
+include { LILAC_CALLING         } from '../subworkflows/local/lilac_calling'
+include { LINX_ANNOTATION       } from '../subworkflows/local/linx_annotation'
+include { LINX_PLOTTING         } from '../subworkflows/local/linx_plotting'
+include { ORANGE_REPORTING      } from '../subworkflows/local/orange_reporting'
+include { PAVE_ANNOTATION       } from '../subworkflows/local/pave_annotation'
+include { PREPARE_REFERENCE     } from '../subworkflows/local/prepare_reference'
+include { PURPLE_CALLING        } from '../subworkflows/local/purple_calling'
+include { READ_ALIGNMENT_DNA    } from '../subworkflows/local/read_alignment_dna'
+include { READ_ALIGNMENT_RNA    } from '../subworkflows/local/read_alignment_rna'
+include { REDUX_PROCESSING      } from '../subworkflows/local/redux_processing'
+include { SAGE_APPEND           } from '../subworkflows/local/sage_append'
+include { SAGE_CALLING          } from '../subworkflows/local/sage_calling'
+
+workflow TARGETED {
+
+    /*
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        VALIDATE INPUTS
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    */
+
+    run_mode = Utils.getRunMode(params.mode, log)
+
     // Parse input samplesheet
     // NOTE(SW): this is done early and outside of gpars so that we can access synchronously and prior to pipeline execution
     inputs = Utils.parseInput(params.input, workflow.stubRun, log)
@@ -52,44 +78,17 @@ if(run_mode === Constants.RunMode.TARGETED) {
 
     // Used in Isofox subworkflow only
     isofox_read_length = params.isofox_read_length !== null ? params.isofox_read_length : Constants.DEFAULT_ISOFOX_READ_LENGTH_TARGETED
-}
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
 
-include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+    /*
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        RUN MAIN WORKFLOW
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    */
 
-include { AMBER_PROFILING       } from '../subworkflows/local/amber_profiling'
-include { BAMTOOLS_METRICS      } from '../subworkflows/local/bamtools_metrics'
-include { COBALT_PROFILING      } from '../subworkflows/local/cobalt_profiling'
-include { ESVEE_CALLING         } from '../subworkflows/local/esvee_calling'
-include { ISOFOX_QUANTIFICATION } from '../subworkflows/local/isofox_quantification'
-include { LILAC_CALLING         } from '../subworkflows/local/lilac_calling'
-include { LINX_ANNOTATION       } from '../subworkflows/local/linx_annotation'
-include { LINX_PLOTTING         } from '../subworkflows/local/linx_plotting'
-include { ORANGE_REPORTING      } from '../subworkflows/local/orange_reporting'
-include { PAVE_ANNOTATION       } from '../subworkflows/local/pave_annotation'
-include { PREPARE_REFERENCE     } from '../subworkflows/local/prepare_reference'
-include { PURPLE_CALLING        } from '../subworkflows/local/purple_calling'
-include { READ_ALIGNMENT_DNA    } from '../subworkflows/local/read_alignment_dna'
-include { READ_ALIGNMENT_RNA    } from '../subworkflows/local/read_alignment_rna'
-include { REDUX_PROCESSING      } from '../subworkflows/local/redux_processing'
-include { SAGE_APPEND           } from '../subworkflows/local/sage_append'
-include { SAGE_CALLING          } from '../subworkflows/local/sage_calling'
+    // Get absolute file paths
+    samplesheet = Utils.getFileObject(params.input)
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    RUN MAIN WORKFLOW
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-// Get absolute file paths
-samplesheet = Utils.getFileObject(params.input)
-
-workflow TARGETED {
     // Create channel for versions
     // channel: [ versions.yml ]
     ch_versions = Channel.empty()
