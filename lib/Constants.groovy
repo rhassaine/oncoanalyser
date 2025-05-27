@@ -51,6 +51,8 @@ class Constants {
         VIRUSINTERPRETER,
     }
 
+    static List DEFAULT_EXCLUDED_PROCESSES = [Process.NEO]
+
     static enum FileType {
         // Generic
         BAM,
