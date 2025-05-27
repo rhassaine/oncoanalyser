@@ -164,7 +164,7 @@ Currently only gzip compressed, non-interleaved paired-end FASTQ files are curre
 
 :::
 
-#### BAM and CRAM
+#### BAM
 
 To run from BAM, specify `bam` in the `filetype` field:
 
@@ -181,14 +181,6 @@ BAM indexes (.bai files) are expected to be in the same location as the BAM file
 group_id,subject_id,sample_id,sample_type,sequence_type,filetype,filepath
 PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bam,/path/to/PATIENT1-T.dna.bam
 PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bai,/other/dir/PATIENT1-T.dna.bam.bai
-```
-
-To run from CRAM, simply provide the CRAM and optionally the CRAM index with `bam` or `bai` in the `filetype` field:
-
-```csv title="samplesheet.cram_crai.csv"
-group_id,subject_id,sample_id,sample_type,sequence_type,filetype,filepath
-PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bam,/path/to/PATIENT1-T.dna.cram
-PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bai,/other/dir/PATIENT1-T.dna.cram.crai
 ```
 
 #### REDUX BAM
@@ -235,6 +227,38 @@ When starting from REDUX BAM, the filenames must have the format:
 
 For example, if `sample_id` is `PATIENT1-T`, the BAM filename must be `PATIENT1-T.redux.bam` and not e.g.
 `PATIENT1.redux.bam`
+
+:::
+
+#### CRAM
+
+To run from CRAM, use `cram` and `crai` in the `filetype` field. `crai` only needs to be provided if the CRAM index is
+not in the same directory as the CRAM file:
+
+```csv title="samplesheet.cram.csv"
+group_id,subject_id,sample_id,sample_type,sequence_type,filetype,filepath
+PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,cram,/path/to/PATIENT1-T.dna.cram
+PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,crai,/other/dir/PATIENT1-T.dna.cram.crai
+```
+
+Similarly, for REDUX CRAMs, provide `cram_redux` and optionally `crai`:
+
+```csv title="samplesheet.redux_cram.csv"
+group_id,subject_id,sample_id,sample_type,sequence_type,filetype,filepath
+PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,cram_redux,/path/to/PATIENT1-T.dna.redux.cram
+PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,crai,/other/dir/PATIENT1-T.dna.cram.crai
+```
+
+:::warning
+
+There is a fixed performance cost associated with reading CRAM files. This means the time it takes to read large CRAMs
+vs BAMs is similar, whereas reading small CRAMs can take significantly longer (>10x) than reading small BAMs. If you
+have small CRAMs (e.g. <10GB), it will be faster to decompress the CRAM into a BAM, and then run `oncoanalyser` with
+this BAM.
+
+This performance issue is due to how CRAM reading is implemented in
+[htsjdk](https://github.com/samtools/htsjdk/blob/master/src/main/java/htsjdk/samtools/CRAMFileReader.java) (which is
+used throughout the WiGiTS tools). We plan to address this issue in future releases of `oncoanalyser`.
 
 :::
 
