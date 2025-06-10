@@ -43,7 +43,6 @@ workflow SAGE_APPEND {
         .map { meta, tumor_dna_bam, tumor_dna_bai, tumor_dna_dup_freq_tsv, tumor_dna_jitter_tsv, tumor_dna_ms_tsv, tumor_rna_bam, tumor_rna_bai, purple_dir ->
 
             def tumor_dna_redux_tsv_list = [
-                tumor_dna_dup_freq_tsv ?: Utils.getInput(meta, Constants.INPUT.REDUX_DUP_FREQ_TSV_TUMOR),
                 tumor_dna_jitter_tsv ?: Utils.getInput(meta, Constants.INPUT.REDUX_JITTER_TSV_TUMOR),
                 tumor_dna_ms_tsv ?: Utils.getInput(meta, Constants.INPUT.REDUX_MS_TSV_TUMOR),
             ]
