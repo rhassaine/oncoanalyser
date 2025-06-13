@@ -26,6 +26,9 @@ process SAGE_APPEND {
 
     def xmx_mod = task.ext.xmx_mod ?: 0.75
 
+    def run_mode = Utils.getEnumFromString(params.mode, Constants.RunMode)
+    def high_depth_mode_arg = (run_mode === Constants.RunMode.TARGETED) ? '-high_depth_mode' : ''
+
     """
     mkdir -p sage_append/
 
@@ -40,6 +43,7 @@ process SAGE_APPEND {
         -ref_genome_version ${genome_ver} \\
         -skip_msi_jitter \\
         -write_frag_lengths \\
+        ${high_depth_mode_arg} \\
         -threads ${task.cpus} \\
         -output_vcf sage_append/${meta.sample_id}.sage.append.vcf.gz \\
         -log_level ${params.module_log_level}
