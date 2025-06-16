@@ -45,7 +45,6 @@ process SAGE_APPEND {
         -reference_bam ${bams.join(',')} \\
         -ref_genome ${genome_fasta} \\
         -ref_genome_version ${genome_ver} \\
-        -skip_msi_jitter \\
         -write_frag_lengths \\
         ${high_depth_mode_arg} \\
         -threads ${task.cpus} \\
