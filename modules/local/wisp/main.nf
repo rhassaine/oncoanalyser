@@ -45,12 +45,6 @@ process WISP {
     }
 
     """
-    # Rename SAGE append files to the names expected by WISP
-    mkdir -p somatic_dir__prepared/
-    ln -sf ../${sage_append_dir}/${meta.longitudinal_id}.sage.append.vcf.gz              somatic_dir__prepared/${meta.primary_id}.purple.somatic.ctdna.vcf.gz
-    ln -sf ../${sage_append_dir}/${meta.longitudinal_id}.sage.append.vcf.gz.tbi          somatic_dir__prepared/${meta.primary_id}.purple.somatic.ctdna.vcf.gz.tbi
-    ln -sf ../${sage_append_dir}/${meta.longitudinal_id}.sage.append.frag_lengths.tsv.gz somatic_dir__prepared/${meta.primary_id}.frag_lengths.tsv.gz
-
     # Put AMBER outputs from all samples into the same dir
     if [[ -n "${amber_dir_arg}" ]]; then
         mkdir -p amber_dir__prepared/;
@@ -70,7 +64,7 @@ process WISP {
         -samples ${meta.longitudinal_id} \\
         -ref_genome ${genome_fasta} \\
         -purity_methods ${purity_methods} \\
-        -somatic_dir somatic_dir__prepared/ \\
+        -somatic_vcf ${sage_append_dir}/${meta.longitudinal_id}.sage.append.vcf.gz \\
         -purple_dir ${primary_purple_dir} \\
         ${amber_dir_arg} \\
         ${cobalt_dir_arg} \\
