@@ -102,27 +102,11 @@ workflow SAGE_APPEND {
                 key: meta.group_id,
                 id: meta.group_id,
                 output_file_id: output_file_id,
-                reference_ids: [],
+                reference_ids: [Utils.getTumorRnaSampleName(meta)],
             ]
 
-            def bams = []
-            def bais = []
-
-            if (tumor_dna_bam) {
-                meta_append.reference_ids.add(Utils.getTumorDnaSampleName(meta))
-                bams.add(tumor_dna_bam)
-                bais.add(tumor_dna_bai)
-            }
-
-            if (tumor_rna_bam) {
-                meta_append.reference_ids.add(Utils.getTumorRnaSampleName(meta))
-                bams.add(tumor_rna_bam)
-                bais.add(tumor_rna_bai)
-            }
-
-            bams = [tumor_rna_bam]
-            bais = [tumor_rna_bai]
-            meta_append.reference_ids = [Utils.getTumorRnaSampleName(meta)]
+            def bams = [tumor_rna_bam]
+            def bais = [tumor_rna_bai]
 
             def purple_smlv_vcf = file(purple_dir).resolve("${tumor_dna_id}.purple.germline.vcf.gz")
 
