@@ -95,12 +95,13 @@ workflow SAGE_APPEND {
         .map { meta, tumor_dna_bam, tumor_dna_bai, tumor_dna_redux_tsv, tumor_rna_bam, tumor_rna_bai, purple_dir ->
 
             // NOTE(SW): explicit in expectation to always obtain the primary tumor DNA sample ID here
-            def tumor_dna_id = Utils.getTumorDnaSampleName(meta, primary: true)
+            def tumor_dna_id   = Utils.getTumorDnaSampleName(meta, primary: true)
+            def output_file_id = Utils.getNormalDnaSampleName(meta)
 
             def meta_append = [
                 key: meta.group_id,
                 id: meta.group_id,
-                sample_id: Utils.getNormalDnaSampleName(meta),
+                output_file_id: output_file_id,
                 reference_ids: [],
             ]
 
@@ -165,12 +166,18 @@ workflow SAGE_APPEND {
     ch_sage_append_somatic_inputs = ch_inputs_somatic_sorted.runnable
         .map { meta, tumor_dna_bam, tumor_dna_bai, tumor_dna_redux_tsv, tumor_rna_bam, tumor_rna_bai, purple_dir ->
 
+            def run_mode = Utils.getEnumFromString(params.mode, Constants.RunMode)
+
             def tumor_dna_id = Utils.getTumorDnaSampleName(meta, primary: true)
+
+            def output_file_id = run_mode === Constants.RunMode.PURITY_ESTIMATE
+                ? Utils.getTumorDnaSampleName(meta, primary: false)
+                : tumor_dna_id
 
             def meta_append = [
                 key: meta.group_id,
                 id: meta.group_id,
-                sample_id: tumor_dna_id,
+                output_file_id: output_file_id,
                 reference_ids: [],
             ]
 

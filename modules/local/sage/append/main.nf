@@ -48,7 +48,7 @@ process SAGE_APPEND {
         -write_frag_lengths \\
         ${high_depth_mode_arg} \\
         -threads ${task.cpus} \\
-        -output_vcf sage_append/${meta.sample_id}.sage.append.vcf.gz \\
+        -output_vcf sage_append/${meta.output_file_id}.sage.append.vcf.gz \\
         -log_level ${params.module_log_level}
 
     cat <<-END_VERSIONS > versions.yml
@@ -61,10 +61,10 @@ process SAGE_APPEND {
     """
     mkdir -p sage_append/
 
-    touch sage_append/${meta.sample_id}.frag_lengths.tsv.gz
-    touch sage_append/${meta.sample_id}.sage.append.vcf.gz
-    touch sage_append/${meta.sample_id}.sage.append.vcf.gz.tbi
-    touch sage_append/${meta.sample_id}_query.sage.bqr.tsv
+    touch sage_append/${meta.output_file_id}.frag_lengths.tsv.gz
+    touch sage_append/${meta.output_file_id}.sage.append.vcf.gz
+    touch sage_append/${meta.output_file_id}.sage.append.vcf.gz.tbi
+    touch sage_append/${meta.output_file_id}_query.sage.bqr.tsv
 
     echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
     """

@@ -47,9 +47,9 @@ process WISP {
     """
     # Rename SAGE append files to the names expected by WISP
     mkdir -p somatic_dir__prepared/
-    ln -sf ../${sage_append_dir}/${meta.primary_id}.sage.append.vcf.gz              somatic_dir__prepared/${meta.primary_id}.purple.somatic.ctdna.vcf.gz;
-    ln -sf ../${sage_append_dir}/${meta.primary_id}.sage.append.vcf.gz.tbi          somatic_dir__prepared/${meta.primary_id}.purple.somatic.ctdna.vcf.gz.tbi;
-    ln -sf ../${sage_append_dir}/${meta.primary_id}.sage.append.frag_lengths.tsv.gz somatic_dir__prepared/${meta.primary_id}.frag_lengths.tsv.gz;
+    ln -sf ../${sage_append_dir}/${meta.longitudinal_id}.sage.append.vcf.gz              somatic_dir__prepared/${meta.primary_id}.purple.somatic.ctdna.vcf.gz
+    ln -sf ../${sage_append_dir}/${meta.longitudinal_id}.sage.append.vcf.gz.tbi          somatic_dir__prepared/${meta.primary_id}.purple.somatic.ctdna.vcf.gz.tbi
+    ln -sf ../${sage_append_dir}/${meta.longitudinal_id}.sage.append.frag_lengths.tsv.gz somatic_dir__prepared/${meta.primary_id}.frag_lengths.tsv.gz
 
     # Put AMBER outputs from all samples into the same dir
     if [[ -n "${amber_dir_arg}" ]]; then
@@ -67,7 +67,7 @@ process WISP {
         ${args} \\
         -patient_id ${meta.subject_id} \\
         -tumor_id ${meta.primary_id} \\
-        -samples ${meta.sample_id} \\
+        -samples ${meta.longitudinal_id} \\
         -ref_genome ${genome_fasta} \\
         -purity_methods ${purity_methods} \\
         -somatic_dir somatic_dir__prepared/ \\
@@ -88,13 +88,13 @@ process WISP {
     stub:
     """
     mkdir -p wisp/
-    touch wisp/${meta.patient_id}_${meta.sample_id}.wisp.cn_plot_calcs.tsv
-    touch wisp/${meta.patient_id}_${meta.sample_id}.wisp.cn_segments.tsv
-    touch wisp/${meta.patient_id}_${meta.sample_id}.wisp.somatic_peak.tsv
-    touch wisp/${meta.patient_id}_${meta.sample_id}.wisp.somatic_variants.tsv
-    touch wisp/${meta.patient_id}_${meta.sample_id}.wisp.summary.tsv
-    touch wisp/${meta.sample_id}.cn_gc_ratio_fit.png
-    touch wisp/${meta.sample_id}.somatic_vaf.png
+    touch wisp/${meta.patient_id}_${meta.longitudinal_id}.wisp.cn_plot_calcs.tsv
+    touch wisp/${meta.patient_id}_${meta.longitudinal_id}.wisp.cn_segments.tsv
+    touch wisp/${meta.patient_id}_${meta.longitudinal_id}.wisp.somatic_peak.tsv
+    touch wisp/${meta.patient_id}_${meta.longitudinal_id}.wisp.somatic_variants.tsv
+    touch wisp/${meta.patient_id}_${meta.longitudinal_id}.wisp.summary.tsv
+    touch wisp/${meta.longitudinal_id}.cn_gc_ratio_fit.png
+    touch wisp/${meta.longitudinal_id}.somatic_vaf.png
 
     echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
     """

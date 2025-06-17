@@ -55,14 +55,12 @@ workflow WISP_ANALYSIS {
 
         .map { meta, primary_purple_dir, primary_amber_dir, amber_dir, cobalt_dir, sage_append_dir ->
 
-            def tumor_dna_id = Utils.getTumorDnaSampleName(meta, primary: true)
-
             def meta_wisp = [
-                key: meta.group_id,
-                id: meta.group_id,
-                subject_id: meta.subject_id,
-                primary_id: Utils.getTumorDnaSampleName(meta, primary: true),
-                sample_id: Utils.getTumorDnaSampleName(meta),
+                key:             meta.group_id,
+                id:              meta.group_id,
+                subject_id:      meta.subject_id,
+                primary_id:      Utils.getTumorDnaSampleName(meta, primary: true),
+                longitudinal_id: Utils.getTumorDnaSampleName(meta, primary: false),
             ]
 
             return [meta_wisp, primary_purple_dir, primary_amber_dir, amber_dir, cobalt_dir, sage_append_dir]
