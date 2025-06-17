@@ -28,7 +28,6 @@ process COBALT {
     def reference_arg = meta.containsKey('normal_id') ? "-reference ${meta.normal_id}" : ''
     def reference_bam_arg = normal_bam ? "-reference_bam ${normal_bam}" : ''
 
-    def diploid_regions_arg = diploid_regions ? "-tumor_only_diploid_bed ${diploid_regions}" : ''
     def target_region_arg = target_region_normalisation ? "-target_region ${target_region_normalisation}" : ''
 
     def run_mode = Utils.getEnumFromString(params.mode, Constants.RunMode)
@@ -38,6 +37,9 @@ process COBALT {
 
     def pcf_gamma_arg = effective_run_mode === Constants.RunMode.TARGETED && !meta.containsKey('normal_id')
         ? "-pcf_gamma 50" : ""
+
+    def diploid_regions_arg = effective_run_mode === Constants.RunMode.WGTS && !meta.containsKey('normal_id')
+        ? "-tumor_only_diploid_bed ${diploid_regions}" : ""
 
     """
     cobalt \\
