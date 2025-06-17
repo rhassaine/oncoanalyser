@@ -35,8 +35,8 @@ process PAVE_GERMLINE {
         -Xmx${Math.round(task.memory.bytes * 0.95)} \\
         ${args} \\
         -sample ${meta.sample_id} \\
-        -vcf_file ${sage_vcf} \\
-        -output_vcf_file ${meta.sample_id}.pave.germline.vcf.gz \\
+        -input_vcf ${sage_vcf} \\
+        -output_vcf ${meta.sample_id}.pave.germline.vcf.gz \\
         -ref_genome ${genome_fasta} \\
         -ref_genome_version ${genome_ver} \\
         -clinvar_vcf ${clinvar_annotations} \\
@@ -46,7 +46,6 @@ process PAVE_GERMLINE {
         -blacklist_bed ${sage_blocklist_regions} \\
         -blacklist_vcf ${sage_blocklist_sites} \\
         -gnomad_no_filter \\
-        -read_pass_only \\
         -threads ${task.cpus} \\
         -output_dir ./ \\
         -log_level ${params.module_log_level}

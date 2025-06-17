@@ -33,13 +33,10 @@ process PAVE_SOMATIC {
 
     def xmx_mod = task.ext.xmx_mod ?: 0.75
 
-    def pon_filters
     def gnomad_args
     if (genome_ver.toString() == '37') {
-        pon_filters = 'HOTSPOT:10:5;PANEL:6:5;UNKNOWN:6:0'
         gnomad_args = "-gnomad_freq_file ${gnomad_resource}"
     } else if (genome_ver.toString() == '38') {
-        pon_filters = 'HOTSPOT:5:5;PANEL:2:5;UNKNOWN:2:0'
         gnomad_args = "-gnomad_freq_dir ${gnomad_resource}"
     } else {
         error "got bad genome version: ${genome_ver}"
@@ -53,11 +50,10 @@ process PAVE_SOMATIC {
         -Xmx${Math.round(task.memory.bytes * xmx_mod)} \\
         ${args} \\
         -sample ${meta.sample_id} \\
-        -vcf_file ${sage_vcf} \\
-        -output_vcf_file ${meta.sample_id}.pave.somatic.vcf.gz \\
+        -input_vcf ${sage_vcf} \\
+        -output_vcf ${meta.sample_id}.pave.somatic.vcf.gz \\
         -ref_genome ${genome_fasta} \\
         -ref_genome_version ${genome_ver} \\
-        -pon_filters "${pon_filters}" \\
         ${pon_artefact_arg} \\
         -pon_file ${sage_pon} \\
         ${gnomad_args} \\
@@ -65,7 +61,6 @@ process PAVE_SOMATIC {
         -driver_gene_panel ${driver_gene_panel} \\
         -mappability_bed ${segment_mappability} \\
         -ensembl_data_dir ${ensembl_data_resources} \\
-        -read_pass_only \\
         -threads ${task.cpus} \\
         -output_dir ./ \\
         -log_level ${params.module_log_level}
