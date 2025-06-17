@@ -1,5 +1,5 @@
 //
-// SAGE append adds additional sample data to an existing SAGE VCF
+// SAGE append adds read support from BAM(s) to existing variants in a VCF
 //
 
 import Constants
@@ -69,6 +69,8 @@ workflow SAGE_APPEND {
     //
     // MODULE: SAGE append germline
     //
+    // Add read support from an RNA BAM to existing variants in the germline PURPLE VCF
+
     // Select inputs that are eligible to run
     // channel: runnable: [ meta, tumor_dna_bam, tumor_dna_bai, [tumor_dna_redux_tsv, ...], tumor_rna_bam, tumor_rna_bai, purple_dir ]
     // channel: skip: [ meta ]
@@ -127,6 +129,8 @@ workflow SAGE_APPEND {
     //
     // MODULE: SAGE append somatic
     //
+    // Add read support from a somatic sample (RNA or longitudinal BAM) to existing variants in the somatic PURPLE VCF
+
     // Select inputs that are eligible to run
     // channel: runnable: [ meta, tumor_dna_bam, tumor_dna_bai, [tumor_dna_redux_tsv, ...], tumor_rna_bam, tumor_rna_bai, purple_dir ]
     // channel: skip: [ meta ]

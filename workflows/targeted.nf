@@ -448,7 +448,7 @@ workflow TARGETED {
     }
 
     //
-    // SUBWORKFLOW: Append read data to SAGE VCF
+    // SUBWORKFLOW: Add read support from the RNA BAM to existing variants in the PURPLE VCF with SAGE append
     //
     // channel: [ meta, sage_append_vcf ]
     ch_sage_somatic_append_out = Channel.empty()

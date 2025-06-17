@@ -211,7 +211,7 @@ workflow PURITY_ESTIMATE {
     }
 
     //
-    // SUBWORKFLOW: Append new sample data to primary SAGE WGS VCF
+    // SUBWORKFLOW: Run SAGE append to add read support from longitudinal BAM(s) to existing variants in the primary sample VCF
     //
     // channel: [ meta, sage_append_dir ]
     ch_sage_somatic_append_out = Channel.empty()
@@ -219,7 +219,7 @@ workflow PURITY_ESTIMATE {
 
         SAGE_APPEND(
             ch_inputs,
-            ch_inputs.map { meta -> [meta, []] },  // ch_purple_dir
+            ch_inputs.map { meta -> [meta, []] },  // ch_purple_dir. The PURPLE dir of the primary sample is taken from the sample sheet
             ch_redux_dna_tumor_out,
             ch_redux_dna_tumor_tsv_out,
             ch_inputs.map { meta -> [meta, [], []] },  // ch_tumor_rna_bam
