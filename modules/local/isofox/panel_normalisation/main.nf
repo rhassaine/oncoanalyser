@@ -31,16 +31,16 @@ process ISOFOX_PANEL_NORMALISATION {
        basename -s .isf.gene_data.csv -a inputs/*.isf.gene_data.csv
     ) > sample_ids.txt
 
-    java -cp /usr/local/share/hmftools-isofox-1.7.1-0/isofox.jar \\
+    isofox \\
         -Xmx${Math.round(task.memory.bytes * 0.95)} \\
         com.hartwig.hmftools.isofox.cohort.CohortAnalyser \\
-            ${args} \\
-            -sample_data_file sample_ids.txt \\
-            -root_data_dir inputs/ \\
-            -analyses PANEL_TPM_NORMALISATION \\
-            -gene_id_file ${gene_ids} \\
-            -gene_distribution_file ${gene_distribution} \\
-            -output_dir ./
+        ${args} \\
+        -sample_data_file sample_ids.txt \\
+        -root_data_dir inputs/ \\
+        -analyses PANEL_TPM_NORMALISATION \\
+        -gene_id_file ${gene_ids} \\
+        -gene_distribution_file ${gene_distribution} \\
+        -output_dir ./
 
     mv isofox.panel_gene_normalisation.csv isofox.gene_normalisation.${genome_ver}.csv
 

@@ -34,17 +34,17 @@ process COBALT_PANEL_NORMALISATION {
         basename -s .amber.baf.tsv.gz -a inputs/*.amber.baf.tsv.gz
     ) > sample_ids.txt
 
-    java -cp /usr/local/share/hmftools-cobalt-2.0-0/cobalt.jar \\
+    cobalt \\
         -Xmx${Math.round(task.memory.bytes * 0.95)} \\
         com.hartwig.hmftools.cobalt.norm.NormalisationFileBuilder \\
-            ${args} \\
-            -sample_id_file sample_ids.txt \\
-            -amber_dir inputs/ \\
-            -cobalt_dir inputs/ \\
-            -ref_genome_version ${genome_ver} \\
-            -gc_profile ${gc_profile} \\
-            -target_regions_bed ${target_regions_bed} \\
-            -output_file cobalt.region_normalisation.${genome_ver}.tsv
+        ${args} \\
+        -sample_id_file sample_ids.txt \\
+        -amber_dir inputs/ \\
+        -cobalt_dir inputs/ \\
+        -ref_genome_version ${genome_ver} \\
+        -gc_profile ${gc_profile} \\
+        -target_regions_bed ${target_regions_bed} \\
+        -output_file cobalt.region_normalisation.${genome_ver}.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
