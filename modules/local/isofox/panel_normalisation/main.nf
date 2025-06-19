@@ -27,8 +27,8 @@ process ISOFOX_PANEL_NORMALISATION {
     for fp in \$(find -L isofox_dirs.* -name '*.gene_data.csv'); do ln -s ../\${fp} inputs/; done
 
     (
-       echo SampleId;
-       find inputs/ -name '*csv' | sed 's#^.*/\\(.*\\).isf.gene_data.csv#\\1#';
+       echo SampleId
+       basename -s .isf.gene_data.csv -a inputs/*.isf.gene_data.csv
     ) > sample_ids.txt
 
     java -cp /usr/local/share/hmftools-isofox-1.7.1-0/isofox.jar \\

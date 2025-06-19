@@ -22,8 +22,8 @@ process PAVE_PON_PANEL_CREATION {
 
     """
     (
-       echo SampleId;
-       find ${sage_vcf} | sed 's#.sage.somatic.vcf.gz##';
+       echo SampleId
+       basename -s .sage.somatic.vcf.gz -a *.sage.somatic.vcf.gz
     ) > sample_ids.txt
 
     java -cp /usr/local/share/hmftools-pave-1.7-0/pave.jar \\

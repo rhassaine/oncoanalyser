@@ -30,8 +30,8 @@ process COBALT_PANEL_NORMALISATION {
     done
 
     (
-        echo SampleId;
-        find -L inputs/ -type f -name '*.amber.baf.tsv.gz' | sed 's#inputs/##; s#\\.amber\\..*\$##; s#\\.cobalt\\..*\$##' | sort -V | uniq;
+        echo SampleId
+        basename -s .amber.baf.tsv.gz -a inputs/*.amber.baf.tsv.gz
     ) > sample_ids.txt
 
     java -cp /usr/local/share/hmftools-cobalt-2.0-0/cobalt.jar \\
