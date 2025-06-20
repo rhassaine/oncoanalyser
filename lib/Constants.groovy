@@ -54,7 +54,7 @@ class Constants {
         WISP,
     }
 
-    static List DEFAULT_EXCLUDED_PROCESSES = [Process.NEO]
+    static List DEFAULT_EXCLUDED_PROCESSES = [] // For experimental tools
 
     static enum FileType {
         // Generic
