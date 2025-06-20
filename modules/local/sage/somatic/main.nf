@@ -70,8 +70,6 @@ process SAGE_SOMATIC {
         error "got bad genome version: ${genome_ver}"
     }
 
-    def coverage_bed_arg = sage_coverage_panel ? "-coverage_bed ${sage_coverage_panel}" : ''
-
     """
     mkdir -p somatic/
 
@@ -88,14 +86,12 @@ process SAGE_SOMATIC {
         -ref_genome_version ${genome_ver} \\
         -hotspots ${sage_known_hotspots_somatic} \\
         -driver_gene_panel ${driver_gene_panel} \\
-        -panel_bed ${sage_actionable_panel} \\
         -high_confidence_bed ${sage_highconf_regions} \\
         -ensembl_data_dir ${ensembl_data_resources} \\
         -pon_file ${sage_pon} \\
         ${gnomad_args} \\
         ${high_depth_mode_arg} \\
         ${run_tinc_arg} \\
-        ${coverage_bed_arg} \\
         -bqr_write_plot \\
         -threads ${task.cpus} \\
         -output_vcf somatic/${meta.tumor_id}.sage.somatic.vcf.gz \\
