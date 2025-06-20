@@ -29,11 +29,14 @@ workflow SAGE_CALLING {
     sage_pon                     // channel: [mandatory] /path/to/sage_pon
     sage_known_hotspots_somatic  // channel: [mandatory] /path/to/sage_known_hotspots_somatic
     sage_known_hotspots_germline // channel: [optional]  /path/to/sage_known_hotspots_germline
+    sage_actionable_panel        // channel: [mandatory] /path/to/sage_actionable_panel
+    sage_coverage_panel          // channel: [mandatory] /path/to/sage_coverage_panel
     sage_highconf_regions        // channel: [mandatory] /path/to/sage_highconf_regions
     segment_mappability          // channel: [mandatory] /path/to/segment_mappability
     driver_gene_panel            // channel: [mandatory] /path/to/driver_gene_panel
     ensembl_data_resources       // channel: [mandatory] /path/to/ensembl_data_resources/
     gnomad_resource              // channel: [mandatory] /path/to/gnomad_resource
+    enable_germline              // boolean: [mandatory] Enable germline mode
 
     main:
     // Channel for version.yml files
@@ -105,7 +108,7 @@ workflow SAGE_CALLING {
             def has_tumor_normal = tumor_bam && normal_bam
             def has_existing = Utils.hasExistingInput(meta, Constants.INPUT.SAGE_VCF_NORMAL)
 
-            runnable: has_tumor_normal && !has_existing
+            runnable: has_tumor_normal && !has_existing && enable_germline
             skip: true
                 return meta
         }

@@ -351,6 +351,7 @@ workflow TARGETED {
             panel_data.driver_gene_panel,
             hmf_data.ensembl_data_resources,
             hmf_data.gnomad_resource,
+            true,  // enable_germline
         )
 
         ch_versions = ch_versions.mix(SAGE_CALLING.out.versions)
@@ -465,7 +466,7 @@ workflow TARGETED {
             ref_data.genome_version,
             ref_data.genome_fai,
             ref_data.genome_dict,
-            true,  // run_germline
+            true,  // enable_germline
         )
 
         ch_versions = ch_versions.mix(SAGE_APPEND.out.versions)
