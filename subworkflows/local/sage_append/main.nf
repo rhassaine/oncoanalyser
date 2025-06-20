@@ -86,7 +86,7 @@ workflow SAGE_APPEND {
             def has_smlv_germline = file(purple_dir).resolve("${tumor_dna_id}.purple.germline.vcf.gz")
             def has_existing = Utils.hasExistingInput(meta, Constants.INPUT.SAGE_APPEND_DIR_NORMAL)
 
-            runnable: has_normal_dna && has_tumor_rna && has_smlv_germline && !has_existing && run_germline
+            runnable: has_normal_dna && has_tumor_rna && has_smlv_germline && !has_existing && enable_germline
             skip: true
                 return meta
         }
