@@ -28,7 +28,7 @@ process PAVE_PON_PANEL_CREATION {
 
     pave \\
         -Xmx${Math.round(task.memory.bytes * 0.95)} \\
-        com.hartwig.hmftools.pave.resources.PonBuilder \\
+        com.hartwig.hmftools.pave.pon_gen.PonBuilder \\
         ${args} \\
         -sample_id_file sample_ids.txt \\
         -vcf_path '*.sage.somatic.vcf.gz' \\
