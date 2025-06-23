@@ -44,7 +44,8 @@ process COBALT_PANEL_NORMALISATION {
         -ref_genome_version ${genome_ver} \\
         -gc_profile ${gc_profile} \\
         -target_regions_bed ${target_regions_bed} \\
-        -output_file cobalt.region_normalisation.${genome_ver}.tsv
+        -output_file cobalt.region_normalisation.${genome_ver}.tsv \\
+        -log_level ${params.module_log_level}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

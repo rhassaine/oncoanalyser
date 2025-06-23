@@ -40,7 +40,8 @@ process ISOFOX_PANEL_NORMALISATION {
         -analyses PANEL_TPM_NORMALISATION \\
         -gene_id_file ${gene_ids} \\
         -gene_distribution_file ${gene_distribution} \\
-        -output_dir ./
+        -output_dir ./ \\
+        -log_level ${params.module_log_level}
 
     mv isofox.panel_gene_normalisation.csv isofox.gene_normalisation.${genome_ver}.csv
 
