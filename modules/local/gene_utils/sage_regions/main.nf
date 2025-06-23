@@ -1,7 +1,9 @@
 process GENE_UTILS_SAGE_REGIONS {
     label 'process_single'
 
-    container 'docker.io/scwatts/hmftools-gene-utils:1.2--0'
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/hmftools-gene-utils:1.2--hdfd78af_0' :
+        'biocontainers/hmftools-gene-utils:1.2--hdfd78af_0' }"
 
     input:
     path driver_gene_panel
@@ -28,7 +30,7 @@ process GENE_UTILS_SAGE_REGIONS {
     ln -s \$(pwd)/${clinvar_annotations} resources/sage/${genome_ver}/
     ln -s \$(pwd)/${ensembl_data_resources}/* resources/ensembl_data_cache/${genome_ver}/
 
-    java -cp /opt/gene-utils/gene-utils.jar \\
+    gene-utils \\
         -Xmx${Math.round(task.memory.bytes * xmx_mod)} \\
         com.hartwig.hmftools.geneutils.drivers.GenerateDriverGeneFiles \\
         -ref_genome_version ${genome_ver} \\
@@ -40,7 +42,7 @@ process GENE_UTILS_SAGE_REGIONS {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        gene-utils: \$(java -cp /opt/gene-utils/gene-utils.jar com.hartwig.hmftools.geneutils.drivers.GenerateDriverGeneFiles -version | sed -n '/GeneUtils/ { s/^.* //p }')
+        gene-utils: \$(gene-utils com.hartwig.hmftools.geneutils.drivers.GenerateDriverGeneFiles -version | sed -n '/GeneUtils/ { s/^.* //p }')
     END_VERSIONS
     """
 
