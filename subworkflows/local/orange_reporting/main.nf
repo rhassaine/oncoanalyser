@@ -26,6 +26,7 @@ workflow ORANGE_REPORTING {
     ch_sigs                     // channel: [mandatory] [ meta, sigs_dir ]
     ch_lilac                    // channel: [optional]  [ meta, lilac_dir ]
     ch_cuppa                    // channel: [mandatory] [ meta, cuppa_dir ]
+    ch_peach                    // channel: [mandatory] [ meta, peach_dir ]
     ch_isofox                   // channel: [mandatory] [ meta, isofox_dir ]
 
     // Reference data
@@ -46,7 +47,7 @@ workflow ORANGE_REPORTING {
     ch_versions = Channel.empty()
 
     // Set expected input ordering and size
-    input_expected_size = 16
+    input_expected_size = 17
 
     dna_tumor_input_indexes = [
         0,   // bamtools_somatic
@@ -64,14 +65,16 @@ workflow ORANGE_REPORTING {
 
     rna_tumor_input_indexes = [
         4,   // sage_somatic_append
-        15,  // isofox_dir
+        16,  // isofox_dir
     ]
 
     sage_somatic_append_index = 4  // sage_somatic_append
     sage_germline_append_index = 5  // sage_germline_append
+    rna_sage_germline_append_index = 7  // sage_germline_append
+    cuppa_dir_index = 14                // cuppa_dir
 
     // Select input sources
-    // channel: [ meta, tbt_metrics_dir, nbt_metrics_dir, tsage_dir, nsage_dir, tsage_append, nsage_append, purple_dir, tlinx_anno_dir, tlinx_plot_dir, nlinx_anno_dir, virusinterpreter_dir, chord_dir, sigs_dir, lilac_dir, cuppa_dir, isofox_dir ]
+    // channel: [ meta, tbt_metrics_dir, nbt_metrics_dir, tsage_dir, nsage_dir, tsage_append, nsage_append, purple_dir, tlinx_anno_dir, tlinx_plot_dir, nlinx_anno_dir, virusinterpreter_dir, chord_dir, sigs_dir, lilac_dir, cuppa_dir, ch_peach, isofox_dir ]
     ch_inputs_selected = WorkflowOncoanalyser.groupByMeta(
         ch_bamtools_somatic,
         ch_bamtools_germline,
@@ -88,6 +91,7 @@ workflow ORANGE_REPORTING {
         ch_sigs,
         ch_lilac,
         ch_cuppa,
+        ch_peach,
         ch_isofox,
     )
         .map { d ->
@@ -115,14 +119,15 @@ workflow ORANGE_REPORTING {
                 Utils.selectCurrentOrExisting(inputs[12], meta, Constants.INPUT.SIGS_DIR),
                 Utils.selectCurrentOrExisting(inputs[13], meta, Constants.INPUT.LILAC_DIR),
                 Utils.selectCurrentOrExisting(inputs[14], meta, Constants.INPUT.CUPPA_DIR),
-                Utils.selectCurrentOrExisting(inputs[15], meta, Constants.INPUT.ISOFOX_DIR),
+                Utils.selectCurrentOrExisting(inputs[15], meta, Constants.INPUT.PEACH_DIR),
+                Utils.selectCurrentOrExisting(inputs[16], meta, Constants.INPUT.ISOFOX_DIR),
             ]
 
             return [meta, *inputs_selected]
         }
 
     // Sort inputs
-    // channel: runnable: [ meta, tbt_metrics_dir, nbt_metrics_dir, tsage_dir, nsage_dir, tsage_append, nsage_append, purple_dir, tlinx_anno_dir, tlinx_plot_dir, nlinx_anno_dir, virusinterpreter_dir, chord_dir, sigs_dir, lilac_dir, cuppa_dir, isofox_dir ]
+    // channel: runnable: [ meta, tbt_metrics_dir, nbt_metrics_dir, tsage_dir, nsage_dir, tsage_append, nsage_append, purple_dir, tlinx_anno_dir, tlinx_plot_dir, nlinx_anno_dir, virusinterpreter_dir, chord_dir, sigs_dir, lilac_dir, cuppa_dir, peach_dir, isofox_dir ]
     // channel: skip: [ meta ]
     ch_inputs_sorted = ch_inputs_selected
         .branch { d ->
@@ -146,7 +151,7 @@ workflow ORANGE_REPORTING {
 
     // First set RNA reference files
     // NOTE(SW): since the RNA reference files are provided as channels, I seem to be only able to include via channel ops
-    // channel: [ meta, tbt_metrics_dir, nbt_metrics_dir, tsage_dir, nsage_dir, tsage_append, nsage_append, purple_dir, tlinx_anno_dir, tlinx_plot_dir, nlinx_anno_dir, virusinterpreter_dir, chord_dir, sigs_dir, lilac_dir, cuppa_dir, isofox_dir, isofox_alt_sj, isofox_gene_distribution ]
+    // channel: [ meta, tbt_metrics_dir, nbt_metrics_dir, tsage_dir, nsage_dir, tsage_append, nsage_append, purple_dir, tlinx_anno_dir, tlinx_plot_dir, nlinx_anno_dir, virusinterpreter_dir, chord_dir, sigs_dir, lilac_dir, cuppa_dir, peach_dir, isofox_dir, isofox_alt_sj, isofox_gene_distribution ]
     ch_inputs_runnable = Channel.empty()
         .mix(
             ch_inputs_sorted.runnable_dna.map { d -> [*d, [], []] },
@@ -156,7 +161,7 @@ workflow ORANGE_REPORTING {
         )
 
     // Create process input channel
-    // channel: sample_data: [ meta, tbt_metrics_dir, nbt_metrics_dir, tsage_dir, nsage_dir, tsmlv_vcf, nsmlv_vcf, purple_dir, tlinx_anno_dir, tlinx_plot_dir, nlinx_anno_dir, virusinterpreter_dir, chord_dir, sigs_dir, lilac_dir, cuppa_dir, isofox_dir ]
+    // channel: sample_data: [ meta, tbt_metrics_dir, nbt_metrics_dir, tsage_dir, nsage_dir, tsmlv_vcf, nsmlv_vcf, purple_dir, tlinx_anno_dir, tlinx_plot_dir, nlinx_anno_dir, virusinterpreter_dir, chord_dir, sigs_dir, lilac_dir, cuppa_dir, peach_dir, isofox_dir ]
     // channel: isofox_alt_sj: [ isofox_alt_sj ]
     // channel: isofox_gene_distribution: [ isofox_gene_distribution ]
     ch_orange_inputs = ch_inputs_runnable
@@ -222,6 +227,15 @@ workflow ORANGE_REPORTING {
                 }
             }
 
+            // ORANGE only accepts CUPPA with DNA; when providing DNA/RNA inputs but skipping Virus Interpreter CUPPA
+            // will generate RNA only outputs and no visualisation, which triggers missing file error in ORANGE
+            if (inputs_selected[cuppa_dir_index]) {
+                def cuppa_vis_data_fp = inputs_selected[cuppa_dir_index].resolve("${meta_orange.tumor_id}.cuppa.vis_data.tsv")
+                if (! cuppa_vis_data_fp.exists()) {
+                    inputs_selected[cuppa_dir_index] = []
+                }
+            }
+
             assert inputs_selected.size() == input_expected_size
 
             sample_data: [meta_orange, *inputs_selected]
@@ -242,7 +256,7 @@ workflow ORANGE_REPORTING {
         ensembl_data_resources,
         ch_orange_inputs.isofox_alt_sj,
         ch_orange_inputs.isofox_gene_distribution,
-        '2.0 [oncoanalyser]',
+        '2.2.0 [oncoanalyser]',
     )
 
     ch_versions = ch_versions.mix(ORANGE.out.versions)
