@@ -33,9 +33,7 @@ process PAVE_PON_PANEL_CREATION {
         -sample_id_file sample_ids.txt \\
         -vcf_path '*.sage.somatic.vcf.gz' \\
         -ref_genome_version ${genome_ver} \\
-        -output_dir ./
-
-    mv somatic_pon_*.tsv pave.somatic_artefacts.${genome_ver}.tsv
+        -output_pon_file pave.somatic_artefacts.${genome_ver}.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
