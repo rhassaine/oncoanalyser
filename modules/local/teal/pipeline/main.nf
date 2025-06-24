@@ -53,8 +53,7 @@ process TEAL_PIPELINE {
         ${tumor_wgs_metrics_arg} \\
         -ref_genome_version ${genome_ver} \\
         -threads ${task.cpus} \\
-        -output_dir teal/ \\
-        -log_level ${params.module_log_level}
+        -output_dir teal/
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

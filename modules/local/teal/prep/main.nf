@@ -55,8 +55,7 @@ process TEAL_PREP {
         ${tumor_bam_arg} \\
         -ref_genome_version ${genome_ver} \\
         -threads ${task.cpus} \\
-        -output_dir teal_bam/ \\
-        -log_level ${params.module_log_level}
+        -output_dir teal_bam/
 
     ${tumor_bam_index_command}
     ${reference_bam_index_command}
