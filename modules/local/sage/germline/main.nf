@@ -17,24 +17,20 @@ process SAGE_GERMLINE {
     path driver_gene_panel
     path sage_highconf_regions
     path ensembl_data_resources
+    val high_depth_mode
 
     output:
     tuple val(meta), path('germline/*.sage.germline.vcf.gz'), path('germline/*.sage.germline.vcf.gz.tbi'), emit: vcf
     tuple val(meta), path('germline/')                                                                   , emit: sage_dir
     path 'versions.yml'                                                                                  , emit: versions
 
-    def run_mode = Utils.getEnumFromString(params.mode, Constants.RunMode)
-    def effective_run_mode = run_mode === Constants.RunMode.PURITY_ESTIMATE
-        ? Utils.getEnumFromString(params.purity_estimate_mode, Constants.RunMode)
-        : run_mode
-
-    def high_depth_mode_arg = effective_run_mode === Constants.RunMode.TARGETED ? "-high_depth_mode" : ""
-
     when:
     task.ext.when == null || task.ext.when
 
     script:
     def args = task.ext.args ?: ''
+
+    def high_depth_mode_arg = high_depth_mode ? "-high_depth_mode" : ""
 
     """
     mkdir -p germline/

@@ -357,6 +357,7 @@ workflow WGTS {
             hmf_data.ensembl_data_resources,
             hmf_data.gnomad_resource,
             true,  // enable_germline
+            false, // enable high_depth_mode
         )
 
         ch_versions = ch_versions.mix(SAGE_CALLING.out.versions)
@@ -472,6 +473,7 @@ workflow WGTS {
             ref_data.genome_fai,
             ref_data.genome_dict,
             run_config.stages.orange,  // enable_germline [run for ORANGE but not Neo]
+            false, // enable high_depth_mode
         )
 
         ch_versions = ch_versions.mix(SAGE_APPEND.out.versions)

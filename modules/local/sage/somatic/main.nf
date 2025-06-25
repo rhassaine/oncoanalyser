@@ -21,6 +21,7 @@ process SAGE_SOMATIC {
     path sage_highconf_regions
     path ensembl_data_resources
     path gnomad_resource
+    val high_depth_mode
 
     output:
     tuple val(meta), path('somatic/*.sage.somatic.vcf.gz'), path('somatic/*.sage.somatic.vcf.gz.tbi'), emit: vcf

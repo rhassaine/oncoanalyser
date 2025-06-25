@@ -13,6 +13,7 @@ process SAGE_APPEND {
     val genome_ver
     path genome_fai
     path genome_dict
+    val high_depth_mode
 
     output:
     tuple val(meta), path('sage_append'), emit: sage_append_dir

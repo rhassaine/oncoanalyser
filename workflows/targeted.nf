@@ -355,6 +355,7 @@ workflow TARGETED {
             hmf_data.ensembl_data_resources,
             hmf_data.gnomad_resource,
             true,  // enable_germline
+            true,  // enable high_depth_mode
         )
 
         ch_versions = ch_versions.mix(SAGE_CALLING.out.versions)
@@ -470,6 +471,7 @@ workflow TARGETED {
             ref_data.genome_fai,
             ref_data.genome_dict,
             true,  // enable_germline
+            true,  // enable high_depth_mode
         )
 
         ch_versions = ch_versions.mix(SAGE_APPEND.out.versions)
