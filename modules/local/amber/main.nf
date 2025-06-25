@@ -42,8 +42,12 @@ process AMBER {
         ? Utils.getEnumFromString(params.purity_estimate_mode, Constants.RunMode)
         : run_mode
 
-    def tumor_min_depth_arg = run_mode === Constants.RunMode.PURITY_ESTIMATE && effective_run_mode === Constants.RunMode.WGTS
-        ? "-tumor_min_depth 1" : ""
+    def tumor_min_depth_arg = ""
+    if(run_mode === Constants.RunMode.PURITY_ESTIMATE && effective_run_mode === Constants.RunMode.WGTS) {
+        tumor_min_depth_arg = "-tumor_min_depth 1"
+    } else if(run_mode === Constants.RunMode.PANEL_RESOURCE_CREATION) {
+        tumor_min_depth_arg = "-tumor_min_depth 2"
+    }
 
     """
     amber \\
