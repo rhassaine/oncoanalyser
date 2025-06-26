@@ -337,7 +337,6 @@ class WorkflowMain {
 
         return [
             mode: run_mode,
-            panel: run_mode === Constants.RunMode.TARGETED ? params.panel : null,
             stages: stages,
             has_dna: inputs.any { Utils.hasTumorDna(it) },
             has_rna: inputs.any { Utils.hasTumorRna(it) },
