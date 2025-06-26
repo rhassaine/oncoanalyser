@@ -358,7 +358,7 @@ class WorkflowMain {
             require_bwa_index: run_config.has_dna_fastq && run_config.stages.alignment,
             require_star_index: run_config.has_rna_fastq && run_config.stages.alignment,
 
-            require_gridss_index: run_config.has_dna && run_config.mode !== Constants.RunMode.TARGETED && run_config.stages.virusinterpreter,
+            require_gridss_index: run_config.has_dna && run_config.mode === Constants.RunMode.WGTS && run_config.stages.virusinterpreter,
             require_hmftools_data: true,
             require_panel_data: run_config.mode === Constants.RunMode.TARGETED,
         ]
