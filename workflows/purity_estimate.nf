@@ -63,7 +63,7 @@ workflow PURITY_ESTIMATE {
     ch_inputs = Channel.fromList(inputs)
 
     // Set up reference data, assign more human readable variables
-    prep_config = WorkflowMain.getPrepConfigFromRunConfig(run_config)
+    prep_config = WorkflowMain.getPrepConfigForRun(run_config)
     PREPARE_REFERENCE(
         prep_config,
     )
