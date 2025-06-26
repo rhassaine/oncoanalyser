@@ -52,7 +52,7 @@ workflow PURITY_ESTIMATE {
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     */
 
-    def purity_estimate_run_mode = Utils.getEnumFromString(params.purity_estimate_mode, Constants.RunMode)
+    purity_estimate_run_mode = Utils.getEnumFromString(params.purity_estimate_mode, Constants.RunMode)
 
     // Create channel for versions
     // channel: [ versions.yml ]
@@ -165,7 +165,7 @@ workflow PURITY_ESTIMATE {
     ch_amber_out = Channel.empty()
     if (run_config.stages.amber) {
 
-        def tumor_min_depth = purity_estimate_run_mode === Constants.RunMode.WGTS ? 1 : []
+        tumor_min_depth = purity_estimate_run_mode === Constants.RunMode.WGTS ? 1 : []
 
         AMBER_PROFILING(
             ch_inputs,
