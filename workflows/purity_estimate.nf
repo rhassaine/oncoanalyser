@@ -4,31 +4,6 @@ import Utils
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    VALIDATE INPUTS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-// Parse input samplesheet
-// NOTE(SW): this is done early and outside of gpars so that we can access synchronously and prior to pipeline execution
-inputs = Utils.parseInput(params.input, workflow.stubRun, log)
-
-// Get run config
-run_config = WorkflowMain.getRunConfig(params, inputs, log)
-
-// Validate inputs
-Utils.validateInput(inputs, run_config, params, log)
-
-// Check input path parameters to see if they exist
-def checkPathParamList = [
-]
-
-// TODO(SW): consider whether we should check for null entries here for errors to be more informative
-for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
-
-// Check mandatory parameters
-if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
@@ -43,16 +18,42 @@ include { REDUX_PROCESSING   } from '../subworkflows/local/redux_processing'
 include { SAGE_APPEND        } from '../subworkflows/local/sage_append'
 include { WISP_ANALYSIS      } from '../subworkflows/local/wisp_analysis'
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    RUN MAIN WORKFLOW
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-// Get absolute file paths
-samplesheet = Utils.getFileObject(params.input)
-
 workflow PURITY_ESTIMATE {
+
+    /*
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        VALIDATE INPUTS
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    */
+    // Parse input samplesheet
+    // NOTE(SW): this is done early and outside of gpars so that we can access synchronously and prior to pipeline execution
+    inputs = Utils.parseInput(params.input, workflow.stubRun, log)
+
+    // Get run config
+    run_config = WorkflowMain.getRunConfig(params, inputs, log)
+
+    // Validate inputs
+    Utils.validateInput(inputs, run_config, params, log)
+
+    // Check input path parameters to see if they exist
+    def checkPathParamList = [
+    ]
+
+    // TODO(SW): consider whether we should check for null entries here for errors to be more informative
+    for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
+
+    // Check mandatory parameters
+    if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
+
+
+    /*
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        RUN MAIN WORKFLOW
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    */
+
+    // Get absolute file paths
+    samplesheet = Utils.getFileObject(params.input)
 
     def purity_estimate_run_mode = Utils.getEnumFromString(params.purity_estimate_mode, Constants.RunMode)
 

@@ -2,47 +2,6 @@ import Constants
 import Processes
 import Utils
 
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    VALIDATE INPUTS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-// Parse input samplesheet
-// NOTE(SW): this is done early and outside of gpars so that we can access synchronously and prior to pipeline execution
-inputs = Utils.parseInput(params.input, workflow.stubRun, log)
-
-// Get run config
-run_config = WorkflowMain.getRunConfig(params, inputs, log)
-
-// Validate inputs
-Utils.validateInput(inputs, run_config, params, log)
-
-// Check input path parameters to see if they exist
-def checkPathParamList = [
-    params.isofox_counts,
-    params.isofox_gc_ratios,
-    params.isofox_gene_ids,
-    params.isofox_tpm_norm,
-    params.driver_gene_panel,
-    params.target_regions_bed,
-]
-
-if (run_config.stages.lilac) {
-    if (params.genome_version.toString() == '38' && params.genome_type == 'alt' && params.containsKey('ref_data_hla_slice_bed')) {
-        checkPathParamList.add(params.ref_data_hla_slice_bed)
-    }
-}
-
-// TODO(SW): consider whether we should check for null entries here for errors to be more informative
-for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
-
-// Check mandatory parameters
-if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
-
-// Used in Isofox subworkflow only
-isofox_read_length = params.isofox_read_length !== null ? params.isofox_read_length : Constants.DEFAULT_ISOFOX_READ_LENGTH_TARGETED
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
@@ -64,16 +23,58 @@ include { READ_ALIGNMENT_RNA         } from '../subworkflows/local/read_alignmen
 include { REDUX_PROCESSING           } from '../subworkflows/local/redux_processing'
 include { SAGE_CALLING               } from '../subworkflows/local/sage_calling'
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    RUN MAIN WORKFLOW
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-// Get absolute file paths
-samplesheet = Utils.getFileObject(params.input)
-
 workflow PANEL_RESOURCE_CREATION {
+
+    /*
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        VALIDATE INPUTS
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    */
+    // Parse input samplesheet
+    // NOTE(SW): this is done early and outside of gpars so that we can access synchronously and prior to pipeline execution
+    inputs = Utils.parseInput(params.input, workflow.stubRun, log)
+
+    // Get run config
+    run_config = WorkflowMain.getRunConfig(params, inputs, log)
+
+    // Validate inputs
+    Utils.validateInput(inputs, run_config, params, log)
+
+    // Check input path parameters to see if they exist
+    def checkPathParamList = [
+        params.isofox_counts,
+        params.isofox_gc_ratios,
+        params.isofox_gene_ids,
+        params.isofox_tpm_norm,
+        params.driver_gene_panel,
+        params.target_regions_bed,
+    ]
+
+    if (run_config.stages.lilac) {
+        if (params.genome_version.toString() == '38' && params.genome_type == 'alt' && params.containsKey('ref_data_hla_slice_bed')) {
+            checkPathParamList.add(params.ref_data_hla_slice_bed)
+        }
+    }
+
+    // TODO(SW): consider whether we should check for null entries here for errors to be more informative
+    for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
+
+    // Check mandatory parameters
+    if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
+
+    // Used in Isofox subworkflow only
+    isofox_read_length = params.isofox_read_length !== null ? params.isofox_read_length : Constants.DEFAULT_ISOFOX_READ_LENGTH_TARGETED
+
+
+    /*
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        RUN MAIN WORKFLOW
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    */
+
+    // Get absolute file paths
+    samplesheet = Utils.getFileObject(params.input)
+
     // Create channel for versions
     // channel: [ versions.yml ]
     ch_versions = Channel.empty()
