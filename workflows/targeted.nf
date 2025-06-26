@@ -38,8 +38,6 @@ workflow TARGETED {
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     */
 
-    run_mode = Utils.getRunMode(params.mode, log)
-
     // Parse input samplesheet
     // NOTE(SW): this is done early and outside of gpars so that we can access synchronously and prior to pipeline execution
     inputs = Utils.parseInput(params.input, workflow.stubRun, log)
@@ -87,9 +85,6 @@ workflow TARGETED {
         RUN MAIN WORKFLOW
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     */
-
-    // Get absolute file paths
-    samplesheet = Utils.getFileObject(params.input)
 
     // Create channel for versions
     // channel: [ versions.yml ]

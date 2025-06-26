@@ -52,9 +52,6 @@ workflow PURITY_ESTIMATE {
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     */
 
-    // Get absolute file paths
-    samplesheet = Utils.getFileObject(params.input)
-
     def purity_estimate_run_mode = Utils.getEnumFromString(params.purity_estimate_mode, Constants.RunMode)
 
     // Create channel for versions

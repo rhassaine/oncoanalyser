@@ -72,9 +72,6 @@ workflow PANEL_RESOURCE_CREATION {
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     */
 
-    // Get absolute file paths
-    samplesheet = Utils.getFileObject(params.input)
-
     // Create channel for versions
     // channel: [ versions.yml ]
     ch_versions = Channel.empty()
