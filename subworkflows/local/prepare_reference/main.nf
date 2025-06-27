@@ -244,16 +244,16 @@ workflow PREPARE_REFERENCE {
     //
     if (prep_config.prepare_ref_data_only) {
 
-        WRITE_FASTA(ch_genome_fasta, workflow.manifest.version)
-        WRITE_FAI(ch_genome_fai, workflow.manifest.version)
-        WRITE_DICT(ch_genome_dict, workflow.manifest.version)
-        WRITE_IMG(ch_genome_img, workflow.manifest.version)
-        WRITE_BWA_INDEX(ch_genome_bwamem2_index, workflow.manifest.version)
-        WRITE_GRIDSS_INDEX(ch_genome_gridss_index, workflow.manifest.version)
-        WRITE_STAR_INDEX(ch_genome_star_index, workflow.manifest.version)
+        WRITE_FASTA(ch_genome_fasta)
+        WRITE_FAI(ch_genome_fai)
+        WRITE_DICT(ch_genome_dict)
+        WRITE_IMG(ch_genome_img)
+        WRITE_BWA_INDEX(ch_genome_bwamem2_index)
+        WRITE_GRIDSS_INDEX(ch_genome_gridss_index)
+        WRITE_STAR_INDEX(ch_genome_star_index)
 
-        WRITE_HMF_DATA(ch_hmf_data.map { getDataBaseDirectory(it) }, workflow.manifest.version)
-        WRITE_PANEL_DATA(ch_panel_data.map { getDataBaseDirectory(it) }, workflow.manifest.version)
+        WRITE_HMF_DATA(ch_hmf_data.map { getDataBaseDirectory(it) })
+        WRITE_PANEL_DATA(ch_panel_data.map { getDataBaseDirectory(it) })
     }
 
     emit:
