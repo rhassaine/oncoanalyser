@@ -562,7 +562,7 @@ workflow TARGETED {
             ch_redux_dna_normal_out,
             ref_data.genome_fasta,
             ref_data.genome_version,
-            hmf_data.driver_gene_panel,
+            panel_data.driver_gene_panel,
             hmf_data.ensembl_data_resources,
         )
 
