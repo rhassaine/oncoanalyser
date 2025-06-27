@@ -286,10 +286,9 @@ workflow PANEL_RESOURCE_CREATION {
     //
     // SUBWORKFLOW: Run gene-utils SAGE region creation
     //
-    driver_gene_panel = params.driver_gene_panel ? file(params.driver_gene_panel) : []
 
     GENE_UTILS_REGION_CREATION(
-        driver_gene_panel,
+        params.driver_gene_panel,
         ref_data.genome_version,
         hmf_data.clinvar_annotations,
         hmf_data.ensembl_data_resources,
