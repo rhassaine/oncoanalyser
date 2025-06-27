@@ -380,39 +380,26 @@ class WorkflowMain {
                 return ref_data_type_enum
             }
 
-        if (ref_data_types.contains(Constants.RefDataType.WGS)) {
-
+        if(
+            ref_data_types.contains(Constants.RefDataType.WGS) ||
+            ref_data_types.contains(Constants.RefDataType.WTS) ||
+            ref_data_types.contains(Constants.RefDataType.TARGETED)
+        ){
             ref_data_types += [
                 Constants.RefDataType.FASTA,
                 Constants.RefDataType.FAI,
                 Constants.RefDataType.DICT,
                 Constants.RefDataType.IMG,
-                Constants.RefDataType.GRIDSS_INDEX,
                 Constants.RefDataType.HMFTOOLS
             ]
         }
 
-        if (ref_data_types.contains(Constants.RefDataType.WTS)) {
-
-            ref_data_types += [
-                Constants.RefDataType.FASTA,
-                Constants.RefDataType.FAI,
-                Constants.RefDataType.DICT,
-                Constants.RefDataType.IMG,
-                Constants.RefDataType.HMFTOOLS
-            ]
+        if (ref_data_types.contains(Constants.RefDataType.WGS)) {
+            ref_data_types += [Constants.RefDataType.GRIDSS_INDEX]
         }
 
         if (ref_data_types.contains(Constants.RefDataType.TARGETED)) {
-
-            ref_data_types += [
-                Constants.RefDataType.FASTA,
-                Constants.RefDataType.FAI,
-                Constants.RefDataType.DICT,
-                Constants.RefDataType.IMG,
-                Constants.RefDataType.HMFTOOLS,
-                Constants.RefDataType.PANEL
-            ]
+            ref_data_types += [Constants.RefDataType.PANEL]
         }
 
         def require_fasta = ref_data_types.contains(Constants.RefDataType.FASTA)
