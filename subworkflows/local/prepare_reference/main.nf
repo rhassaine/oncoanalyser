@@ -206,6 +206,16 @@ workflow PREPARE_REFERENCE {
             ch_hmf_data = Channel.value(createDataMap(hmf_data_paths, params.ref_data_hmf_data_path))
 
         }
+
+        if(params.driver_gene_panel) {
+            // User defined driver gene panel
+            ch_hmf_data = ch_hmf_data
+                .map { d ->
+                    d.driver_gene_panel = params.driver_gene_panel
+                    return d
+                }
+        }
+
     }
 
     //
