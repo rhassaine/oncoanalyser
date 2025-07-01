@@ -208,10 +208,17 @@ workflow PREPARE_REFERENCE {
         }
 
         if(params.driver_gene_panel) {
-            // User defined driver gene panel
+
+            def run_mode = Utils.getEnumFromString(params.mode, Constants.RunMode)
+
+            if(run_mode !== Constants.RunMode.PANEL_RESOURCE_CREATION) {
+                log.info "Using custom driver gene panel: ${params.driver_gene_panel}"
+            }
+
+            def custom_driver_panel = file(params.driver_gene_panel, checkIfExists: true)
             ch_hmf_data = ch_hmf_data
                 .map { d ->
-                    d.driver_gene_panel = params.driver_gene_panel
+                    d.driver_gene_panel = custom_driver_panel
                     return d
                 }
         }
