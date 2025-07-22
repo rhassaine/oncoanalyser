@@ -122,6 +122,9 @@ workflow ESVEE_CALLING {
         ESVEE_PREP.out.prep_dir,
     )
 
+    ch_assemble_inputs.view()
+    ch_assemble_inputs.map{ println it; it }
+
     // Run process
     ESVEE_ASSEMBLE(
         ch_assemble_inputs,

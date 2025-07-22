@@ -87,6 +87,8 @@ workflow WGTS {
     // channel: [ meta ]
     ch_inputs = Channel.fromList(inputs)
 
+    ch_inputs.view()
+
     // Set up reference data, assign more human readable variables
     PREPARE_REFERENCE(
         run_config,
