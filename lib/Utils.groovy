@@ -33,37 +33,6 @@ class Utils {
                         meta.subject_id = it.subject_id
                     }
 
-                    // Info data
-                    def info_data = [:]
-                    if (it.containsKey('info')) {
-                        // Parse
-                        it.info
-                            .tokenize(';')
-                            .each { e ->
-                                def (k, v) = e.tokenize(':')
-                                def info_field_enum = Utils.getEnumFromString(k, Constants.InfoField)
-
-                                if (!info_field_enum) {
-                                    def info_field_str = Utils.getEnumNames(Constants.InfoField).join('\n  - ')
-                                    log.error "received invalid info field: '${k}'. Valid options are:\n  - ${info_field_str}"
-                                    Nextflow.exit(1)
-                                }
-
-                                if (info_data.containsKey(info_field_enum)) {
-                                    log.error "got duplicate info field for ${group_id} ${sample_type_enum}/${sequence_type_enum}: ${info_field_enum}"
-                                    Nextflow.exit(1)
-                                }
-
-                                info_data[info_field_enum] = v
-                            }
-
-                        // Process
-                        if (info_data.containsKey(Constants.InfoField.CANCER_TYPE)) {
-                            meta[Constants.InfoField.CANCER_TYPE] = info_data[Constants.InfoField.CANCER_TYPE]
-                        }
-
-                    }
-
                     // Sample type
                     def sample_type_enum = Utils.getEnumFromString(it.sample_type, Constants.SampleType)
                     if (!sample_type_enum) {
@@ -90,6 +59,42 @@ class Utils {
 
                     def sample_key = [sample_type_enum, sequence_type_enum]
                     def meta_sample = meta.get(sample_key, [:])
+
+                    // Info data
+                    def info_data = [:]
+                    if (it.containsKey('info')) {
+                        // Parse
+                        it.info
+                            .tokenize(';')
+                            .each { e ->
+                                def (k, v) = e.tokenize(':')
+                                def info_field_enum = Utils.getEnumFromString(k, Constants.InfoField)
+
+                                if (!info_field_enum) {
+                                    def info_field_str = Utils.getEnumNames(Constants.InfoField).join('\n  - ')
+                                    log.error "received invalid info field: '${k}'. Valid options are:\n  - ${info_field_str}"
+                                    Nextflow.exit(1)
+                                }
+
+                                if (info_data.containsKey(info_field_enum)) {
+                                    log.error "got duplicate info field for ${group_id} ${sample_type_enum}/${sequence_type_enum}: ${info_field_enum}"
+                                    Nextflow.exit(1)
+                                }
+
+                                if (!v && info_field_enum !== Constants.InfoField.LONGITUDINAL_SAMPLE) {
+                                    log.error "got empty value for ${group_id} ${sample_type_enum}/${sequence_type_enum} ${info_field_enum}"
+                                    Nextflow.exit(1)
+                                }
+
+                                info_data[info_field_enum] = v
+                            }
+
+                        // Process
+                        if (info_data.containsKey(Constants.InfoField.CANCER_TYPE)) {
+                            meta[Constants.InfoField.CANCER_TYPE] = info_data[Constants.InfoField.CANCER_TYPE]
+                        }
+
+                    }
 
                     if (info_data.containsKey(Constants.InfoField.LONGITUDINAL_SAMPLE)) {
 
@@ -134,20 +139,20 @@ class Utils {
 
                         if (fastq_entries.size() != 2) {
                             log.error "expected exactly 2 FASTQ files delimited by ';' (i.e. '<fwd>;<rev>') but found ${fastq_entries.size} " +
-                                " files for ${group_id} ${sample_type_enum}/${sequence_type_enum} but found ${fastq_entries.size} files"
+                                " files for ${group_id} ${sample_type_enum}/${sequence_type_enum}"
                             Nextflow.exit(1)
                         }
 
                         def (fwd, rev) = fastq_entries
                         def fastq_key = [info_data[Constants.InfoField.LIBRARY_ID], info_data[Constants.InfoField.LANE]]
 
-                        if (meta_sample.containsKey(fastq_key)) {
-                            log.error "got duplicate lane + library_id data for ${group_id} ${sample_type_enum}/${sequence_type_enum}: ${fastq_key}"
-                            Nextflow.exit(1)
-                        }
-
                         if (!meta_sample.containsKey(filetype_enum)) {
                             meta_sample[filetype_enum] = [:]
+                        }
+
+                        if (meta_sample[filetype_enum].containsKey(fastq_key)) {
+                            log.error "got duplicate lane + library_id data for ${group_id} ${sample_type_enum}/${sequence_type_enum}: ${fastq_key}"
+                            Nextflow.exit(1)
                         }
 
                         meta_sample[filetype_enum][fastq_key] = ['fwd': Utils.getFileObject(fwd), 'rev': Utils.getFileObject(rev)]
