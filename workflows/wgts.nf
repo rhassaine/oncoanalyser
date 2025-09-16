@@ -258,6 +258,7 @@ workflow WGTS {
             ch_inputs,
             ch_redux_dna_tumor_out,
             ch_redux_dna_normal_out,
+            ref_data.genome_version,
             hmf_data.gc_profile,
             hmf_data.diploid_bed,
             [],  // panel_target_region_normalisation
@@ -296,7 +297,8 @@ workflow WGTS {
             hmf_data.esvee_pon_breakpoints,
             hmf_data.decoy_sequences_image,
             hmf_data.repeatmasker_annotations,
-            hmf_data.unmap_regions
+            hmf_data.unmap_regions,
+            [],  // target_region_bed
         )
 
         ch_versions = ch_versions.mix(ESVEE_CALLING.out.versions)
@@ -513,6 +515,9 @@ workflow WGTS {
         LINX_PLOTTING(
             ch_inputs,
             ch_linx_somatic_out,
+            ch_inputs.map { meta -> [meta, []] }, // amber_dir
+            ch_inputs.map { meta -> [meta, []] }, // cobalt_dir
+            ch_inputs.map { meta -> [meta, []] }, // purple_dir
             ref_data.genome_version,
             hmf_data.ensembl_data_resources,
         )
@@ -543,6 +548,7 @@ workflow WGTS {
             ref_data.genome_version,
             hmf_data.driver_gene_panel,
             hmf_data.ensembl_data_resources,
+            [], // target_region_bed
         )
 
         ch_versions = ch_versions.mix(BAMTOOLS_METRICS.out.versions)
@@ -568,6 +574,8 @@ workflow WGTS {
             ch_align_rna_tumor_out,
             ref_data.genome_version,
             ref_data.genome_fasta,
+            ref_data.genome_dict,
+            ref_data.genome_img,
         )
 
         ch_versions = ch_versions.mix(CIDER_CALLING.out.versions)

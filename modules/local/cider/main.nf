@@ -11,6 +11,8 @@ process CIDER {
     tuple val(meta), path(bam), path(bai)
     val genome_ver
     file genome_fasta
+    file genome_dict
+    file genome_img
 
     output:
     tuple val(meta), path('cider/*'), emit: cider_dir
@@ -52,7 +54,7 @@ process CIDER {
     mkdir -p cider/
 
     touch cider/${meta.sample_id}.cider.bam
-    touch cider/${meta.sample_id}.cider.blastn_match.tsv.gz
+    touch cider/${meta.sample_id}.cider.alignment_match.tsv.gz
     touch cider/${meta.sample_id}.cider.layout.gz
     touch cider/${meta.sample_id}.cider.locus_stats.tsv
     touch cider/${meta.sample_id}.cider.vdj.tsv.gz
