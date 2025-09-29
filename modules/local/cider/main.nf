@@ -10,7 +10,7 @@ process CIDER {
     input:
     tuple val(meta), path(bam), path(bai)
     val genome_ver
-    file human_blastdb
+    file genome_fasta
 
     output:
     tuple val(meta), path('cider/*'), emit: cider_dir
@@ -35,8 +35,7 @@ process CIDER {
         -sample ${meta.sample_id} \\
         -bam ${bam} \\
         -ref_genome_version ${genome_ver} \\
-        -blast \$(which blastn | sed 's#/bin/blastn##') \\
-        -blast_db ${human_blastdb} \\
+        -ref_genome ${genome_fasta} \\
         -write_cider_bam \\
         -threads ${task.cpus} \\
         ${log_level_arg} \\
