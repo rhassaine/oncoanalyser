@@ -92,6 +92,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Nextflow for reference download
+        uses: nf-core/setup-nextflow@v2
+        with:
+          version: ${{ matrix.NXF_VER }}
+
+      - name: Download HMF reference data from R2
+        run: |
+          nextflow run . \
+            -profile docker \
+            --mode prepare_reference \
+            --ref_data_types wgs \
+            --genome GRCh38_hmf \
+            --outdir reference_data/
+
       - name: Run nf-test
         id: run_nf_test
         uses: ./.github/actions/nf-test
