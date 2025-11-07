@@ -191,6 +191,12 @@
                     "description": "Log level filter for WiGiTS modules",
                     "default": "DEBUG",
                     "fa_icon": "fas fa-cog"
+                },
+                "purple_circos": {
+                    "type": "boolean",
+                    "description": "Enable Circos plot generation for purple.",
+                    "default": true,
+                    "fa_icon": "fas fa-cog"
                 }
             }
         },

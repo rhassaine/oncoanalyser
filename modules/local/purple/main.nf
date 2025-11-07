@@ -53,6 +53,8 @@ process PURPLE {
     def target_region_ratios_arg = target_region_ratios ? "-target_regions_ratios ${target_region_ratios}" : ''
     def target_region_msi_indels_arg = target_region_msi_indels ? "-target_regions_msi_indels ${target_region_msi_indels}" : ''
 
+    def purple_circos_arg = params.purple_circos ? "-circos \$(which circos)" : ''
+
     """
     purple \\
         -Xmx${Math.round(task.memory.bytes * xmx_mod)} \\
@@ -76,7 +78,7 @@ process PURPLE {
         ${target_region_msi_indels_arg} \\
         ${germline_del_arg} \\
         -gc_profile ${gc_profile} \\
-        -circos \$(which circos) \\
+        ${purple_circos_arg} \\
         -threads ${task.cpus} \\
         ${log_level_arg} \\
         -output_dir purple/
