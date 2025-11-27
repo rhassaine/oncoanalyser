@@ -251,17 +251,18 @@ used throughout the WiGiTS tools). We plan to address this issue in future relea
 #### REDUX BAM / CRAM
 
 When running an analysis with DNA data from FASTQ, two of the most time consuming and resource intensive pipeline steps
-are read alignment by [BWA-MEM2](https://github.com/bwa-mem2/bwa-mem2) and read post-processing by 
+are read alignment by [BWA-MEM2](https://github.com/bwa-mem2/bwa-mem2) and read post-processing by
 [REDUX](https://github.com/hartwigmedical/hmftools/tree/master/redux).
 
 `oncoanalyser` can be run starting from existing REDUX output BAMs/CRAMs, as well the associated TSV files (which are
-used during small variant calling by [SAGE](https://github.com/hartwigmedical/hmftools/tree/master/sage)): 
+used during small variant calling by [SAGE](https://github.com/hartwigmedical/hmftools/tree/master/sage)):
+
 - `<sample_id>.redux.bam` or `<sample_id>.redux.cram`
 - `<sample_id>.redux.bam.bai` or `<sample_id>.redux.cram.crai`
 - `<sample_id>.jitter_params.tsv`
 - `<sample_id>.ms_table.tsv.gz`
 
-When running `oncoanalyser` on local file systems (non-cloud storage), only the BAM/CRAM files need to be provided to 
+When running `oncoanalyser` on local file systems (non-cloud storage), only the BAM/CRAM files need to be provided to
 the samplesheet assuming the REDUX output files are in the same directory. For example:
 
 ```csv title="samplesheet.redux_bam_bai.csv"
@@ -270,8 +271,8 @@ PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bam_redux,/path/to/PATIENT1-T.dna.redux.b
 PATIENT2,PATIENT2,PATIENT2-T,tumor,dna,cram_redux,/path/to/PATIENT2-T.dna.redux.cram
 ```
 
-However, all REDUX files must be provided explicitly to the sample sheet if running on `oncoanalyser` using 
-cloud storage (i.e. using a [cloud executor](#executors)), or if not all REDUX files are not in the same directory. 
+However, all REDUX files must be provided explicitly to the sample sheet if running on `oncoanalyser` using
+cloud storage (i.e. using a [cloud executor](#executors)), or if not all REDUX files are not in the same directory.
 Below is an example samplesheet with Google Cloud Storage URIs:
 
 ```csv title="samplesheet.redux_inputs.csv"
@@ -284,8 +285,8 @@ PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,redux_ms_tsv,gs://bucket/PATIENT1-T.dna.m
 
 :::info
 
-Cloud storage does not have real directories. Two files such as `gs://bucket/file1.tsv` and `gs://bucket/file2.tsv`, 
-even if they share same "directory" or more precisely URI prefix, are independent objects and unrelated. This is why 
+Cloud storage does not have real directories. Two files such as `gs://bucket/file1.tsv` and `gs://bucket/file2.tsv`,
+even if they share same "directory" or more precisely URI prefix, are independent objects and unrelated. This is why
 all REDUX files must be provided explicitly to the sample sheet.
 
 :::
@@ -655,7 +656,7 @@ params {
                 target_region_normalisation = 'cobalt.region_normalisation.38.tsv'
                 target_region_ratios        = 'target_regions_ratios.38.tsv'
                 target_region_msi_indels    = 'target_regions_msi_indels.38.tsv'
-              
+
                 // (Optional) RNA reference data
                 // Paths can be omitted (e.g. for panels without RNA) by providing an empty list:
                 // isofox_counts = []
@@ -889,8 +890,8 @@ Syntax and examples of config items are described in the [Nextflow documentation
 
 ### Compute resources
 
-Compute resources (e.g. CPUs, RAM, disk space) can be configured in `oncoanalyser` if the defaults are not sufficient 
-for one or more processes. Please see [Usage: Compute resources](./usage/compute_resources.md) for recommendations on 
+Compute resources (e.g. CPUs, RAM, disk space) can be configured in `oncoanalyser` if the defaults are not sufficient
+for one or more processes. Please see [Usage: Compute resources](./usage/compute_resources.md) for recommendations on
 compute resource configuration.
 
 ### Container images
