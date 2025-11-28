@@ -21,7 +21,6 @@ workflow LILAC_CALLING {
     genome_version     // channel: [mandatory] genome version
     genome_fai         // channel: [mandatory] /path/to/genome_fai
     lilac_resource_dir // channel: [mandatory] /path/to/lilac_resource_dir/
-    hla_slice_bed      // channel: [mandatory] /path/to/hla_slice_bed
     targeted_mode   // boolean: [mandatory] Running in targeted/panel mode?
 
     main:
