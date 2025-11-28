@@ -21,7 +21,7 @@ workflow LILAC_CALLING {
     genome_version     // channel: [mandatory] genome version
     genome_fai         // channel: [mandatory] /path/to/genome_fai
     lilac_resource_dir // channel: [mandatory] /path/to/lilac_resource_dir/
-    targeted_mode   // boolean: [mandatory] Running in targeted/panel mode?
+    targeted_mode      // boolean: [mandatory] Set targeted mode
 
     main:
     // Channel for version.yml files
