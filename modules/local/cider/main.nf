@@ -1,16 +1,18 @@
 process CIDER {
     tag "${meta.id}"
-    label 'process_medium'
+    label 'process_high'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/hmftools-cider:1.0.4--hdfd78af_0' :
-        'biocontainers/hmftools-cider:1.0.4--hdfd78af_0' }"
+        'https://depot.galaxyproject.org/singularity/hmftools-cider:1.1--hdfd78af_0' :
+        'biocontainers/hmftools-cider:1.1--hdfd78af_0' }"
 
     input:
     tuple val(meta), path(bam), path(bai)
     val genome_ver
-    file human_blastdb
+    file genome_fasta
+    file genome_dict
+    file genome_img
 
     output:
     tuple val(meta), path('cider/*'), emit: cider_dir
@@ -35,8 +37,7 @@ process CIDER {
         -sample ${meta.sample_id} \\
         -bam ${bam} \\
         -ref_genome_version ${genome_ver} \\
-        -blast \$(which blastn | sed 's#/bin/blastn##') \\
-        -blast_db ${human_blastdb} \\
+        -ref_genome ${genome_fasta} \\
         -write_cider_bam \\
         -threads ${task.cpus} \\
         ${log_level_arg} \\
@@ -53,7 +54,7 @@ process CIDER {
     mkdir -p cider/
 
     touch cider/${meta.sample_id}.cider.bam
-    touch cider/${meta.sample_id}.cider.blastn_match.tsv.gz
+    touch cider/${meta.sample_id}.cider.alignment_match.tsv.gz
     touch cider/${meta.sample_id}.cider.layout.gz
     touch cider/${meta.sample_id}.cider.locus_stats.tsv
     touch cider/${meta.sample_id}.cider.vdj.tsv.gz

@@ -4,15 +4,15 @@ process ORANGE {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/hmftools-orange:4.1--hdfd78af_0' :
-        'biocontainers/hmftools-orange:4.1--hdfd78af_0' }"
+        'https://depot.galaxyproject.org/singularity/hmftools-orange:4.1.2--hdfd78af_0' :
+        'biocontainers/hmftools-orange:4.1.2--hdfd78af_0' }"
 
     input:
     tuple val(meta),
-        path(bamtools_somatic_dir),
-        path(bamtools_germline_dir),
-        path(sage_somatic_dir),
-        path(sage_germline_dir),
+        path(bamtools_somatic_dir, stageAs: "bamtools_somatic"),
+        path(bamtools_germline_dir, stageAs: "bamtools_germline"),
+        path(sage_somatic_dir, stageAs: "sage_somatic"),
+        path(sage_germline_dir, stageAs: "sage_germline"),
         path(smlv_somatic_vcf),
         path(smlv_germline_vcf),
         path(purple_dir),

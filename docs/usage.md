@@ -251,51 +251,49 @@ used throughout the WiGiTS tools). We plan to address this issue in future relea
 #### REDUX BAM / CRAM
 
 When running an analysis with DNA data from FASTQ, two of the most time consuming and resource intensive pipeline steps
-are [BWA-MEM2](https://github.com/bwa-mem2/bwa-mem2) read alignment and
-[REDUX](https://github.com/hartwigmedical/hmftools/tree/master/redux) alignment processing.
+are read alignment by [BWA-MEM2](https://github.com/bwa-mem2/bwa-mem2) and read post-processing by
+[REDUX](https://github.com/hartwigmedical/hmftools/tree/master/redux).
 
-`oncoanalyser` can be run starting from REDUX BAMs or CRAMs if they already exist from a prior analysis.
-
-For REDUX BAMs, provide `bam_redux`/`cram_redux` in the `filetype` field, and optionally the BAM/CRAM index to `bai`/`crai` (only required
-if indexes are not in the same directory as the BAM/CRAM):
-
-```csv title="samplesheet.redux_bam_bai.csv"
-group_id,subject_id,sample_id,sample_type,sequence_type,filetype,filepath
-PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bam_redux,/path/to/PATIENT1-T.dna.redux.bam
-PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bai,/other/dir/PATIENT1-T.dna.redux.bam.bai
-PATIENT2,PATIENT2,PATIENT2-T,tumor,dna,cram_redux,/path/to/PATIENT2-T.dna.redux.cram
-PATIENT2,PATIENT2,PATIENT2-T,tumor,dna,crai,/other/dir/PATIENT2-T.dna.redux.cram.crai
-```
-
-The `*.jitter_params.tsv` and `*.ms_table.tsv.gz` REDUX output files are expected to be in the same directory as the
-REDUX BAM, and are required to run [SAGE](https://github.com/hartwigmedical/hmftools/tree/master/sage). If these files
-are located elsewhere, their paths can be explicitly provided by specifying `redux_jitter_tsv` and `redux_ms_tsv`in the
-`filetype` field:
-
-```csv title="samplesheet.redux_inputs.csv"
-group_id,subject_id,sample_id,sample_type,sequence_type,filetype,filepath
-PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bam_redux,/path/to/PATIENT1-T.dna.redux.bam
-PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,redux_jitter_tsv,/other/dir/PATIENT1-T.dna.jitter_params.tsv
-PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,redux_ms_tsv,/path/dir/PATIENT1-T.dna.ms_table.tsv.gz
-```
-
-:::tip
-
-You can also [start from existing inputs](#starting-from-existing-inputs) other than from REDUX BAM
-
-:::
-
-:::warning
-
-When starting from REDUX BAM/CRAM, the filenames must have the format:
+`oncoanalyser` can be run starting from existing REDUX output BAMs/CRAMs, as well the associated TSV files (which are
+used during small variant calling by [SAGE](https://github.com/hartwigmedical/hmftools/tree/master/sage)):
 
 - `<sample_id>.redux.bam` or `<sample_id>.redux.cram`
 - `<sample_id>.redux.bam.bai` or `<sample_id>.redux.cram.crai`
 - `<sample_id>.jitter_params.tsv`
 - `<sample_id>.ms_table.tsv.gz`
 
-For example, if `sample_id` is `PATIENT1-T`, the BAM filename must be `PATIENT1-T.redux.bam` and not e.g.
-`PATIENT1.redux.bam`
+When running `oncoanalyser` on local file systems (non-cloud storage), only the BAM/CRAM files need to be provided to
+the samplesheet assuming the REDUX output files are in the same directory. For example:
+
+```csv title="samplesheet.redux_bam_bai.csv"
+group_id,subject_id,sample_id,sample_type,sequence_type,filetype,filepath
+PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bam_redux,/path/to/PATIENT1-T.dna.redux.bam
+PATIENT2,PATIENT2,PATIENT2-T,tumor,dna,cram_redux,/path/to/PATIENT2-T.dna.redux.cram
+```
+
+However, all REDUX files must be provided explicitly to the sample sheet if running on `oncoanalyser` using
+cloud storage (i.e. using a [cloud executor](#executors)), or if not all REDUX files are not in the same directory.
+Below is an example samplesheet with Google Cloud Storage URIs:
+
+```csv title="samplesheet.redux_inputs.csv"
+group_id,subject_id,sample_id,sample_type,sequence_type,filetype,filepath
+PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bam_redux,gs://bucket/PATIENT1-T.dna.redux.bam
+PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bai,gs://bucket/PATIENT1-T.dna.redux.bam.bai
+PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,redux_jitter_tsv,gs://bucket/PATIENT1-T.dna.jitter_params.tsv
+PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,redux_ms_tsv,gs://bucket/PATIENT1-T.dna.ms_table.tsv.gz
+```
+
+:::info
+
+Cloud storage does not have real directories. Two files such as `gs://bucket/file1.tsv` and `gs://bucket/file2.tsv`,
+even if they share same "directory" or more precisely URI prefix, are independent objects and unrelated. This is why
+all REDUX files must be provided explicitly to the sample sheet.
+
+:::
+
+:::tip
+
+You can also [start from existing inputs](#starting-from-existing-inputs) other than from REDUX BAM
 
 :::
 
@@ -639,7 +637,7 @@ nextflow run nf-core/oncoanalyser \
   --outdir output/
 ```
 
-Place the all the custom panel reference data files in a directory, and define the paths / file names in a configuration file:
+Place all the custom panel reference data files in a directory and define the paths / file names in a configuration file:
 
 ```groovy title="panel.config"
 params {
@@ -659,11 +657,13 @@ params {
                 target_region_ratios        = 'target_regions_ratios.38.tsv'
                 target_region_msi_indels    = 'target_regions_msi_indels.38.tsv'
 
-                // RNA. Optional, only provide if panel supports RNA data.
+                // (Optional) RNA reference data
+                // Paths can be omitted (e.g. for panels without RNA) by providing an empty list:
+                // isofox_counts = []
+                isofox_counts               = 'read_151_exp_counts.38.csv'
+                isofox_gc_ratios            = 'read_100_exp_gc_ratios.38.csv'
                 isofox_gene_ids             = 'rna_gene_ids.csv'
                 isofox_tpm_norm             = 'isofox.gene_normalisation.38.csv'
-                isofox_counts               = 'read_151_exp_counts.37.csv'
-                isofox_gc_ratios            = 'read_100_exp_gc_ratios.37.csv'
             }
         }
     }
@@ -890,58 +890,9 @@ Syntax and examples of config items are described in the [Nextflow documentation
 
 ### Compute resources
 
-The default compute resources (e.g. CPUs, RAM, disk space) configured in `oncoanalyser` may not be sufficient for one or
-more processes (nf-core documentation: [tuning workflow resources](https://nf-co.re/docs/usage/configuration#tuning-workflow-resources)).
-For example, for high depth samples (e.g. panel samples), you may need increase the memory for alignment, read processing (REDUX),
-small variant calling (SAGE), or structural variant calling (ESVEE) steps.
-
-Below are the settings per tool that Hartwig Medical Foundation uses when running `oncoanalyser` in Google cloud:
-
-```groovy
-process {
-    withName: '.*ALIGN'          { memory = 72.GB; cpus = 12; disk = 750.GB }
-    withName: 'AMBER'            { memory = 24.GB; cpus = 16; disk = 375.GB }
-    withName: 'BAMTOOLS'         { memory = 24.GB; cpus = 16; disk = 375.GB }
-    withName: 'CHORD'            { memory = 12.GB; cpus = 4 ; disk = 375.GB }
-    withName: 'CIDER'            { memory = 24.GB; cpus = 16; disk = 375.GB }
-    withName: 'COBALT'           { memory = 24.GB; cpus = 16; disk = 375.GB }
-    withName: 'CUPPA'            { memory = 16.GB; cpus = 4 ; disk = 375.GB }
-    withName: 'ESVEE'            { memory = 96.GB; cpus = 32; disk = 375.GB }
-    withName: 'ISOFOX'           { memory = 24.GB; cpus = 16; disk = 375.GB }
-    withName: 'LILAC'            { memory = 24.GB; cpus = 16; disk = 375.GB }
-    withName: 'LINX_.*'          { memory = 16.GB; cpus = 8 ; disk = 375.GB }
-    withName: 'REDUX'            { memory = 64.GB; cpus = 32; disk = 750.GB }
-    withName: 'ORANGE'           { memory = 16.GB; cpus = 4 ; disk = 375.GB }
-    withName: 'PAVE.*'           { memory = 32.GB; cpus = 8 ; disk = 375.GB }
-    withName: 'PEACH'            { memory = 4.GB ; cpus = 2 ; disk = 375.GB }
-    withName: 'PURPLE'           { memory = 40.GB; cpus = 8 ; disk = 375.GB }
-    withName: 'SAGE.*'           { memory = 64.GB; cpus = 32; disk = 375.GB }
-    withName: 'TEAL.*'           { memory = 32.GB; cpus = 32; disk = 375.GB }
-    withName: 'VIRUSBREAKEND'    { memory = 64.GB; cpus = 16; disk = 375.GB }
-    withName: 'VIRUSINTERPRETER' { memory = 8.GB ; cpus = 2 ; disk = 375.GB }
-    withName: 'WISP'             { memory = 16.GB; cpus = 4 ; disk = 375.GB }
-}
-```
-
-We recommend setting an upper limit on total resources that `oncoanalyser` is allowed to use (nf-core
-documentation: [max resources](https://nf-co.re/docs/usage/configuration#max-resources)). Otherwise, `oncoanalyser` may
-crash when it tries to request more resources than available on a machine or compute job.
-Below are some recommended resource limit settings:
-
-```groovy
-process {
-    resourceLimits = [
-        cpus:   64,
-        memory: 120.GB, // Provides leeway on a 128.GB machine
-        disk:   1500.GB,
-        time:   48.h
-    ]
-}
-```
-
-The total runtime of `oncoanalyser` is ~3h for a paired 100x/30x tumor/normal WGS run starting from BAMs with parallel job execution via
-Google batch. However, your runtime will vary depending on several factors such as sequencing depth, number of small/structural variants, or
-parallel vs. non-parallel job execution.
+Compute resources (e.g. CPUs, RAM, disk space) can be configured in `oncoanalyser` if the defaults are not sufficient
+for one or more processes. Please see [Usage: Compute resources](./usage/compute_resources.md) for recommendations on
+compute resource configuration.
 
 ### Container images
 

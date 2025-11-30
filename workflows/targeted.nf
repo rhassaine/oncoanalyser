@@ -256,6 +256,7 @@ workflow TARGETED {
             ch_inputs,
             ch_redux_dna_tumor_out,
             ch_redux_dna_normal_out,
+            ref_data.genome_version,
             hmf_data.gc_profile,
             hmf_data.diploid_bed,
             panel_data.target_region_normalisation,
@@ -290,11 +291,12 @@ workflow TARGETED {
             ref_data.genome_dict,
             ref_data.genome_img,
             hmf_data.known_fusions,
-            hmf_data.gridss_pon_breakends,
-            hmf_data.gridss_pon_breakpoints,
+            hmf_data.esvee_pon_breakends,
+            hmf_data.esvee_pon_breakpoints,
             hmf_data.decoy_sequences_image,
             hmf_data.repeatmasker_annotations,
             hmf_data.unmap_regions,
+            panel_data.target_region_bed,
         )
 
         ch_versions = ch_versions.mix(ESVEE_CALLING.out.versions)
@@ -511,6 +513,9 @@ workflow TARGETED {
         LINX_PLOTTING(
             ch_inputs,
             ch_linx_somatic_out,
+            ch_amber_out,
+            ch_cobalt_out,
+            ch_purple_out,
             ref_data.genome_version,
             hmf_data.ensembl_data_resources,
         )
@@ -541,6 +546,7 @@ workflow TARGETED {
             ref_data.genome_version,
             panel_data.driver_gene_panel,
             hmf_data.ensembl_data_resources,
+            panel_data.target_region_bed,
         )
 
         ch_versions = ch_versions.mix(BAMTOOLS_METRICS.out.versions)
@@ -565,7 +571,9 @@ workflow TARGETED {
             ch_redux_dna_tumor_out,
             ch_align_rna_tumor_out,
             ref_data.genome_version,
-            hmf_data.cider_blastdb,
+            ref_data.genome_fasta,
+            ref_data.genome_dict,
+            ref_data.genome_img,
         )
 
         ch_versions = ch_versions.mix(CIDER_CALLING.out.versions)
