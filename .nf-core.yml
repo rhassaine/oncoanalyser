@@ -15,6 +15,7 @@ template:
 lint:
   actions_ci: false
   files_exist:
+    - .github/workflows/nf-test.yml
     - lib/Utils.groovy
     - lib/WorkflowMain.groovy
     - lib/WorkflowOncoanalyser.groovy
