@@ -4,4 +4,4 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - bioconda::hmftools-cider=1.0.4
+  - bioconda::hmftools-cider=1.1

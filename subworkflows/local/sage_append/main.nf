@@ -25,7 +25,7 @@ workflow SAGE_APPEND {
 
     // Params
     enable_germline  // boolean: [mandatory] Enable germline
-    targeted_mode // boolean: [mandatory] Running with SAGE arguments for targeted/panel mode?
+    targeted_mode    // boolean: [mandatory] Set targeted mode
 
     main:
     // Channel for version.yml files

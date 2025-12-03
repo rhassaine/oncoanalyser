@@ -293,13 +293,6 @@
                     "description": "Path to reference genome GTF.",
                     "fa_icon": "far fa-file-code"
                 },
-                "ref_data_hla_slice_bed": {
-                    "type": "string",
-                    "format": "file-path",
-                    "pattern": "^\\S+\\.bed$",
-                    "description": "Path to HLA slice BED file.",
-                    "fa_icon": "far fa-file-code"
-                },
                 "prepare_reference_only": {
                     "type": "boolean",
                     "default": false,

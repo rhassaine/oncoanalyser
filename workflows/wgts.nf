@@ -54,12 +54,6 @@ workflow WGTS {
         params.isofox_gc_ratios,
     ]
 
-    if (run_config.stages.lilac) {
-        if (params.genome_version.toString() == '38' && params.genome_type == 'alt' && params.containsKey('ref_data_hla_slice_bed')) {
-            checkPathParamList.add(params.ref_data_hla_slice_bed)
-        }
-    }
-
     for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
     // Create channel for versions
@@ -637,9 +631,6 @@ workflow WGTS {
     ch_lilac_out = Channel.empty()
     if (run_config.stages.lilac) {
 
-        // Use HLA slice BED if provided in params or set as default requirement
-        ref_data_hla_slice_bed = params.containsKey('ref_data_hla_slice_bed') ? params.ref_data_hla_slice_bed : []
-
         LILAC_CALLING(
             ch_inputs,
             ch_redux_dna_tumor_out,
@@ -650,7 +641,6 @@ workflow WGTS {
             ref_data.genome_version,
             ref_data.genome_fai,
             hmf_data.lilac_resources,
-            ref_data_hla_slice_bed,
             false,  // targeted_mode
         )
 

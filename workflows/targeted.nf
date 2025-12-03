@@ -50,12 +50,6 @@ workflow TARGETED {
         params.isofox_tpm_norm,
     ]
 
-    if (run_config.stages.lilac) {
-        if (params.genome_version.toString() == '38' && params.genome_type == 'alt' && params.containsKey('ref_data_hla_slice_bed')) {
-            checkPathParamList.add(params.ref_data_hla_slice_bed)
-        }
-    }
-
     for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
     // Create channel for versions
@@ -587,9 +581,6 @@ workflow TARGETED {
     ch_lilac_out = Channel.empty()
     if (run_config.stages.lilac) {
 
-        // Set HLA slice BED if provided in params
-        ref_data_hla_slice_bed = params.containsKey('ref_data_hla_slice_bed') ? params.ref_data_hla_slice_bed : []
-
         LILAC_CALLING(
             ch_inputs,
             ch_redux_dna_tumor_out,
@@ -600,7 +591,6 @@ workflow TARGETED {
             ref_data.genome_version,
             ref_data.genome_fai,
             hmf_data.lilac_resources,
-            ref_data_hla_slice_bed,
             true,  // targeted_mode
         )
 
