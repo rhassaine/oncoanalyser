@@ -3,10 +3,44 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project mostly adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [dev]
+## [[2.3.0](https://github.com/nf-core/oncoanalyser/releases/tag/2.3.0)] Spotted Nightjar
 
+- [268](https://github.com/nf-core/oncoanalyser/pull/268) - Apply minor fixes and updates
+  - Samplesheet / version collection fixes, misc adjustments
+  - Update the Hartwig panel and pipeline reference data bundles
+- [265](https://github.com/nf-core/oncoanalyser/pull/265) - Update tests and relevant GH Actions workflows / actions
+  - Add full sized test data; HCC1395 (SEQC-II) tumor / normal WGS with tumor WTS
+  - Enable the `test` profile in 'Run nf-test' GH Actions workflow and configure appropriate RunsOn instance
+  - Update nf-test snapshots for each respective test
+- [267](https://github.com/nf-core/oncoanalyser/pull/267) - Update WiGiTS tools, reference data, documentation
+  - Bump WiGiTS tool versions (see Software dependencies below)
+  - Remove the remapping step for ALT alignments in the LILAC subworkflow
+  - Update documentation, add new compute resource page
 - [247](https://github.com/nf-core/oncoanalyser/pull/247) - Improve samplesheet validation
-- [246](https://github.com/nf-core/oncoanalyser/pull/246) - Post-release bump
+- [246](https://github.com/nf-core/oncoanalyser/pull/246) - Post release bump
+
+### Software dependencies
+
+| Dependency         | Old version | New version |
+| ------------------ | ----------- | ----------- |
+| `BamTools`         | 1.4.2       | 1.5         |
+| `CIDER`            | 1.0.4       | 1.1         |
+| `COBALT`           | 2.1         | 2.2         |
+| `ESVEE`            | 1.1.2       | 1.2         |
+| `LILAC`            | 1.7.1       | 1.7.3       |
+| `LINX`             | 2.1         | 2.2         |
+| `ORANGE`           | 4.1         | 4.1.2       |
+| `PURPLE`           | 4.2         | 4.3         |
+| `REDUX`            | 1.2         | 1.2.2       |
+| `TEAL`             | 1.3.5       | 1.3.6       |
+| `VirusInterpreter` | 1.7.1       | 1.7.2       |
+
+### Reference data
+
+| Name                     | Old version | New version |
+| ------------------------ | ----------- | ----------- |
+| `HMF pipeline resources` | 2.2.0--3    | 2.3.0--2    |
+| `HMF TSO500 resources`   | 2.2.0--3    | 2.3.0--2    |
 
 ## [[2.2.0](https://github.com/nf-core/oncoanalyser/releases/tag/2.2.0)] Royal Spoonbill - 2025-08-02
 
