@@ -15,11 +15,6 @@ tools:
       doi: 10.1158/1538-7445.AM2017-3590
       licence: ["MIT"]
 input:
-  - meta:
-      type: map
-      description: |
-        Groovy Map containing sample information
-        e.g. [id: 'sample_id']
   - genome_fasta:
       type: file
       description: Reference genome assembly FASTA file

@@ -15,9 +15,9 @@ workflow LINX_PLOTTING {
     ch_annotations         // channel: [mandatory] [ meta, annotation_dir ]
 
     // Sample data for copy number circos tracks
-    ch_amber               // channel: [optional] [ meta, amber_dir ]
-    ch_cobalt              // channel: [optional] [ meta, cobalt_dir ]
-    ch_purple              // channel: [optional] [ meta, purple_dir ]
+    ch_amber               // channel: [mandatory] [ meta, amber_dir ]
+    ch_cobalt              // channel: [mandatory] [ meta, cobalt_dir ]
+    ch_purple              // channel: [mandatory] [ meta, purple_dir ]
 
     // Reference data
     genome_version         // channel: [mandatory] genome version
@@ -55,7 +55,7 @@ workflow LINX_PLOTTING {
             runnable: annotation_dir && !has_existing
             skip: true
                 return meta
-         }
+        }
 
     //
     // MODULE: LINX visualiser
@@ -63,7 +63,7 @@ workflow LINX_PLOTTING {
     // Create process input channel
     // channel: [ meta_linx, annotation_dir, amber_dir, cobalt_dir, purple_dir ]
     ch_linx_visualiser_inputs = ch_inputs_sorted.runnable
-        .map { meta, annotation_dir, amber_dir, cobalt_dir, purple_dir  ->
+        .map { meta, annotation_dir, amber_dir, cobalt_dir, purple_dir ->
 
             def meta_linx = [
                 key: meta.group_id,

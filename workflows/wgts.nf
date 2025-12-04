@@ -447,7 +447,7 @@ workflow WGTS {
         SAGE_APPEND(
             ch_inputs,
             ch_purple_out,
-            ch_inputs.map { meta -> [meta, [], []] },      // ch_tumor_redux_bam
+            ch_inputs.map { meta -> [meta, [], []] },  // ch_tumor_redux_bam
             ch_inputs.map { meta -> [meta, [], [], []] },  // ch_tumor_redux_tsv
             ch_align_rna_tumor_out,
             ref_data.genome_fasta,
@@ -455,7 +455,7 @@ workflow WGTS {
             ref_data.genome_fai,
             ref_data.genome_dict,
             run_config.stages.orange,  // enable_germline [run for ORANGE but not Neo]
-            false, // targeted_mode
+            false,  // targeted_mode
         )
 
         ch_versions = ch_versions.mix(SAGE_APPEND.out.versions)
@@ -509,9 +509,9 @@ workflow WGTS {
         LINX_PLOTTING(
             ch_inputs,
             ch_linx_somatic_out,
-            ch_inputs.map { meta -> [meta, []] }, // amber_dir
-            ch_inputs.map { meta -> [meta, []] }, // cobalt_dir
-            ch_inputs.map { meta -> [meta, []] }, // purple_dir
+            ch_inputs.map { meta -> [meta, []] },  // ch_amber
+            ch_inputs.map { meta -> [meta, []] },  // ch_cobalt
+            ch_inputs.map { meta -> [meta, []] },  // ch_purple
             ref_data.genome_version,
             hmf_data.ensembl_data_resources,
         )
@@ -566,8 +566,8 @@ workflow WGTS {
             ch_inputs,
             ch_redux_dna_tumor_out,
             ch_align_rna_tumor_out,
-            ref_data.genome_version,
             ref_data.genome_fasta,
+            ref_data.genome_version,
             ref_data.genome_dict,
             ref_data.genome_img,
         )

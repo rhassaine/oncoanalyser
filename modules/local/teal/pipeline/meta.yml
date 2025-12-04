@@ -1,4 +1,4 @@
-name: teal
+name: teal_pipeline
 description: TEAL measures telomere content, and estimates telomeric length based on WGS read data
 keywords:
   - telomere
@@ -33,12 +33,12 @@ input:
       type: file
       description: Normal TEAL BAI file (optional)
       pattern: "*.{bai}"
-  - tumor_wgs_metrics_dir:
+  - tumor_metrics_dir:
       type: directory
-      description: Tumor WGS metrics directory (optional)
-  - normal_wgs_metrics:
+      description: Tumor metrics directory (optional)
+  - normal_metrics_dir:
       type: directory
-      description: Normal WGS metrics directory (optional)
+      description: Normal metrics directory (optional)
   - cobalt_dir:
       type: directory
       description: COBALT output directory

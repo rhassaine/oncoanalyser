@@ -10,10 +10,10 @@ process ESVEE {
     input:
     tuple val(meta), path(tumor_bam), path(tumor_bai), path(normal_bam), path(normal_bai)
     path genome_fasta
+    val genome_ver
     path genome_fai
     path genome_dict
     path genome_img
-    val genome_ver
     path pon_breakends
     path pon_breakpoints
     path decoy_sequences_image
