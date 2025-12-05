@@ -1,4 +1,4 @@
-name: teal
+name: teal_prep
 description: TEAL measures telomere content, and estimates telomeric length based on WGS read data
 keywords:
   - telomere

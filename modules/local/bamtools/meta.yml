@@ -36,6 +36,10 @@ input:
   - ensembl_data_resources:
       type: directory
       description: HMF ensembl data resources directory
+  - target_region_bed:
+      type: file
+      description: Target regions BED file (optional)
+      pattern: "*.{bed}"
 output:
   - meta:
       type: map

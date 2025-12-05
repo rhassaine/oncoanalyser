@@ -10,8 +10,8 @@ process LILAC {
     input:
     tuple val(meta), path(normal_dna_bam), path(normal_dna_bai), path(tumor_dna_bam), path(tumor_dna_bai), path(tumor_rna_bam), path(tumor_rna_bai), path(purple_dir)
     path genome_fasta
-    path genome_fai
     val genome_ver
+    path genome_fai
     path lilac_resources, stageAs: 'lilac_resources'
     val targeted_mode
 

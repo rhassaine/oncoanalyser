@@ -15,10 +15,10 @@ workflow CIDER_CALLING {
     ch_tumor_rna_bam // channel: [mandatory] [ meta, bam, bai ]
 
     // Reference data
-    genome_version  // channel: [mandatory] ref genome version
-    genome_fasta    // channel: [mandatory] ref genome fasta
-    genome_dict     // channel: [mandatory] ref genome dict
-    genome_img      // channel: [mandatory] ref genome dict
+    genome_fasta     // channel: [mandatory] /path/to/genome_fasta
+    genome_version   // channel: [mandatory] genome version
+    genome_dict      // channel: [mandatory] /path/to/genome_dict
+    genome_img       // channel: [optional]  /path/to/genome_img
 
     main:
     // Channel for version.yml files
@@ -79,8 +79,8 @@ workflow CIDER_CALLING {
     // Run process
     CIDER(
         ch_cider_inputs,
-        genome_version,
         genome_fasta,
+        genome_version,
         genome_dict,
         genome_img,
     )

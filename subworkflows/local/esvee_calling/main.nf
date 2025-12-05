@@ -80,17 +80,17 @@ workflow ESVEE_CALLING {
     ESVEE(
         ch_esvee_inputs,
         genome_fasta,
+        genome_version,
         genome_fai,
         genome_dict,
         genome_img,
-        genome_version,
         pon_breakends,
         pon_breakpoints,
         decoy_sequences_image,
         known_fusions,
         repeatmasker_annotations,
         unmap_regions,
-        target_region_bed
+        target_region_bed,
     )
 
     ch_versions = ch_versions.mix(ESVEE.out.versions)

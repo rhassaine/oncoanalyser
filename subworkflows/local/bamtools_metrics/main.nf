@@ -87,7 +87,7 @@ workflow BAMTOOLS_METRICS {
         genome_version,
         driver_gene_panel,
         ensembl_data_resources,
-        target_region_bed
+        target_region_bed,
     )
 
     ch_versions = ch_versions.mix(BAMTOOLS.out.versions)

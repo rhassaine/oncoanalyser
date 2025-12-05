@@ -10,8 +10,8 @@ process CIDER {
 
     input:
     tuple val(meta), path(bam), path(bai)
-    val genome_ver
     file genome_fasta
+    val genome_ver
     file genome_dict
     file genome_img
 
