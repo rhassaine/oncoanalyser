@@ -22,7 +22,7 @@ workflow PREPARE_REFERENCE {
     main:
     // Create channel for versions
     // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     // Stage in reference data as requested
     prep_config = WorkflowMain.getPrepConfigFromCli(params, log)
@@ -37,7 +37,7 @@ workflow PREPARE_REFERENCE {
     //
     // TASK: Aggregate software versions
     //
-    def topic_versions = Channel.topic("versions")
+    def topic_versions = channel.topic("versions")
         .distinct()
         .branch { entry ->
             versions_file: entry instanceof Path

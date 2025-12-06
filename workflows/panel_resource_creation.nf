@@ -51,11 +51,11 @@ workflow PANEL_RESOURCE_CREATION {
 
     // Create channel for versions
     // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     // Create input channel from parsed CSV
     // channel: [ meta ]
-    ch_inputs = Channel.fromList(inputs)
+    ch_inputs = channel.fromList(inputs)
 
     // Set up reference data, assign more human readable variables
     prep_config = WorkflowMain.getPrepConfigFromSamplesheet(run_config)
@@ -263,7 +263,7 @@ workflow PANEL_RESOURCE_CREATION {
     //
     // TASK: Aggregate software versions
     //
-    def topic_versions = Channel.topic("versions")
+    def topic_versions = channel.topic("versions")
         .distinct()
         .branch { entry ->
             versions_file: entry instanceof Path

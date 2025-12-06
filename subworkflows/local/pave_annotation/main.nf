@@ -133,13 +133,13 @@ workflow PAVE_ANNOTATION {
 
     // Set outputs, restoring original meta
     // channel: [ meta, pave_vcf ]
-    ch_somatic_out = Channel.empty()
+    ch_somatic_out = channel.empty()
         .mix(
             WorkflowOncoanalyser.restoreMeta(channel.topic('pave_somatic_vcf'), ch_inputs),
             ch_sage_somatic_inputs_sorted.skip.map { meta -> [meta, []] },
         )
 
-    ch_germline_out = Channel.empty()
+    ch_germline_out = channel.empty()
         .mix(
             WorkflowOncoanalyser.restoreMeta(channel.topic('pave_germline_vcf'), ch_inputs),
             ch_sage_germline_inputs_sorted.skip.map { meta -> [meta, []] },

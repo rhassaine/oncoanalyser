@@ -30,11 +30,11 @@ workflow PURITY_ESTIMATE {
     main:
     // Create channel for versions
     // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     // Create input channel from parsed CSV
     // channel: [ meta ]
-    ch_inputs = Channel.fromList(inputs)
+    ch_inputs = channel.fromList(inputs)
 
     // Get run mode of purity estimate mode
     purity_estimate_run_mode = Utils.getEnumFromString(params.purity_estimate_mode, Constants.RunMode)
@@ -55,10 +55,10 @@ workflow PURITY_ESTIMATE {
     // SUBWORKFLOW: Run read alignment to generate BAMs
     //
     // channel: [ meta, [bam, ...], [bai, ...] ]
-    ch_align_dna_tumor_out = Channel.empty()
-    ch_align_dna_normal_out = Channel.empty()
-    ch_align_dna_donor_out = Channel.empty()
-    ch_align_rna_tumor_out = Channel.empty()
+    ch_align_dna_tumor_out = channel.empty()
+    ch_align_dna_normal_out = channel.empty()
+    ch_align_dna_donor_out = channel.empty()
+    ch_align_rna_tumor_out = channel.empty()
     if (run_config.stages.alignment) {
 
         READ_ALIGNMENT_DNA(
@@ -90,14 +90,14 @@ workflow PURITY_ESTIMATE {
     // SUBWORKFLOW: Run REDUX for DNA BAMs
     //
     // channel: [ meta, bam, bai ]
-    ch_redux_dna_tumor_out = Channel.empty()
-    ch_redux_dna_normal_out = Channel.empty()
-    ch_redux_dna_donor_out = Channel.empty()
+    ch_redux_dna_tumor_out = channel.empty()
+    ch_redux_dna_normal_out = channel.empty()
+    ch_redux_dna_donor_out = channel.empty()
 
     // channel: [ meta, dup_freq_tsv, jitter_tsv, ms_tsv, repeat_tsv ]
-    ch_redux_dna_tumor_tsv_out = Channel.empty()
-    ch_redux_dna_normal_tsv_out = Channel.empty()
-    ch_redux_dna_donor_tsv_out = Channel.empty()
+    ch_redux_dna_tumor_tsv_out = channel.empty()
+    ch_redux_dna_normal_tsv_out = channel.empty()
+    ch_redux_dna_donor_tsv_out = channel.empty()
 
     if (run_config.stages.redux) {
 
@@ -142,7 +142,7 @@ workflow PURITY_ESTIMATE {
     // SUBWORKFLOW: Run AMBER to obtain b-allele frequencies
     //
     // channel: [ meta, amber_dir ]
-    ch_amber_out = Channel.empty()
+    ch_amber_out = channel.empty()
     if (run_config.stages.amber && purity_estimate_run_mode == Constants.RunMode.WGTS) {
 
         tumor_min_depth = purity_estimate_run_mode == Constants.RunMode.WGTS ? 1 : []
@@ -172,7 +172,7 @@ workflow PURITY_ESTIMATE {
     // SUBWORKFLOW: Run COBALT to obtain read ratios
     //
     // channel: [ meta, cobalt_dir ]
-    ch_cobalt_out = Channel.empty()
+    ch_cobalt_out = channel.empty()
     if (run_config.stages.cobalt && purity_estimate_run_mode == Constants.RunMode.WGTS) {
 
         COBALT_PROFILING(
@@ -200,7 +200,7 @@ workflow PURITY_ESTIMATE {
     // SUBWORKFLOW: Append new sample data to primary SAGE WGS VCF
     //
     // channel: [ meta, sage_append_dir ]
-    ch_sage_somatic_append_out = Channel.empty()
+    ch_sage_somatic_append_out = channel.empty()
     if (run_config.stages.orange) {
 
         SAGE_APPEND(
@@ -249,7 +249,7 @@ workflow PURITY_ESTIMATE {
     //
     // TASK: Aggregate software versions
     //
-    def topic_versions = Channel.topic("versions")
+    def topic_versions = channel.topic("versions")
         .distinct()
         .branch { entry ->
             versions_file: entry instanceof Path

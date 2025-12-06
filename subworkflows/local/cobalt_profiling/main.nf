@@ -48,7 +48,7 @@ workflow COBALT_PROFILING {
     // First set diploid BED input for tumor/normal and tumor only samples
     // NOTE(SW): since the diploid BED is provided as a channel, I seem to be only able to include via channel ops
     // channel: [ meta, tumor_bam, tumor_bai, normal_bam, normal_bai, diploid_bed ]
-    ch_inputs_runnable = Channel.empty()
+    ch_inputs_runnable = channel.empty()
         .mix(
             ch_inputs_sorted.runnable_tn.map { it + [[]] },
             ch_inputs_sorted.runnable_to.combine(diploid_bed),
@@ -86,7 +86,7 @@ workflow COBALT_PROFILING {
 
     // Set outputs, restoring original meta
     // channel: [ meta, cobalt_dir ]
-    ch_outputs = Channel.empty()
+    ch_outputs = channel.empty()
         .mix(
             WorkflowOncoanalyser.restoreMeta(channel.topic('cobalt_dir'), ch_inputs),
             ch_inputs_sorted.skip.map { meta -> [meta, []] },

@@ -57,7 +57,7 @@ workflow BAMTOOLS_METRICS {
 
     // Create process input channel
     // channel: [ meta_bamtools, bam, bai ]
-    ch_bamtools_inputs = Channel.empty()
+    ch_bamtools_inputs = channel.empty()
         .mix(
             ch_inputs_tumor_sorted.runnable.map { meta, bam, bai -> [meta, Utils.getTumorDnaSample(meta), 'tumor', bam, bai] },
             ch_inputs_normal_sorted.runnable.map { meta, bam, bai -> [meta, Utils.getNormalDnaSample(meta), 'normal', bam, bai] },
@@ -95,13 +95,13 @@ workflow BAMTOOLS_METRICS {
 
     // Set outputs, restoring original meta
     // channel: [ meta, metrics_dir ]
-    ch_somatic_metrics_dir = Channel.empty()
+    ch_somatic_metrics_dir = channel.empty()
         .mix(
             WorkflowOncoanalyser.restoreMeta(ch_bamtools_out.tumor, ch_inputs),
             ch_inputs_tumor_sorted.skip.map { meta -> [meta, []] },
         )
 
-    ch_germline_metrics_dir = Channel.empty()
+    ch_germline_metrics_dir = channel.empty()
         .mix(
             WorkflowOncoanalyser.restoreMeta(ch_bamtools_out.normal, ch_inputs),
             ch_inputs_normal_sorted.skip.map { meta -> [meta, []] },

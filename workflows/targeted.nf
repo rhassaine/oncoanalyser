@@ -52,11 +52,11 @@ workflow TARGETED {
 
     // Create channel for versions
     // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     // Create input channel from parsed CSV
     // channel: [ meta ]
-    ch_inputs = Channel.fromList(inputs)
+    ch_inputs = channel.fromList(inputs)
 
     // Set up reference data, assign more human readable variables
     prep_config = WorkflowMain.getPrepConfigFromSamplesheet(run_config)
@@ -75,10 +75,10 @@ workflow TARGETED {
     // SUBWORKFLOW: Run read alignment to generate BAMs
     //
     // channel: [ meta, [bam, ...], [bai, ...] ]
-    ch_align_dna_tumor_out = Channel.empty()
-    ch_align_dna_normal_out = Channel.empty()
-    ch_align_dna_donor_out = Channel.empty()
-    ch_align_rna_tumor_out = Channel.empty()
+    ch_align_dna_tumor_out = channel.empty()
+    ch_align_dna_normal_out = channel.empty()
+    ch_align_dna_donor_out = channel.empty()
+    ch_align_rna_tumor_out = channel.empty()
     if (run_config.stages.alignment) {
 
         READ_ALIGNMENT_DNA(
@@ -120,14 +120,14 @@ workflow TARGETED {
     // SUBWORKFLOW: Run REDUX for DNA BAMs
     //
     // channel: [ meta, bam, bai ]
-    ch_redux_dna_tumor_out = Channel.empty()
-    ch_redux_dna_normal_out = Channel.empty()
-    ch_redux_dna_donor_out = Channel.empty()
+    ch_redux_dna_tumor_out = channel.empty()
+    ch_redux_dna_normal_out = channel.empty()
+    ch_redux_dna_donor_out = channel.empty()
 
     // channel: [ meta, dup_freq_tsv, jitter_tsv, ms_tsv ]
-    ch_redux_dna_tumor_tsv_out = Channel.empty()
-    ch_redux_dna_normal_tsv_out = Channel.empty()
-    ch_redux_dna_donor_tsv_out = Channel.empty()
+    ch_redux_dna_tumor_tsv_out = channel.empty()
+    ch_redux_dna_normal_tsv_out = channel.empty()
+    ch_redux_dna_donor_tsv_out = channel.empty()
 
     if (run_config.stages.redux) {
 
@@ -181,7 +181,7 @@ workflow TARGETED {
     isofox_read_length = params.isofox_read_length != null ? params.isofox_read_length : Constants.DEFAULT_ISOFOX_READ_LENGTH_TARGETED
 
     // channel: [ meta, isofox_dir ]
-    ch_isofox_out = Channel.empty()
+    ch_isofox_out = channel.empty()
     if (run_config.stages.isofox) {
 
         ISOFOX_QUANTIFICATION(
@@ -214,7 +214,7 @@ workflow TARGETED {
     // SUBWORKFLOW: Run AMBER to obtain b-allele frequencies
     //
     // channel: [ meta, amber_dir ]
-    ch_amber_out = Channel.empty()
+    ch_amber_out = channel.empty()
     if (run_config.stages.amber) {
 
         AMBER_PROFILING(
@@ -242,7 +242,7 @@ workflow TARGETED {
     // SUBWORKFLOW: Run COBALT to obtain read ratios
     //
     // channel: [ meta, cobalt_dir ]
-    ch_cobalt_out = Channel.empty()
+    ch_cobalt_out = channel.empty()
     if (run_config.stages.cobalt) {
 
         COBALT_PROFILING(
@@ -270,8 +270,8 @@ workflow TARGETED {
     // SUBWORKFLOW: Call structural variants with ESVEE
     //
     // channel: [ meta, esvee_vcf ]
-    ch_esvee_germline_out = Channel.empty()
-    ch_esvee_somatic_out = Channel.empty()
+    ch_esvee_germline_out = channel.empty()
+    ch_esvee_somatic_out = channel.empty()
     if (run_config.stages.esvee) {
 
         ESVEE_CALLING(
@@ -308,11 +308,11 @@ workflow TARGETED {
     // SUBWORKFLOW: call SNV, MNV, and small INDELS with SAGE
     //
     // channel: [ meta, sage_vcf, sage_tbi ]
-    ch_sage_germline_vcf_out = Channel.empty()
-    ch_sage_somatic_vcf_out = Channel.empty()
+    ch_sage_germline_vcf_out = channel.empty()
+    ch_sage_somatic_vcf_out = channel.empty()
     // channel: [ meta, sage_dir ]
-    ch_sage_germline_dir_out = Channel.empty()
-    ch_sage_somatic_dir_out = Channel.empty()
+    ch_sage_germline_dir_out = channel.empty()
+    ch_sage_somatic_dir_out = channel.empty()
     if (run_config.stages.sage) {
 
         SAGE_CALLING(
@@ -359,8 +359,8 @@ workflow TARGETED {
     // SUBWORKFLOW: Annotate variants with PAVE
     //
     // channel: [ meta, pave_vcf ]
-    ch_pave_germline_out = Channel.empty()
-    ch_pave_somatic_out = Channel.empty()
+    ch_pave_germline_out = channel.empty()
+    ch_pave_somatic_out = channel.empty()
     if (run_config.stages.pave) {
 
         PAVE_ANNOTATION(
@@ -397,7 +397,7 @@ workflow TARGETED {
     // SUBWORKFLOW: Call CNVs, infer purity and ploidy, and recover low quality SVs with PURPLE
     //
     // channel: [ meta, purple_dir ]
-    ch_purple_out = Channel.empty()
+    ch_purple_out = channel.empty()
     if (run_config.stages.purple) {
 
         PURPLE_CALLING(
@@ -437,8 +437,8 @@ workflow TARGETED {
     // SUBWORKFLOW: Append read data to SAGE VCF
     //
     // channel: [ meta, sage_append_vcf ]
-    ch_sage_somatic_append_out = Channel.empty()
-    ch_sage_germline_append_out = Channel.empty()
+    ch_sage_somatic_append_out = channel.empty()
+    ch_sage_germline_append_out = channel.empty()
     if (run_config.stages.orange) {
 
         SAGE_APPEND(
@@ -472,8 +472,8 @@ workflow TARGETED {
     // SUBWORKFLOW: Group structural variants into higher order events with LINX
     //
     // channel: [ meta, linx_annotation_dir ]
-    ch_linx_somatic_out = Channel.empty()
-    ch_linx_germline_out = Channel.empty()
+    ch_linx_somatic_out = channel.empty()
+    ch_linx_germline_out = channel.empty()
     if (run_config.stages.linx) {
 
         LINX_ANNOTATION(
@@ -501,7 +501,7 @@ workflow TARGETED {
     // SUBWORKFLOW: Visualise LINX annotations
     //
     // channel: [ meta, linx_visualiser_dir ]
-    ch_linx_somatic_visualiser_dir_out = Channel.empty()
+    ch_linx_somatic_visualiser_dir_out = channel.empty()
     if (run_config.stages.linx) {
 
         LINX_PLOTTING(
@@ -528,8 +528,8 @@ workflow TARGETED {
     // SUBWORKFLOW: Run Bam Tools to generate stats required for downstream processes
     //
     // channel: [ meta, metrics ]
-    ch_bamtools_somatic_out = Channel.empty()
-    ch_bamtools_germline_out = Channel.empty()
+    ch_bamtools_somatic_out = channel.empty()
+    ch_bamtools_germline_out = channel.empty()
     if (run_config.stages.bamtools) {
 
         BAMTOOLS_METRICS(
@@ -578,7 +578,7 @@ workflow TARGETED {
     // SUBWORKFLOW: Run LILAC for HLA typing and somatic CNV and SNV calling
     //
     // channel: [ meta, lilac_dir ]
-    ch_lilac_out = Channel.empty()
+    ch_lilac_out = channel.empty()
     if (run_config.stages.lilac) {
 
         LILAC_CALLING(
@@ -608,7 +608,7 @@ workflow TARGETED {
     // SUBWORKFLOW: Run PEACH to call germline haplotypes and report pharmacogenomics
     //
     // channel: [ meta, peach_dir ]
-    ch_peach_out = Channel.empty()
+    ch_peach_out = channel.empty()
     if (run_config.stages.peach) {
 
         PEACH_CALLING(
@@ -678,7 +678,7 @@ workflow TARGETED {
     //
     // TASK: Aggregate software versions
     //
-    def topic_versions = Channel.topic("versions")
+    def topic_versions = channel.topic("versions")
         .distinct()
         .branch { entry ->
             versions_file: entry instanceof Path

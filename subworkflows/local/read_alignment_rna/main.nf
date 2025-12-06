@@ -149,7 +149,7 @@ workflow READ_ALIGNMENT_RNA {
     //
     // Create process input channel
     // channel: [ meta_markdups, bam ]
-    ch_markdups_inputs = Channel.empty()
+    ch_markdups_inputs = channel.empty()
         .mix(
             WorkflowOncoanalyser.restoreMeta(channel.topic('sambamba_merge_bam'), ch_inputs),
             WorkflowOncoanalyser.restoreMeta(ch_bams_united_sorted.skip, ch_inputs),
@@ -179,7 +179,7 @@ workflow READ_ALIGNMENT_RNA {
 
     // Set outputs
     // channel: [ meta, bam, bai ]
-    ch_bam_out = Channel.empty()
+    ch_bam_out = channel.empty()
         .mix(
             ch_bams_ready,
             ch_inputs_sorted.skip.map { meta -> [meta, [], []] },

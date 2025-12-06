@@ -21,9 +21,9 @@ workflow WISP_ANALYSIS {
     purity_estimate_run_mode   //  string: [mandatory] Purity estimate run mode
 
     main:
-    // Channel for version.yml files
+    // channel for version.yml files
     // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     // Select input sources and sort
     // channel: runnable: [ meta, ... ]

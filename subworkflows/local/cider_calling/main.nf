@@ -54,7 +54,7 @@ workflow CIDER_CALLING {
 
     // Create process input channel
     // channel: [ meta_cider, bam, bai ]
-    ch_cider_inputs = Channel.empty()
+    ch_cider_inputs = channel.empty()
         .mix(
             ch_inputs_tumor_dna_sorted.runnable.map { meta, bam, bai -> [meta, Utils.getTumorDnaSample(meta), bam, bai] },
             ch_inputs_tumor_rna_sorted.runnable.map { meta, bam, bai -> [meta, Utils.getTumorRnaSample(meta), bam, bai] },

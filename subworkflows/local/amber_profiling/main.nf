@@ -88,7 +88,7 @@ workflow AMBER_PROFILING {
 
     // Set outputs, restoring original meta
     // channel: [ meta, amber_dir ]
-    ch_outputs = Channel.empty()
+    ch_outputs = channel.empty()
         .mix(
             WorkflowOncoanalyser.restoreMeta(channel.topic('amber_dir'), ch_inputs),
             ch_inputs_sorted.skip.map { meta -> [meta, []] },

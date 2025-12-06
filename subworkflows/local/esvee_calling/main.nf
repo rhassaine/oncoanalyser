@@ -49,7 +49,7 @@ workflow ESVEE_CALLING {
         }
 
     // Create process input channel
-    ch_esvee_inputs = Channel.empty()
+    ch_esvee_inputs = channel.empty()
         .mix(
             ch_inputs_sorted.runnable_tn,
             ch_inputs_sorted.runnable_to.map { it + [[], []] },
@@ -87,20 +87,20 @@ workflow ESVEE_CALLING {
     )
 
     // Set outputs, restoring original meta
-    ch_somatic_out = Channel.empty()
+    ch_somatic_out = channel.empty()
         .mix(
             WorkflowOncoanalyser.restoreMeta(channel.topic('esvee_somatic_vcf'), ch_inputs),
             ch_inputs_sorted.skip.map { meta -> [meta, [], []] }
         )
 
-    ch_germline_out = Channel.empty()
+    ch_germline_out = channel.empty()
         .mix(
             WorkflowOncoanalyser.restoreMeta(channel.topic('esvee_germline_vcf'), ch_inputs),
             ch_inputs_sorted.runnable_to.map { meta, tumor_bam, tumor_bai -> [meta, [], []] },
             ch_inputs_sorted.skip.map { meta -> [meta, [], []] },
         )
 
-    ch_unfiltered_out = Channel.empty()
+    ch_unfiltered_out = channel.empty()
         .mix(
             WorkflowOncoanalyser.restoreMeta(channel.topic('esvee_unfiltered_vcf'), ch_inputs),
             ch_inputs_sorted.skip.map { meta -> [meta, [], []] }

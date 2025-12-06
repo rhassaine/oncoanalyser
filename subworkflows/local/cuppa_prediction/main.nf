@@ -130,7 +130,7 @@ workflow CUPPA_PREDICTION {
 
     // Set outputs, restoring original meta
     // channel: [ meta, cuppa_dir ]
-    ch_outputs = Channel.empty()
+    ch_outputs = channel.empty()
         .mix(
             WorkflowOncoanalyser.restoreMeta(channel.topic('cuppa_dir'), ch_inputs),
             ch_inputs_sorted.skip.map { meta -> [meta, []] },

@@ -148,7 +148,7 @@ workflow ORANGE_REPORTING {
     // First set RNA reference files
     // NOTE(SW): since the RNA reference files are provided as channels, I seem to be only able to include via channel ops
     // channel: [ meta, tbt_metrics_dir, nbt_metrics_dir, tsage_dir, nsage_dir, tsage_append, nsage_append, purple_dir, tlinx_anno_dir, tlinx_plot_dir, nlinx_anno_dir, virusinterpreter_dir, chord_dir, sigs_dir, lilac_dir, cuppa_dir, peach_dir, isofox_dir, isofox_alt_sj, isofox_gene_distribution ]
-    ch_inputs_runnable = Channel.empty()
+    ch_inputs_runnable = channel.empty()
         .mix(
             ch_inputs_sorted.runnable_dna.map { d -> d + [[], []] },
             ch_inputs_sorted.runnable_dna_and_rna
