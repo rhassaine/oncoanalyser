@@ -145,31 +145,3 @@ workflow {
     THE END
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-
-
-
-//#!/usr/bin/env nextflow
-//
-//
-//workflow {
-//
-//  ch_inputs = Channel.of(
-//    [id: 'a', f1: 'afile1', f2: 'afile2'],
-//    [id: 'b', f1: 'bfile1', f2: 'bfile2'],
-//  )
-//
-//  ch_file1 = ch_inputs.map { meta -> [meta, meta.f1] }
-//  ch_file2 = ch_inputs.map { meta -> [meta, meta.f2] }
-//
-//  ch_file1.view()
-//  ch_file2.view()
-//
-//  WorkflowOncoanalyser.groupByMeta(
-//    ch_file1,
-//    ch_file2,
-//  )
-//
-//
-//
-//}
-
