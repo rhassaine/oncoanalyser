@@ -2,8 +2,6 @@
 // AMBER determines b-allele frequencies at predetermined positions
 //
 
-import Constants
-import Utils
 
 include { AMBER } from '../../../modules/local/amber/main'
 

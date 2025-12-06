@@ -94,9 +94,8 @@
                     "fa_icon": "fas fa-diagram-project"
                 },
                 "create_stub_placeholders": {
-                    "type": "boolean",
+                    "type": "string",
                     "description": "Create placeholders for reference data during stub run.",
-                    "default": false,
                     "fa_icon": "fas fa-diagram-project"
                 },
                 "max_fastq_records": {

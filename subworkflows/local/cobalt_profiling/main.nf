@@ -2,8 +2,6 @@
 // COBALT calculates read ratios between tumor and normal samples
 //
 
-import Constants
-import Utils
 
 include { COBALT } from '../../../modules/local/cobalt/run/main'
 
@@ -56,7 +54,7 @@ workflow COBALT_PROFILING {
     // channel: [ meta, tumor_bam, tumor_bai, normal_bam, normal_bai, diploid_bed ]
     ch_inputs_runnable = Channel.empty()
         .mix(
-            ch_inputs_sorted.runnable_tn.map { [*it, []] },
+            ch_inputs_sorted.runnable_tn.map { it + [[]] },
             ch_inputs_sorted.runnable_to.combine(diploid_bed),
         )
 
@@ -64,7 +62,7 @@ workflow COBALT_PROFILING {
     // channel: sample_data: [ meta_cobalt, tumor_bam, normal_bam, tumor_bai, normal_bai ]
     // channel: diploid_bed: [ diploid_bed ]
     ch_cobalt_inputs = ch_inputs_runnable
-        .multiMap { meta, tumor_bam, tumor_bai, normal_bam, normal_bai, diploid_bed ->
+        .multiMap { meta, tumor_bam, tumor_bai, normal_bam, normal_bai, _diploid_bed ->
 
             def meta_cobalt = [
                 key: meta.group_id,
@@ -77,7 +75,7 @@ workflow COBALT_PROFILING {
             }
 
             sample_data: [meta_cobalt, tumor_bam, normal_bam, tumor_bai, normal_bai]
-            diploid_bed: diploid_bed
+            diploid_bed: _diploid_bed
         }
 
     // Run process

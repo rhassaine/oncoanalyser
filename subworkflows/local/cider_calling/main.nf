@@ -2,8 +2,6 @@
 // CIDER identifies and annotates CDR3 sequences of IG and TCR loci
 //
 
-import Constants
-import Utils
 
 include { CIDER } from '../../../modules/local/cider/main'
 

@@ -2,8 +2,6 @@
 // TEAL performs characterisation of telomeric features and rearrangements
 //
 
-import Constants
-import Utils
 
 include { TEAL_PREP     } from '../../../modules/local/teal/prep/main'
 include { TEAL_PIPELINE } from '../../../modules/local/teal/pipeline/main'
@@ -83,7 +81,7 @@ workflow TEAL_CHARACTERISATION {
     // Flatten TEAL_PREP output
     // channel: [ meta, teal_bam, teal_bai ]
     ch_tumor_teal_bam = WorkflowOncoanalyser.restoreMeta(TEAL_PREP.out.tumor_teal_bam, ch_inputs)
-        .map { meta, bam_bai -> [meta, *bam_bai] }
+        .map { meta, bam_bai -> [meta] + bam_bai }
 
     ch_normal_teal_bam_placeholder = WorkflowOncoanalyser.restoreMeta(
         ch_teal_prep_inputs
@@ -93,7 +91,7 @@ workflow TEAL_CHARACTERISATION {
     )
 
     ch_normal_teal_bam = WorkflowOncoanalyser.restoreMeta(TEAL_PREP.out.normal_teal_bam, ch_inputs)
-        .map { meta, bam_bai -> [meta, *bam_bai] }
+        .map { meta, bam_bai -> [meta] + bam_bai }
         .mix(ch_normal_teal_bam_placeholder)
 
     //

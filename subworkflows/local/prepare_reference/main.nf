@@ -2,9 +2,8 @@
 // Prepare reference data as required
 //
 
-import Constants
 
-include { BWAMEM2_INDEX         } from '../../../modules/nf-core/bwamem2/index/main'
+include { _BWAMEM2_INDEX         } from '../../../modules/nf-core/bwamem2/index/main'
 include { BWA_INDEX             } from '../../../modules/nf-core/bwa/index/main'
 include { SAMTOOLS_DICT         } from '../../../modules/nf-core/samtools/dict/main'
 include { SAMTOOLS_FAIDX        } from '../../../modules/nf-core/samtools/faidx/main'
@@ -43,10 +42,19 @@ workflow PREPARE_REFERENCE {
     //
     ch_genome_version = Channel.value(params.genome_version)
 
+    println "z ${params.ref_data_genome_fasta}"
+    println "z ${params.ref_data_genome_fasta}"
+    println "z ${params.ref_data_genome_fasta}"
+
+/*
+
     ch_genome_fasta = Channel.empty()
     if (prep_config.require_fasta) {
         ch_genome_fasta = Channel.fromPath(params.ref_data_genome_fasta)
     }
+
+
+
 
     ch_genome_fai = Channel.empty()
     if (prep_config.require_fai) {
@@ -89,12 +97,12 @@ workflow PREPARE_REFERENCE {
 
         if (!params.ref_data_genome_bwamem2_index) {
 
-            BWAMEM2_INDEX(
+            _BWAMEM2_INDEX(
                 ch_genome_fasta,
                 params.ref_data_genome_alt ? file(params.ref_data_genome_alt) : [],
             )
-            ch_genome_bwamem2_index = BWAMEM2_INDEX.out.index
-            ch_versions = ch_versions.mix(BWAMEM2_INDEX.out.versions)
+            ch_genome_bwamem2_index = _BWAMEM2_INDEX.out.index
+            ch_versions = ch_versions.mix(_BWAMEM2_INDEX.out.versions)
 
         } else if (params.ref_data_genome_bwamem2_index.endsWith('.tar.gz')) {
 
@@ -212,7 +220,7 @@ workflow PREPARE_REFERENCE {
 
             def run_mode = Utils.getEnumFromString(params.mode, Constants.RunMode)
 
-            if (run_mode !== Constants.RunMode.PANEL_RESOURCE_CREATION) {
+            if (run_mode != Constants.RunMode.PANEL_RESOURCE_CREATION) {
                 log.info "Using custom driver gene panel: ${params.driver_gene_panel}"
             }
 
@@ -292,6 +300,13 @@ workflow PREPARE_REFERENCE {
     panel_data           = ch_panel_data                   // map:  Panel data paths
 
     versions             = ch_versions                     // channel: [ versions.yml ]
+
+
+
+*/
+
+
+
 }
 
 def getRefFileChannel(key) {

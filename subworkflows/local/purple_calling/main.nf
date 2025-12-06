@@ -2,8 +2,6 @@
 // PURPLE is a CNV caller that infers purity/ploidy and recovers low-confidence SVs
 //
 
-import Constants
-import Utils
 
 include { PURPLE } from '../../../modules/local/purple/main'
 
@@ -65,7 +63,7 @@ workflow PURPLE_CALLING {
                 Utils.selectCurrentOrExisting(d[8], meta, Constants.INPUT.PAVE_VCF_NORMAL),
             ]
 
-            return [meta, *inputs]
+            return [meta] + inputs
         }
 
     // Sort inputs
@@ -102,7 +100,7 @@ workflow PURPLE_CALLING {
                 meta_purple.normal_id = Utils.getNormalDnaSampleName(meta)
             }
 
-            return [meta_purple, *inputs]
+            return [meta_purple] + inputs
 
         }
 

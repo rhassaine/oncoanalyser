@@ -2,8 +2,6 @@
 // Align RNA reads
 //
 
-import Constants
-import Utils
 
 include { GATK4_MARKDUPLICATES } from '../../../modules/nf-core/gatk4/markduplicates/main'
 include { SAMBAMBA_MERGE       } from '../../../modules/local/sambamba/merge/main'
@@ -61,10 +59,8 @@ workflow READ_ALIGNMENT_RNA {
     // channel: [ meta_star, fastq_fwd, fastq_rev ]
     ch_star_inputs = ch_fastq_inputs
         .map { meta_fastq, fastq_fwd, fastq_rev ->
-            def meta_star = [
-                *:meta_fastq,
-                read_group: "${meta_fastq.sample_id}.${meta_fastq.library_id}.${meta_fastq.lane}",
-            ]
+
+            def meta_star = meta_fastq + [read_group: "${meta_fastq.sample_id}.${meta_fastq.library_id}.${meta_fastq.lane}"]
 
             return [meta_star, fastq_fwd, fastq_rev]
         }
@@ -84,10 +80,8 @@ workflow READ_ALIGNMENT_RNA {
     // channel: [ meta_sort, bam ]
     ch_sort_inputs = STAR_ALIGN.out.bam
         .map { meta_star, bam ->
-            def meta_sort = [
-                *:meta_star,
-                prefix: meta_star.read_group,
-            ]
+
+            def meta_sort = meta_star + [prefix: meta_star.read_group]
 
             return [meta_sort, bam]
         }
@@ -125,9 +119,7 @@ workflow READ_ALIGNMENT_RNA {
             def group_size = count_tuple[1]
             def (meta_bam, bam) = bam_tuple
 
-            def meta_group = [
-                *:meta_bam,
-            ]
+            def meta_group = meta_bam
 
             return tuple(groupKey(meta_group, group_size), bam)
         }

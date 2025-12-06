@@ -2,8 +2,6 @@
 // SAGE append adds additional sample data to an existing SAGE VCF
 //
 
-import Constants
-import Utils
 
 include { SAGE_APPEND as SAGE_APPEND_SOMATIC  } from '../../../modules/local/sage/append/main'
 include { SAGE_APPEND as SAGE_APPEND_GERMLINE } from '../../../modules/local/sage/append/main'
@@ -33,7 +31,7 @@ workflow SAGE_APPEND {
     ch_versions = Channel.empty()
 
     def run_mode = Utils.getEnumFromString(params.mode, Constants.RunMode)
-    def purity_estimate_mode = run_mode === Constants.RunMode.PURITY_ESTIMATE
+    def purity_estimate_mode = run_mode == Constants.RunMode.PURITY_ESTIMATE
 
     // Select input sources and sort
     // channel: runnable: [ meta, tumor_dna_bam, tumor_dna_bai, [tumor_dna_redux_tsv, ...], tumor_rna_bam, tumor_rna_bai, purple_dir ]

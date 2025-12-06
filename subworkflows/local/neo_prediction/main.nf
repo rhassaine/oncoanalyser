@@ -2,8 +2,6 @@
 // Neo identifies and scores neoepitopes
 //
 
-import Constants
-import Utils
 
 include { NEO_ANNOTATE_FUSIONS } from '../../../modules/local/neo/annotate_fusions/main'
 include { NEO_FINDER           } from '../../../modules/local/neo/finder/main'
@@ -52,7 +50,7 @@ workflow NEO_PREDICTION {
                 Utils.selectCurrentOrExisting(linx_annotation_dir, meta, Constants.INPUT.LINX_ANNO_DIR_TUMOR),
             ]
 
-            return [meta, *inputs]
+            return [meta] + inputs
         }
 
     // Sort inputs
@@ -200,7 +198,7 @@ workflow NEO_PREDICTION {
                 annotated_fusions,
             ]
 
-            return [meta_scorer, *inputs]
+            return [meta_scorer] + inputs
         }
         .branch { meta, isofox_dir, purple_dir, sage_somatic_append, lilac_dir, neo_finder_dir, annotated_fusions ->
             runnable: purple_dir && neo_finder_dir && lilac_dir

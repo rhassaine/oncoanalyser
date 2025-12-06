@@ -79,6 +79,6 @@ def getSampleName(meta, tumor_bam, normal_bam) {
     } else if (normal_bam) {
         return meta.normal_id
     } else {
-        Sys.exit(1)
+        exit(1)
     }
 }

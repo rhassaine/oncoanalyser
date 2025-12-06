@@ -2,8 +2,6 @@
 // CUPPA predicts tissue of origin from molecular profiles
 //
 
-import Constants
-import Utils
 
 include { CUPPA } from '../../../modules/local/cuppa/main'
 
@@ -43,7 +41,7 @@ workflow CUPPA_PREDICTION {
                 Utils.selectCurrentOrExisting(virusinterpreter_dir, meta, Constants.INPUT.VIRUSINTERPRETER_DIR),
             ]
 
-            return [meta, *inputs]
+            return [meta] + inputs
         }
 
     // Sort inputs

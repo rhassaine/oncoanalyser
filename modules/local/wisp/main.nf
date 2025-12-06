@@ -57,8 +57,8 @@ process WISP {
     # Put AMBER outputs from all samples into the same dir
     if [[ -n "${amber_dir_arg}" ]]; then
         mkdir -p amber_dir__prepared/;
-        for fp in ${primary_amber_dir}/*.amber.*; do ln -sf ../\$fp amber_dir__prepared/; done
-        for fp in ${sample_amber_dir}/*.amber.*;  do ln -sf ../\$fp amber_dir__prepared/; done
+        for fp in primary_amber_dir/*.amber.*; do ln -sf ../\$fp amber_dir__prepared/; done
+        for fp in sample_amber_dir/*.amber.*;  do ln -sf ../\$fp amber_dir__prepared/; done
     fi;
 
     # Run WISP

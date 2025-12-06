@@ -2,8 +2,6 @@
 // Align DNA reads
 //
 
-import Constants
-import Utils
 
 include { BWAMEM2_ALIGN  } from '../../../modules/local/bwa-mem2/mem/main'
 include { FASTP          } from '../../../modules/local/fastp/main'
@@ -118,11 +116,7 @@ workflow READ_ALIGNMENT_DNA {
                         assert split_fwd == split_rev
 
                         // NOTE(SW): split allows meta_fastq_ready to be unique, which is required during reunite below
-                        def meta_fastq_ready = [
-                            *:meta_fastq,
-                            id: "${meta_fastq.id}_${split_fwd}",
-                            split: split_fwd,
-                        ]
+                        def meta_fastq_ready = meta_fastq + [id: "${meta_fastq.id}_${split_fwd}", split: split_fwd]
 
                         return [meta_fastq_ready, fwd, rev]
                     }
@@ -138,10 +132,7 @@ workflow READ_ALIGNMENT_DNA {
         ch_fastqs_ready = ch_fastq_source
             .map { meta_fastq, fastq_fwd, fastq_rev ->
 
-                def meta_fastq_ready = [
-                    *:meta_fastq,
-                    split: null,
-                ]
+                def meta_fastq_ready = meta_fastq + [split: null]
 
                 return [meta_fastq_ready, fastq_fwd, fastq_rev]
             }
@@ -156,10 +147,7 @@ workflow READ_ALIGNMENT_DNA {
     ch_bwamem2_inputs = ch_fastqs_ready
         .map { meta_fastq_ready, fastq_fwd, fastq_rev ->
 
-            def meta_bwamem2 = [
-                *:meta_fastq_ready,
-                read_group: "${meta_fastq_ready.sample_id}.${meta_fastq_ready.library_id}.${meta_fastq_ready.lane}",
-            ]
+            def meta_bwamem2 = meta_fastq_ready + [read_group: "${meta_fastq_ready.sample_id}.${meta_fastq_ready.library_id}.${meta_fastq_ready.lane}"]
 
             return [meta_bwamem2, fastq_fwd, fastq_rev]
         }
@@ -201,9 +189,7 @@ workflow READ_ALIGNMENT_DNA {
             def group_size = count_tuple[1]
             def (meta_bam, bam, bai) = bam_tuple
 
-            def meta_group = [
-                *:meta_bam,
-            ]
+            def meta_group = meta_bam
 
             return tuple(groupKey(meta_group, group_size), bam, bai)
         }

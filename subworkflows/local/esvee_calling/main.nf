@@ -2,10 +2,6 @@
 // ESVEE detects structural variants, and reports breakends and breakpoints.
 //
 
-import Constants
-import Utils
-
-import java.nio.channels.Channel
 
 include { ESVEE } from '../../../modules/local/esvee/main'
 
@@ -59,7 +55,7 @@ workflow ESVEE_CALLING {
     ch_esvee_inputs = Channel.empty()
         .mix(
             ch_inputs_sorted.runnable_tn,
-            ch_inputs_sorted.runnable_to.map { [*it, [], []] },
+            ch_inputs_sorted.runnable_to.map { it + [[], []] },
         )
         .map { meta, tumor_bam, tumor_bai, normal_bam, normal_bai ->
 

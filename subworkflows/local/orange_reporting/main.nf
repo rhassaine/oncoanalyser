@@ -2,8 +2,6 @@
 // ORANGE collates outputs of hmftools into a static PDF report
 //
 
-import Constants
-import Utils
 
 include { ORANGE } from '../../../modules/local/orange/main'
 
@@ -122,7 +120,7 @@ workflow ORANGE_REPORTING {
                 Utils.selectCurrentOrExisting(inputs[16], meta, Constants.INPUT.ISOFOX_DIR),
             ]
 
-            return [meta, *inputs_selected]
+            return [meta] + inputs_selected
         }
 
     // Sort inputs
@@ -153,7 +151,7 @@ workflow ORANGE_REPORTING {
     // channel: [ meta, tbt_metrics_dir, nbt_metrics_dir, tsage_dir, nsage_dir, tsage_append, nsage_append, purple_dir, tlinx_anno_dir, tlinx_plot_dir, nlinx_anno_dir, virusinterpreter_dir, chord_dir, sigs_dir, lilac_dir, cuppa_dir, peach_dir, isofox_dir, isofox_alt_sj, isofox_gene_distribution ]
     ch_inputs_runnable = Channel.empty()
         .mix(
-            ch_inputs_sorted.runnable_dna.map { d -> [*d, [], []] },
+            ch_inputs_sorted.runnable_dna.map { d -> d + [[], []] },
             ch_inputs_sorted.runnable_dna_and_rna
                 .combine(isofox_alt_sj)
                 .combine(isofox_gene_distribution),
@@ -169,8 +167,8 @@ workflow ORANGE_REPORTING {
             def meta = d[0]
             def inputs = d[1..-3]
 
-            def isofox_alt_sj = d[-2]
-            def isofox_gene_distribution = d[-1]
+            def _isofox_alt_sj = d[-2]
+            def _isofox_gene_distribution = d[-1]
 
             def meta_orange = [
                 key: meta.group_id,
@@ -196,7 +194,7 @@ workflow ORANGE_REPORTING {
             // SAGE append germline is only required when normal DNA is present
             def rna_tumor_input_indexes_ready
             if (has_dna_normal) {
-                rna_tumor_input_indexes_ready = [*rna_tumor_input_indexes, sage_germline_append_index]
+                rna_tumor_input_indexes_ready = rna_tumor_input_indexes + [sage_germline_append_index]
             } else {
                 rna_tumor_input_indexes_ready = rna_tumor_input_indexes.clone()
             }
@@ -237,9 +235,9 @@ workflow ORANGE_REPORTING {
 
             assert inputs_selected.size() == input_expected_size
 
-            sample_data: [meta_orange, *inputs_selected]
-            isofox_alt_sj: isofox_alt_sj
-            isofox_gene_distribution: isofox_gene_distribution
+            sample_data: [meta_orange] + inputs_selected
+            isofox_alt_sj: _isofox_alt_sj
+            isofox_gene_distribution: _isofox_gene_distribution
         }
 
     // Run process

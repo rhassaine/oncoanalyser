@@ -2,8 +2,6 @@
 // VIRUSBreakend and Virus Interpreter identify viral content and insertion sites
 //
 
-import Constants
-import Utils
 
 include { VIRUSBREAKEND    } from '../../../modules/local/virusbreakend/main'
 include { VIRUSINTERPRETER } from '../../../modules/local/virusinterpreter/main'
@@ -100,7 +98,7 @@ workflow VIRUSBREAKEND_CALLING {
                 Utils.selectCurrentOrExisting(somatic_metrics, meta, Constants.INPUT.BAMTOOLS_DIR_TUMOR),
             ]
 
-            return [meta, *inputs]
+            return [meta] + inputs
         }
 
     // Sort inputs
@@ -127,7 +125,7 @@ workflow VIRUSBREAKEND_CALLING {
                 sample_id: Utils.getTumorDnaSampleName(meta),
             ]
 
-            return [meta_virus, *inputs]
+            return [meta_virus] + inputs
         }
 
     // Run process

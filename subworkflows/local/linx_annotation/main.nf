@@ -2,8 +2,6 @@
 // LINX annotates and interprets structural variants
 //
 
-import Constants
-import Utils
 
 include { LINX_GERMLINE } from '../../../modules/local/linx/germline/main'
 include { LINX_SOMATIC  } from '../../../modules/local/linx/somatic/main'

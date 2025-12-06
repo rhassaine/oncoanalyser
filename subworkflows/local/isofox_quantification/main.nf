@@ -2,8 +2,6 @@
 // Isofox estimates transcript abundance, detects novel SJs, and identifies fusion events
 //
 
-import Constants
-import Utils
 
 include { ISOFOX } from '../../../modules/local/isofox/run/main'
 

@@ -2,8 +2,6 @@
 // PAVE annotates somatic and germline variant VCFs with gene and transcript coding and protein effects
 //
 
-import Constants
-import Utils
 
 include { PAVE_GERMLINE } from '../../../modules/local/pave/germline/main'
 include { PAVE_SOMATIC  } from '../../../modules/local/pave/somatic/main'

@@ -2,8 +2,6 @@
 // Sigs fits trinucleotide signature definitions with sample SNV counts
 //
 
-import Constants
-import Utils
 
 include { SIGS } from '../../../modules/local/sigs/main'
 

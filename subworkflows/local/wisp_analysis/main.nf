@@ -2,8 +2,6 @@
 // WISP estimates tumor purity in longitudinal samples using WGS data of the primary
 //
 
-import Constants
-import Utils
 
 include { WISP } from '../../../modules/local/wisp/main'
 
@@ -37,13 +35,13 @@ workflow WISP_ANALYSIS {
     )
         .branch { meta, amber_dir, cobalt_dir, sage_append_dir ->
 
-            primary_purple_dir = Utils.getInput(meta, Constants.INPUT.PURPLE_DIR)
-            primary_amber_dir = Utils.getInput(meta, Constants.INPUT.AMBER_DIR)
+            def primary_purple_dir = Utils.getInput(meta, Constants.INPUT.PURPLE_DIR)
+            def primary_amber_dir = Utils.getInput(meta, Constants.INPUT.AMBER_DIR)
 
             def purity_estimate_mode = Utils.getEnumFromString(params.purity_estimate_mode, Constants.RunMode)
 
             def runnable
-            if (purity_estimate_mode === Constants.RunMode.WGTS) {
+            if (purity_estimate_mode == Constants.RunMode.WGTS) {
                 runnable = primary_purple_dir && primary_amber_dir && sage_append_dir && amber_dir && cobalt_dir
             } else {
                 runnable = primary_purple_dir && sage_append_dir

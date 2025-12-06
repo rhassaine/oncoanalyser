@@ -7,9 +7,6 @@ import static groovy.io.FileType.FILES
 import nextflow.Channel
 import nextflow.Nextflow
 
-import Constants
-import Processes
-import Utils
 
 class WorkflowOncoanalyser {
 
@@ -30,7 +27,7 @@ class WorkflowOncoanalyser {
                 return d
             }
 
-        r = Channel.empty().mix(*r)
+        r = Channel.empty().mix(r as Object[])
 
         // NOTE(SW): As of Nextflow 22.10.6, groupTuple requires a matching meta /and/ an additional element to complete without error, these placeholders are filtered in the groupByMeta function
         r = r.filter { it[0] != Constants.PLACEHOLDER_META }
@@ -44,7 +41,7 @@ class WorkflowOncoanalyser {
                 def values_list = values_map
                     .sort(false) { it.position }
                     .collect { it.values }
-                return [meta, *values_list]
+                return [meta] + values_list
             }
 
         if (named_args.getOrDefault('flatten', true)) {
@@ -55,7 +52,7 @@ class WorkflowOncoanalyser {
                 r = r.map { data ->
                     def meta = data[0]
                     def inputs = data[1..-1].collectMany { it }
-                    return [meta, *inputs]
+                    return [meta] + inputs
                 }
             } else {
                 System.err.println "ERROR: got bad flatten_mode: ${flatten_mode}"
@@ -68,7 +65,7 @@ class WorkflowOncoanalyser {
 
     // NOTE(SW): function signature required to catch where no named arguments are passed
     public static groupByMeta(... channels) {
-        return groupByMeta([:], *channels)
+        return groupByMeta([:], channels as Object[])
     }
 
     public static getInput(Map named_args, meta, key) {
@@ -109,7 +106,7 @@ class WorkflowOncoanalyser {
             .map { b, a ->
                 def (ka, values) = a
                 def (kb, meta) = b
-                return [meta, *values]
+                return [meta] + values
             }
     }
 
@@ -120,7 +117,7 @@ class WorkflowOncoanalyser {
 
     public static restoreMeta(ch_output, ch_metas) {
         // NOTE(SW): ch_output must contain a Map in the first position with a key named 'key' that
-        // contains the corresponding meta.id value, for example: [val(meta_process), *process_outputs]
+        // contains the corresponding meta.id value, for example: [val(meta_process), process_outputs as Object[]]
         joinMeta([:], ch_output, ch_metas)
     }
 }

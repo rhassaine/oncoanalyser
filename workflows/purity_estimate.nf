@@ -1,6 +1,3 @@
-import Constants
-import Processes
-import Utils
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -144,9 +141,9 @@ workflow PURITY_ESTIMATE {
     //
     // channel: [ meta, amber_dir ]
     ch_amber_out = Channel.empty()
-    if (run_config.stages.amber && purity_estimate_run_mode === Constants.RunMode.WGTS) {
+    if (run_config.stages.amber && purity_estimate_run_mode == Constants.RunMode.WGTS) {
 
-        tumor_min_depth = purity_estimate_run_mode === Constants.RunMode.WGTS ? 1 : []
+        tumor_min_depth = purity_estimate_run_mode == Constants.RunMode.WGTS ? 1 : []
 
         AMBER_PROFILING(
             ch_inputs,
@@ -174,7 +171,7 @@ workflow PURITY_ESTIMATE {
     //
     // channel: [ meta, cobalt_dir ]
     ch_cobalt_out = Channel.empty()
-    if (run_config.stages.cobalt && purity_estimate_run_mode === Constants.RunMode.WGTS) {
+    if (run_config.stages.cobalt && purity_estimate_run_mode == Constants.RunMode.WGTS) {
 
         COBALT_PROFILING(
             ch_inputs,
@@ -184,7 +181,7 @@ workflow PURITY_ESTIMATE {
             hmf_data.gc_profile,
             hmf_data.diploid_bed,
             [],  // panel_target_region_normalisation
-            purity_estimate_run_mode === Constants.RunMode.TARGETED,  // targeted_mode
+            purity_estimate_run_mode == Constants.RunMode.TARGETED,  // targeted_mode
         )
 
         ch_versions = ch_versions.mix(COBALT_PROFILING.out.versions)
@@ -215,7 +212,7 @@ workflow PURITY_ESTIMATE {
             ref_data.genome_fai,
             ref_data.genome_dict,
             false,  // run_germline
-            purity_estimate_run_mode === Constants.RunMode.TARGETED,  // targeted_mode
+            purity_estimate_run_mode == Constants.RunMode.TARGETED,  // targeted_mode
         )
 
         ch_versions = ch_versions.mix(SAGE_APPEND.out.versions)
@@ -239,7 +236,7 @@ workflow PURITY_ESTIMATE {
             ch_sage_somatic_append_out,
             ref_data.genome_fasta,
             ref_data.genome_fai,
-            purity_estimate_run_mode === Constants.RunMode.TARGETED,  // targeted_mode
+            purity_estimate_run_mode == Constants.RunMode.TARGETED,  // targeted_mode
         )
 
         ch_versions = ch_versions.mix(WISP_ANALYSIS.out.versions)

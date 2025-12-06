@@ -2,10 +2,6 @@
 // SAGE is a precise and highly sensitive somatic SNV, MNV and small INDEL caller
 //
 
-import Constants
-import Utils
-
-import java.nio.channels.Channel
 
 include { SAGE_GERMLINE } from '../../../modules/local/sage/germline/main'
 include { SAGE_SOMATIC  } from '../../../modules/local/sage/somatic/main'

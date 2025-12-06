@@ -57,7 +57,7 @@ process ORANGE {
     def pipeline_version_str = pipeline_version ?: 'not specified'
 
     def run_mode = Utils.getEnumFromString(params.mode, Constants.RunMode);
-    def experiment_type = (run_mode === Constants.RunMode.WGTS) ? 'WGS' : 'PANEL'
+    def experiment_type = (run_mode == Constants.RunMode.WGTS) ? 'WGS' : 'PANEL'
 
     def virus_dir_arg = virusinterpreter_dir ? "-virus_dir ${virusinterpreter_dir}" : ''
     def lilac_dir_arg = lilac_dir ? "-lilac_dir ${lilac_dir}" : ''

@@ -2,8 +2,6 @@
 // CHORD predicts HR status for tumor samples
 //
 
-import Constants
-import Utils
 
 include { CHORD } from '../../../modules/local/chord/main'
 

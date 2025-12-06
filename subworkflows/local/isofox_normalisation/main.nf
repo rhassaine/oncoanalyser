@@ -2,8 +2,6 @@
 // ISOFOX normalisation prepares panel-specific TPM normalisation resource
 //
 
-import Constants
-import Utils
 
 include { ISOFOX_PANEL_NORMALISATION } from '../../../modules/local/isofox/panel_normalisation/main'
 

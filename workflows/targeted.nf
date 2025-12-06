@@ -1,6 +1,3 @@
-import Constants
-import Processes
-import Utils
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -50,7 +47,7 @@ workflow TARGETED {
         params.isofox_tpm_norm,
     ]
 
-    for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
+    //for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
     // Create channel for versions
     // channel: [ versions.yml ]
@@ -179,7 +176,7 @@ workflow TARGETED {
     isofox_gene_ids = params.isofox_gene_ids ? file(params.isofox_gene_ids) : panel_data.isofox_gene_ids
     isofox_tpm_norm = params.isofox_tpm_norm ? file(params.isofox_tpm_norm) : panel_data.isofox_tpm_norm
 
-    isofox_read_length = params.isofox_read_length !== null ? params.isofox_read_length : Constants.DEFAULT_ISOFOX_READ_LENGTH_TARGETED
+    isofox_read_length = params.isofox_read_length != null ? params.isofox_read_length : Constants.DEFAULT_ISOFOX_READ_LENGTH_TARGETED
 
     // channel: [ meta, isofox_dir ]
     ch_isofox_out = Channel.empty()

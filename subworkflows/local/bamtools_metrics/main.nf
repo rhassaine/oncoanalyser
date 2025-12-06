@@ -2,8 +2,6 @@
 // Bam Tools calculates summary statistics for BAMs
 //
 
-import Constants
-import Utils
 
 include { BAMTOOLS } from '../../../modules/local/bamtools/main'
 

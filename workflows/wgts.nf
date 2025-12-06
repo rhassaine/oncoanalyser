@@ -1,6 +1,3 @@
-import Constants
-import Processes
-import Utils
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -54,7 +51,7 @@ workflow WGTS {
         params.isofox_gc_ratios,
     ]
 
-    for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
+    //for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
     // Create channel for versions
     // channel: [ versions.yml ]
@@ -64,19 +61,26 @@ workflow WGTS {
     // channel: [ meta ]
     ch_inputs = Channel.fromList(inputs)
 
+
+
     // Set up reference data, assign more human readable variables
     prep_config = WorkflowMain.getPrepConfigFromSamplesheet(run_config)
     PREPARE_REFERENCE(
         prep_config,
         run_config,
     )
+
+
+
+/*
+
     ref_data = PREPARE_REFERENCE.out
     hmf_data = PREPARE_REFERENCE.out.hmf_data
 
     ch_versions = ch_versions.mix(PREPARE_REFERENCE.out.versions)
 
     // Set GRIDSS config
-    gridss_config = params.gridss_config !== null ? file(params.gridss_config) : hmf_data.gridss_config
+    gridss_config = params.gridss_config != null ? file(params.gridss_config) : hmf_data.gridss_config
 
     //
     // SUBWORKFLOW: Run read alignment to generate BAMs
@@ -181,7 +185,7 @@ workflow WGTS {
 
     isofox_counts = params.isofox_counts ? file(params.isofox_counts) : hmf_data.isofox_counts
     isofox_gc_ratios = params.isofox_gc_ratios ? file(params.isofox_gc_ratios) : hmf_data.isofox_gc_ratios
-    isofox_read_length = params.isofox_read_length !== null ? params.isofox_read_length : Constants.DEFAULT_ISOFOX_READ_LENGTH_WTS
+    isofox_read_length = params.isofox_read_length != null ? params.isofox_read_length : Constants.DEFAULT_ISOFOX_READ_LENGTH_WTS
 
     // channel: [ meta, isofox_dir ]
     ch_isofox_out = Channel.empty()
@@ -853,6 +857,11 @@ workflow WGTS {
             sort: true,
             newLine: true,
         )
+
+
+*/
+
+
 }
 
 /*
