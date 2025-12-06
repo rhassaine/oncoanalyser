@@ -9,29 +9,27 @@ include { SAGE_APPEND as SAGE_APPEND_GERMLINE } from '../../../modules/local/sag
 workflow SAGE_APPEND {
     take:
     // Sample data
-    ch_inputs         // channel: [mandatory] [ meta ]
-    ch_purple_dir     // channel: [mandatory] [ meta, purple_dir ]
-    ch_tumor_dna_bam  // channel: [mandatory] [ meta, bam, bai ]
-    ch_tumor_dna_tsv  // channel: [mandatory] [ meta, dup_freq_tsv, jitter_tsv, ms_tsv ]
-    ch_tumor_rna_bam  // channel: [mandatory] [ meta, bam, bai ]
+    ch_inputs            // channel: [mandatory] [ meta ]
+    ch_purple_dir        // channel: [mandatory] [ meta, purple_dir ]
+    ch_tumor_dna_bam     // channel: [mandatory] [ meta, bam, bai ]
+    ch_tumor_dna_tsv     // channel: [mandatory] [ meta, dup_freq_tsv, jitter_tsv, ms_tsv ]
+    ch_tumor_rna_bam     // channel: [mandatory] [ meta, bam, bai ]
 
     // Reference data
-    genome_fasta     // channel: [mandatory] /path/to/genome_fasta
-    genome_version   // channel: [mandatory] genome version
-    genome_fai       // channel: [mandatory] /path/to/genome_fai
-    genome_dict      // channel: [mandatory] /path/to/genome_dict
+    genome_fasta         // channel: [mandatory] /path/to/genome_fasta
+    genome_version       // channel: [mandatory] genome version
+    genome_fai           // channel: [mandatory] /path/to/genome_fai
+    genome_dict          // channel: [mandatory] /path/to/genome_dict
 
     // Params
-    enable_germline  // boolean: [mandatory] Enable germline
-    targeted_mode    // boolean: [mandatory] Set targeted mode
+    enable_germline      // boolean: [mandatory] Enable germline
+    targeted_mode        // boolean: [mandatory] Set targeted mode
+    purity_estimate_mode // boolean: [mandatory] Set purity estimate mode
 
     main:
     // Channel for version.yml files
     // channel: [ versions.yml ]
     ch_versions = Channel.empty()
-
-    def run_mode = Utils.getEnumFromString(params.mode, Constants.RunMode)
-    def purity_estimate_mode = run_mode == Constants.RunMode.PURITY_ESTIMATE
 
     // Select input sources and sort
     // channel: runnable: [ meta, tumor_dna_bam, tumor_dna_bai, [tumor_dna_redux_tsv, ...], tumor_rna_bam, tumor_rna_bai, purple_dir ]

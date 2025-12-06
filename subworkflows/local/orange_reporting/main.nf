@@ -39,6 +39,9 @@ workflow ORANGE_REPORTING {
     isofox_alt_sj               // channel: [optional]  /path/to/isofox_alt_sj
     isofox_gene_distribution    // channel: [optional]  /path/to/isofox_gene_distribution
 
+    // Params
+    experiment_type             //  string: [mandatory] Experiment type for report (WGS, PANEL)
+
     main:
     // Channel for version.yml files
     // channel: [ versions.yml ]
@@ -253,6 +256,7 @@ workflow ORANGE_REPORTING {
         ensembl_data_resources,
         ch_orange_inputs.isofox_alt_sj,
         ch_orange_inputs.isofox_gene_distribution,
+        experiment_type,
         '2.3.0 [oncoanalyser]',
     )
 

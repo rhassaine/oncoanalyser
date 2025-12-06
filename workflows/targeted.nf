@@ -453,6 +453,7 @@ workflow TARGETED {
             ref_data.genome_dict,
             true,  // enable_germline
             true,  // targeted_mode
+            false,  // purity_estimate_mode
         )
 
         ch_versions = ch_versions.mix(SAGE_APPEND.out.versions)
@@ -668,6 +669,7 @@ workflow TARGETED {
             hmf_data.sigs_etiology,
             hmf_data.alt_sj_distribution,
             hmf_data.gene_exp_distribution,
+            'PANEL',
         )
 
         ch_versions = ch_versions.mix(ORANGE_REPORTING.out.versions)

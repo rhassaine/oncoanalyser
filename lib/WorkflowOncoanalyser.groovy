@@ -27,7 +27,7 @@ class WorkflowOncoanalyser {
                 return d
             }
 
-        r = Channel.empty().mix(r as Object[])
+        r = Channel.empty().mix(*r)
 
         // NOTE(SW): As of Nextflow 22.10.6, groupTuple requires a matching meta /and/ an additional element to complete without error, these placeholders are filtered in the groupByMeta function
         r = r.filter { it[0] != Constants.PLACEHOLDER_META }
@@ -65,7 +65,7 @@ class WorkflowOncoanalyser {
 
     // NOTE(SW): function signature required to catch where no named arguments are passed
     public static groupByMeta(... channels) {
-        return groupByMeta([:], channels as Object[])
+        return groupByMeta([:], *channels)
     }
 
     public static getInput(Map named_args, meta, key) {
@@ -117,7 +117,7 @@ class WorkflowOncoanalyser {
 
     public static restoreMeta(ch_output, ch_metas) {
         // NOTE(SW): ch_output must contain a Map in the first position with a key named 'key' that
-        // contains the corresponding meta.id value, for example: [val(meta_process), process_outputs as Object[]]
+        // contains the corresponding meta.id value, for example: [val(meta_process), *process_outputs]
         joinMeta([:], ch_output, ch_metas)
     }
 }

@@ -103,6 +103,9 @@ input:
       type: file
       description: Isofox cohort gene expression file
       pattern: "*.{csv}"
+  - experiment_type:
+      type: string
+      description: Experiment type
   - pipeline_version:
       type: string
       description: Pipeline version to display in report

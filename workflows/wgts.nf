@@ -458,6 +458,7 @@ workflow WGTS {
             ref_data.genome_dict,
             run_config.stages.orange,  // enable_germline [run for ORANGE but not Neo]
             false,  // targeted_mode
+            false,  // purity_estimate_mode
         )
 
         ch_versions = ch_versions.mix(SAGE_APPEND.out.versions)
@@ -822,6 +823,7 @@ workflow WGTS {
             hmf_data.sigs_etiology,
             hmf_data.alt_sj_distribution,
             hmf_data.gene_exp_distribution,
+            'WGS',
         )
 
         ch_versions = ch_versions.mix(ORANGE_REPORTING.out.versions)
@@ -855,10 +857,6 @@ workflow WGTS {
             sort: true,
             newLine: true,
         )
-
-
-*/
-
 
 }
 

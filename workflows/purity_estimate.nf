@@ -215,6 +215,7 @@ workflow PURITY_ESTIMATE {
             ref_data.genome_dict,
             false,  // run_germline
             purity_estimate_run_mode == Constants.RunMode.TARGETED,  // targeted_mode
+            true,  // purity_estimate_mode
         )
 
         ch_versions = ch_versions.mix(SAGE_APPEND.out.versions)
@@ -238,7 +239,7 @@ workflow PURITY_ESTIMATE {
             ch_sage_somatic_append_out,
             ref_data.genome_fasta,
             ref_data.genome_fai,
-            purity_estimate_run_mode == Constants.RunMode.TARGETED,  // targeted_mode
+            purity_estimate_run_mode,
         )
 
         ch_versions = ch_versions.mix(WISP_ANALYSIS.out.versions)

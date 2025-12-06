@@ -86,13 +86,13 @@ workflow {
     //
     // BLOCK: Set defaults and apply extended, custom validation
     //
-    params.ref_data_genome_fasta         = getGenomeAttribute('fasta')
-    params.ref_data_genome_fai           = getGenomeAttribute('fai')
-    params.ref_data_genome_dict          = getGenomeAttribute('dict')
-    params.ref_data_genome_img           = getGenomeAttribute('img')
-    params.ref_data_genome_bwamem2_index = getGenomeAttribute('bwamem2_index')
-    params.ref_data_genome_gridss_index  = getGenomeAttribute('gridss_index')
-    params.ref_data_genome_star_index    = getGenomeAttribute('star_index')
+    params.ref_data_genome_fasta         = getGenomeAttribute('fasta', params)
+    params.ref_data_genome_fai           = getGenomeAttribute('fai', params)
+    params.ref_data_genome_dict          = getGenomeAttribute('dict', params)
+    params.ref_data_genome_img           = getGenomeAttribute('img', params)
+    params.ref_data_genome_bwamem2_index = getGenomeAttribute('bwamem2_index', params)
+    params.ref_data_genome_gridss_index  = getGenomeAttribute('gridss_index', params)
+    params.ref_data_genome_star_index    = getGenomeAttribute('star_index', params)
 
     WorkflowMain.setParamsDefaults(params, log)
     WorkflowMain.validateParams(params, log)
@@ -116,7 +116,8 @@ workflow {
         params.input,
         params.help,
         params.help_full,
-        params.show_hidden
+        params.show_hidden,
+        params,
     )
 
     //
@@ -134,6 +135,7 @@ workflow {
         params.outdir,
         params.monochrome_logs,
         params.hook_url,
+        params,
     )
 
 }
@@ -143,3 +145,31 @@ workflow {
     THE END
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+
+
+
+//#!/usr/bin/env nextflow
+//
+//
+//workflow {
+//
+//  ch_inputs = Channel.of(
+//    [id: 'a', f1: 'afile1', f2: 'afile2'],
+//    [id: 'b', f1: 'bfile1', f2: 'bfile2'],
+//  )
+//
+//  ch_file1 = ch_inputs.map { meta -> [meta, meta.f1] }
+//  ch_file2 = ch_inputs.map { meta -> [meta, meta.f2] }
+//
+//  ch_file1.view()
+//  ch_file2.view()
+//
+//  WorkflowOncoanalyser.groupByMeta(
+//    ch_file1,
+//    ch_file2,
+//  )
+//
+//
+//
+//}
+
