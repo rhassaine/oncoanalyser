@@ -35,10 +35,6 @@ workflow PREPARE_REFERENCE {
     params
 
     main:
-    // Channel for version.yml files
-    // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
-
     //
     // Set .fasta and main genome indexes, create if required
     //
@@ -54,8 +50,7 @@ workflow PREPARE_REFERENCE {
 
         if (!params.ref_data_genome_fai) {
             SAMTOOLS_FAIDX(ch_genome_fasta)
-            ch_genome_fai = SAMTOOLS_FAIDX.out.fai
-            ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
+            ch_genome_fai = channel.topic('samtools_fai')
         } else {
             ch_genome_fai = Channel.of(params.ref_data_genome_fai)
         }
@@ -67,8 +62,7 @@ workflow PREPARE_REFERENCE {
 
         if (!params.ref_data_genome_dict) {
             SAMTOOLS_DICT(ch_genome_fasta)
-            ch_genome_dict = SAMTOOLS_DICT.out.dict
-            ch_versions = ch_versions.mix(SAMTOOLS_DICT.out.versions)
+            ch_genome_dict = channel.topic('samtools_dict')
         } else {
             ch_genome_dict = Channel.of(params.ref_data_genome_dict)
         }
@@ -80,8 +74,7 @@ workflow PREPARE_REFERENCE {
 
         if (!params.ref_data_genome_img) {
             GATK4_BWA_INDEX_IMAGE(ch_genome_fasta)
-            ch_genome_img = GATK4_BWA_INDEX_IMAGE.out.img
-            ch_versions = ch_versions.mix(GATK4_BWA_INDEX_IMAGE.out.versions)
+            ch_genome_img = channel.topic('gatk4_bwa_index_image')
         } else {
             ch_genome_img = Channel.of(params.ref_data_genome_img)
         }
@@ -100,16 +93,15 @@ workflow PREPARE_REFERENCE {
                 ch_genome_fasta,
                 params.ref_data_genome_alt ? file(params.ref_data_genome_alt) : [],
             )
-            ch_genome_bwamem2_index = BWAMEM2_INDEX.out.index
-            ch_versions = ch_versions.mix(BWAMEM2_INDEX.out.versions)
+            ch_genome_bwamem2_index = channel.topic('bwamem2_index')
 
         } else if (params.ref_data_genome_bwamem2_index.endsWith('.tar.gz')) {
 
             ch_genome_bwamem2_index_inputs = Channel.fromPath(params.ref_data_genome_bwamem2_index)
-                .map { [[id: "${it.name.replaceAll('\\.tar\\.gz$', '')}"], it] }
+                .map { [[id: "${it.name.replaceAll('\\.tar\\.gz$', '')}", fp: it], it] }
 
             DECOMP_BWAMEM2_INDEX(ch_genome_bwamem2_index_inputs)
-            ch_genome_bwamem2_index = DECOMP_BWAMEM2_INDEX.out.extracted_dir
+            ch_genome_bwamem2_index = channel.topic('extracted_dir').filter { meta, dir -> meta.fp == params.ref_data_genome_bwamem2_index }
 
         } else {
 
@@ -130,7 +122,6 @@ workflow PREPARE_REFERENCE {
                 ch_genome_fasta,
                 params.ref_data_genome_alt ? file(params.ref_data_genome_alt) : [],
             )
-            ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
 
             GRIDSS_INDEX(
                 ch_genome_fasta,
@@ -139,15 +130,14 @@ workflow PREPARE_REFERENCE {
                 BWA_INDEX.out.index,
             )
             ch_genome_gridss_index = GRIDSS_INDEX.out.index
-            ch_versions = ch_versions.mix(GRIDSS_INDEX.out.versions)
 
         } else if (params.ref_data_genome_gridss_index.endsWith('.tar.gz')) {
 
             ch_genome_gridss_index_inputs = Channel.fromPath(params.ref_data_genome_gridss_index)
-                .map { [[id: "${it.name.replaceAll('\\.tar\\.gz$', '')}"], it] }
+                .map { [[id: "${it.name.replaceAll('\\.tar\\.gz$', '')}", fp: it], it] }
 
             DECOMP_GRIDSS_INDEX(ch_genome_gridss_index_inputs)
-            ch_genome_gridss_index = DECOMP_GRIDSS_INDEX.out.extracted_dir
+            ch_genome_gridss_index = channel.topic('extracted_dir').filter { meta, dir -> meta.fp == params.ref_data_genome_gridss_index }
 
         } else {
 
@@ -169,15 +159,14 @@ workflow PREPARE_REFERENCE {
                 file(params.ref_data_genome_gtf),
             )
             ch_genome_star_index = STAR_GENOMEGENERATE.out.index
-            ch_versions = ch_versions.mix(STAR_GENOMEGENERATE.out.versions)
 
         } else if (params.ref_data_genome_star_index.endsWith('.tar.gz')) {
 
             ch_genome_star_index_inputs = Channel.fromPath(params.ref_data_genome_star_index)
-                .map { [[id: "${it.name.replaceAll('\\.tar\\.gz$', '')}"], it] }
+                .map { [[id: "${it.name.replaceAll('\\.tar\\.gz$', '')}", fp: it], it] }
 
             DECOMP_STAR_INDEX(ch_genome_star_index_inputs)
-            ch_genome_star_index = DECOMP_STAR_INDEX.out.extracted_dir
+            ch_genome_star_index = channel.topic('extracted_dir').filter { meta, dir -> meta.fp == params.ref_data_genome_star_index }
 
         } else {
 
@@ -197,11 +186,12 @@ workflow PREPARE_REFERENCE {
         if (params.ref_data_hmf_data_path.endsWith('tar.gz')) {
 
             ch_hmf_data_inputs = Channel.fromPath(params.ref_data_hmf_data_path)
-                .map { [[id: "${it.name.replaceAll('\\.tar\\.gz$', '')}"], it] }
+                .map { [[id: "${it.name.replaceAll('\\.tar\\.gz$', '')}", fp: it], it] }
 
             DECOMP_HMF_DATA(ch_hmf_data_inputs)
 
-            ch_hmf_data = DECOMP_HMF_DATA.out.extracted_dir
+            ch_hmf_data = channel.topic('extracted_dir')
+                .filter { meta, dir -> meta.fp == params.ref_data_hmf_data_path }
                 .collect()
                 .map { dir_list ->
                     assert dir_list.size() == 1
@@ -245,11 +235,12 @@ workflow PREPARE_REFERENCE {
         if (params.ref_data_panel_data_path.endsWith('tar.gz')) {
 
             ch_panel_data_inputs = Channel.fromPath(params.ref_data_panel_data_path)
-                .map { [[id: "${it.name.replaceAll('\\.tar\\.gz$', '')}"], it] }
+                .map { [[id: "${it.name.replaceAll('\\.tar\\.gz$', '')}", fp: it], it] }
 
             DECOMP_PANEL_DATA(ch_panel_data_inputs)
 
-            ch_panel_data = DECOMP_PANEL_DATA.out.extracted_dir
+            ch_panel_data = channel.topic('extracted_dir')
+                .filter { meta, dir -> meta.fp == params.ref_data_panel_data_path }
                 .collect()
                 .map { dir_list ->
                     assert dir_list.size() == 1
@@ -297,8 +288,6 @@ workflow PREPARE_REFERENCE {
 
     hmf_data             = ch_hmf_data                     // map:  HMF data paths
     panel_data           = ch_panel_data                   // map:  Panel data paths
-
-    versions             = ch_versions                     // channel: [ versions.yml ]
 }
 
 def createDataMap(entries, ref_data_path) {
