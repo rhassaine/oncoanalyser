@@ -20,10 +20,6 @@ workflow PREPARE_REFERENCE {
     params
 
     main:
-    // Create channel for versions
-    // channel: [ versions.yml ]
-    ch_versions = channel.empty()
-
     // Stage in reference data as requested
     prep_config = WorkflowMain.getPrepConfigFromCli(params, log)
     STAGE_REFERENCE(
@@ -31,8 +27,6 @@ workflow PREPARE_REFERENCE {
         [:],
         params,
     )
-
-    ch_versions = ch_versions.mix(STAGE_REFERENCE.out.versions)
 
     //
     // TASK: Aggregate software versions
@@ -54,7 +48,7 @@ workflow PREPARE_REFERENCE {
             "${process}:\n${tool_versions.join('\n')}"
         }
 
-    softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+    softwareVersionsToYAML(topic_versions.versions_file)
         .mix(topic_versions_string)
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",

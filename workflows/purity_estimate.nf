@@ -28,10 +28,6 @@ workflow PURITY_ESTIMATE {
     params
 
     main:
-    // Create channel for versions
-    // channel: [ versions.yml ]
-    ch_versions = channel.empty()
-
     // Create input channel from parsed CSV
     // channel: [ meta ]
     ch_inputs = channel.fromList(inputs)
@@ -48,8 +44,6 @@ workflow PURITY_ESTIMATE {
     )
     ref_data = PREPARE_REFERENCE.out
     hmf_data = PREPARE_REFERENCE.out.hmf_data
-
-    ch_versions = ch_versions.mix(PREPARE_REFERENCE.out.versions)
 
     //
     // SUBWORKFLOW: Run read alignment to generate BAMs
@@ -71,8 +65,6 @@ workflow PURITY_ESTIMATE {
             params.fastp_umi_length,
             params.fastp_umi_skip,
         )
-
-        ch_versions = ch_versions.mix(READ_ALIGNMENT_DNA.out.versions)
 
         ch_align_dna_tumor_out = ch_align_dna_tumor_out.mix(READ_ALIGNMENT_DNA.out.dna_tumor)
         ch_align_dna_normal_out = ch_align_dna_normal_out.mix(READ_ALIGNMENT_DNA.out.dna_normal)
@@ -116,8 +108,6 @@ workflow PURITY_ESTIMATE {
             params.redux_umi_duplex_delim,
         )
 
-        ch_versions = ch_versions.mix(REDUX_PROCESSING.out.versions)
-
         ch_redux_dna_tumor_out = ch_redux_dna_tumor_out.mix(REDUX_PROCESSING.out.dna_tumor)
         ch_redux_dna_normal_out = ch_redux_dna_normal_out.mix(REDUX_PROCESSING.out.dna_normal)
         ch_redux_dna_donor_out = ch_redux_dna_donor_out.mix(REDUX_PROCESSING.out.dna_donor)
@@ -158,8 +148,6 @@ workflow PURITY_ESTIMATE {
             tumor_min_depth,
         )
 
-        ch_versions = ch_versions.mix(AMBER_PROFILING.out.versions)
-
         ch_amber_out = ch_amber_out.mix(AMBER_PROFILING.out.amber_dir)
 
     } else {
@@ -185,8 +173,6 @@ workflow PURITY_ESTIMATE {
             [],  // panel_target_region_normalisation
             purity_estimate_run_mode == Constants.RunMode.TARGETED,  // targeted_mode
         )
-
-        ch_versions = ch_versions.mix(COBALT_PROFILING.out.versions)
 
         ch_cobalt_out = ch_cobalt_out.mix(COBALT_PROFILING.out.cobalt_dir)
 
@@ -218,7 +204,6 @@ workflow PURITY_ESTIMATE {
             true,  // purity_estimate_mode
         )
 
-        ch_versions = ch_versions.mix(SAGE_APPEND.out.versions)
         ch_sage_somatic_append_out = ch_sage_somatic_append_out.mix(SAGE_APPEND.out.somatic_dir)
 
     } else {
@@ -242,8 +227,6 @@ workflow PURITY_ESTIMATE {
             purity_estimate_run_mode,
         )
 
-        ch_versions = ch_versions.mix(WISP_ANALYSIS.out.versions)
-
     }
 
     //
@@ -266,7 +249,7 @@ workflow PURITY_ESTIMATE {
             "${process}:\n${tool_versions.join('\n')}"
         }
 
-    softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+    softwareVersionsToYAML(topic_versions.versions_file)
         .mix(topic_versions_string)
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",

@@ -792,7 +792,7 @@ workflow WGTS {
             "${process}:\n${tool_versions.join('\n')}"
         }
 
-    softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+    softwareVersionsToYAML(topic_versions.versions_file)
         .mix(topic_versions_string)
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",
@@ -800,8 +800,6 @@ workflow WGTS {
             sort: true,
             newLine: true,
         )
-
-    */
 
 }
 

@@ -7,7 +7,6 @@ import static groovy.io.FileType.FILES
 import nextflow.Channel
 import nextflow.Nextflow
 
-
 class WorkflowOncoanalyser {
 
     public static groupByMeta(Map named_args, ... channels) {
@@ -27,7 +26,7 @@ class WorkflowOncoanalyser {
                 return d
             }
 
-        r = channel.empty().mix(*r)
+        r = nextflow.Channel.empty().mix(*r)
 
         // NOTE(SW): As of Nextflow 22.10.6, groupTuple requires a matching meta /and/ an additional element to complete without error, these placeholders are filtered in the groupByMeta function
         r = r.filter { it[0] != Constants.PLACEHOLDER_META }

@@ -50,10 +50,6 @@ workflow TARGETED {
 
     //for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
-    // Create channel for versions
-    // channel: [ versions.yml ]
-    ch_versions = channel.empty()
-
     // Create input channel from parsed CSV
     // channel: [ meta ]
     ch_inputs = channel.fromList(inputs)
@@ -68,8 +64,6 @@ workflow TARGETED {
     ref_data = PREPARE_REFERENCE.out
     hmf_data = PREPARE_REFERENCE.out.hmf_data
     panel_data = PREPARE_REFERENCE.out.panel_data
-
-    ch_versions = ch_versions.mix(PREPARE_REFERENCE.out.versions)
 
     //
     // SUBWORKFLOW: Run read alignment to generate BAMs
@@ -95,11 +89,6 @@ workflow TARGETED {
         READ_ALIGNMENT_RNA(
             ch_inputs,
             ref_data.genome_star_index,
-        )
-
-        ch_versions = ch_versions.mix(
-            READ_ALIGNMENT_DNA.out.versions,
-            READ_ALIGNMENT_RNA.out.versions,
         )
 
         ch_align_dna_tumor_out = ch_align_dna_tumor_out.mix(READ_ALIGNMENT_DNA.out.dna_tumor)
@@ -145,8 +134,6 @@ workflow TARGETED {
             params.redux_umi_enabled,
             params.redux_umi_duplex_delim,
         )
-
-        ch_versions = ch_versions.mix(REDUX_PROCESSING.out.versions)
 
         ch_redux_dna_tumor_out = ch_redux_dna_tumor_out.mix(REDUX_PROCESSING.out.dna_tumor)
         ch_redux_dna_normal_out = ch_redux_dna_normal_out.mix(REDUX_PROCESSING.out.dna_normal)
@@ -200,8 +187,6 @@ workflow TARGETED {
             isofox_read_length,
         )
 
-        ch_versions = ch_versions.mix(ISOFOX_QUANTIFICATION.out.versions)
-
         ch_isofox_out = ch_isofox_out.mix(ISOFOX_QUANTIFICATION.out.isofox_dir)
 
     } else {
@@ -228,8 +213,6 @@ workflow TARGETED {
             [],  // tumor_min_depth
         )
 
-        ch_versions = ch_versions.mix(AMBER_PROFILING.out.versions)
-
         ch_amber_out = ch_amber_out.mix(AMBER_PROFILING.out.amber_dir)
 
     } else {
@@ -255,8 +238,6 @@ workflow TARGETED {
             panel_data.target_region_normalisation,
             true,  // targeted_mode
         )
-
-        ch_versions = ch_versions.mix(COBALT_PROFILING.out.versions)
 
         ch_cobalt_out = ch_cobalt_out.mix(COBALT_PROFILING.out.cobalt_dir)
 
@@ -291,8 +272,6 @@ workflow TARGETED {
             hmf_data.unmap_regions,
             panel_data.target_region_bed,
         )
-
-        ch_versions = ch_versions.mix(ESVEE_CALLING.out.versions)
 
         ch_esvee_germline_out = ch_esvee_germline_out.mix(ESVEE_CALLING.out.germline_vcf)
         ch_esvee_somatic_out = ch_esvee_somatic_out.mix(ESVEE_CALLING.out.somatic_vcf)
@@ -339,8 +318,6 @@ workflow TARGETED {
             true,  // targeted_mode
         )
 
-        ch_versions = ch_versions.mix(SAGE_CALLING.out.versions)
-
         ch_sage_germline_vcf_out = ch_sage_germline_vcf_out.mix(SAGE_CALLING.out.germline_vcf)
         ch_sage_somatic_vcf_out = ch_sage_somatic_vcf_out.mix(SAGE_CALLING.out.somatic_vcf)
         ch_sage_germline_dir_out = ch_sage_germline_dir_out.mix(SAGE_CALLING.out.germline_dir)
@@ -380,8 +357,6 @@ workflow TARGETED {
             hmf_data.ensembl_data_resources,
             hmf_data.gnomad_resource,
         )
-
-        ch_versions = ch_versions.mix(PAVE_ANNOTATION.out.versions)
 
         ch_pave_germline_out = ch_pave_germline_out.mix(PAVE_ANNOTATION.out.germline)
         ch_pave_somatic_out = ch_pave_somatic_out.mix(PAVE_ANNOTATION.out.somatic)
@@ -423,8 +398,6 @@ workflow TARGETED {
             panel_data.target_region_msi_indels,
         )
 
-        ch_versions = ch_versions.mix(PURPLE_CALLING.out.versions)
-
         ch_purple_out = ch_purple_out.mix(PURPLE_CALLING.out.purple_dir)
 
     } else {
@@ -456,8 +429,6 @@ workflow TARGETED {
             false,  // purity_estimate_mode
         )
 
-        ch_versions = ch_versions.mix(SAGE_APPEND.out.versions)
-
         ch_sage_somatic_append_out = ch_sage_somatic_append_out.mix(SAGE_APPEND.out.somatic_dir)
         ch_sage_germline_append_out = ch_sage_germline_append_out.mix(SAGE_APPEND.out.germline_dir)
 
@@ -484,8 +455,6 @@ workflow TARGETED {
             hmf_data.known_fusion_data,
             panel_data.driver_gene_panel,
         )
-
-        ch_versions = ch_versions.mix(LINX_ANNOTATION.out.versions)
 
         ch_linx_somatic_out = ch_linx_somatic_out.mix(LINX_ANNOTATION.out.somatic)
         ch_linx_germline_out = ch_linx_germline_out.mix(LINX_ANNOTATION.out.germline)
@@ -514,8 +483,6 @@ workflow TARGETED {
             hmf_data.ensembl_data_resources,
         )
 
-        ch_versions = ch_versions.mix(LINX_PLOTTING.out.versions)
-
         ch_linx_somatic_visualiser_dir_out = ch_linx_somatic_visualiser_dir_out.mix(LINX_PLOTTING.out.visualiser_dir)
 
     } else {
@@ -543,8 +510,6 @@ workflow TARGETED {
             panel_data.target_region_bed,
         )
 
-        ch_versions = ch_versions.mix(BAMTOOLS_METRICS.out.versions)
-
         ch_bamtools_somatic_out = ch_bamtools_somatic_out.mix(BAMTOOLS_METRICS.out.somatic)
         ch_bamtools_germline_out = ch_bamtools_germline_out.mix(BAMTOOLS_METRICS.out.germline)
 
@@ -570,8 +535,6 @@ workflow TARGETED {
             ref_data.genome_img,
         )
 
-        ch_versions = ch_versions.mix(CIDER_CALLING.out.versions)
-
     }
 
     //
@@ -593,8 +556,6 @@ workflow TARGETED {
             hmf_data.lilac_resources,
             true,  // targeted_mode
         )
-
-        ch_versions = ch_versions.mix(LILAC_CALLING.out.versions)
 
         ch_lilac_out = ch_lilac_out.mix(LILAC_CALLING.out.lilac_dir)
 
@@ -618,8 +579,6 @@ workflow TARGETED {
             hmf_data.peach_haplotype_functions,
             hmf_data.peach_drug_info,
         )
-
-        ch_versions = ch_versions.mix(PEACH_CALLING.out.versions)
 
         ch_peach_out = ch_peach_out.mix(PEACH_CALLING.out.peach_dir)
 
@@ -672,7 +631,6 @@ workflow TARGETED {
             'PANEL',
         )
 
-        ch_versions = ch_versions.mix(ORANGE_REPORTING.out.versions)
     }
 
     //
@@ -695,7 +653,7 @@ workflow TARGETED {
             "${process}:\n${tool_versions.join('\n')}"
         }
 
-    softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+    softwareVersionsToYAML(topic_versions.versions_file)
         .mix(topic_versions_string)
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",

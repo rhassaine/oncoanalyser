@@ -49,10 +49,6 @@ workflow PANEL_RESOURCE_CREATION {
     driver_gene_panel = params.driver_gene_panel ? file(params.driver_gene_panel) : []
     isofox_gene_ids = params.isofox_gene_ids ? file(params.isofox_gene_ids) : []
 
-    // Create channel for versions
-    // channel: [ versions.yml ]
-    ch_versions = channel.empty()
-
     // Create input channel from parsed CSV
     // channel: [ meta ]
     ch_inputs = channel.fromList(inputs)
@@ -66,8 +62,6 @@ workflow PANEL_RESOURCE_CREATION {
     )
     ref_data = PREPARE_REFERENCE.out
     hmf_data = PREPARE_REFERENCE.out.hmf_data
-
-    ch_versions = ch_versions.mix(PREPARE_REFERENCE.out.versions)
 
     //
     // SUBWORKFLOW: Run read alignment to generate BAMs
@@ -86,12 +80,6 @@ workflow PANEL_RESOURCE_CREATION {
     READ_ALIGNMENT_RNA(
         ch_inputs,
         ref_data.genome_star_index,
-    )
-
-    // channel: [ meta, [bam, ...], [bai, ...] ]
-    ch_versions = ch_versions.mix(
-        READ_ALIGNMENT_DNA.out.versions,
-        READ_ALIGNMENT_RNA.out.versions,
     )
 
     // channel: [ meta, [bam, ...], [bai, ...] ]
@@ -116,8 +104,6 @@ workflow PANEL_RESOURCE_CREATION {
         params.redux_umi_enabled,
         params.redux_umi_duplex_delim,
     )
-
-    ch_versions = ch_versions.mix(REDUX_PROCESSING.out.versions)
 
     // channel: [ meta, bam, bai ]
     ch_redux_dna_tumor_out = REDUX_PROCESSING.out.dna_tumor
@@ -150,8 +136,6 @@ workflow PANEL_RESOURCE_CREATION {
         isofox_read_length,
     )
 
-    ch_versions = ch_versions.mix(ISOFOX_QUANTIFICATION.out.versions)
-
     // channel: [ meta, isofox_dir ]
     ch_isofox_out = ISOFOX_QUANTIFICATION.out.isofox_dir
 
@@ -169,8 +153,6 @@ workflow PANEL_RESOURCE_CREATION {
         2,   // tumor_min_depth
     )
 
-    ch_versions = ch_versions.mix(AMBER_PROFILING.out.versions)
-
     // channel: [ meta, amber_dir ]
     ch_amber_out = AMBER_PROFILING.out.amber_dir
 
@@ -187,8 +169,6 @@ workflow PANEL_RESOURCE_CREATION {
         [],  // panel_target_region_normalisation
         true,  // targeted_mode
     )
-
-    ch_versions = ch_versions.mix(COBALT_PROFILING.out.versions)
 
     // channel: [ meta, cobalt_dir ]
     ch_cobalt_out = COBALT_PROFILING.out.cobalt_dir
@@ -220,8 +200,6 @@ workflow PANEL_RESOURCE_CREATION {
         true,  // targeted_mode
     )
 
-    ch_versions = ch_versions.mix(SAGE_CALLING.out.versions)
-
     // channel: [ meta, sage_vcf, sage_tbi ]
     ch_sage_somatic_vcf_out = SAGE_CALLING.out.somatic_vcf
 
@@ -236,8 +214,6 @@ workflow PANEL_RESOURCE_CREATION {
         target_regions_bed,
     )
 
-    ch_versions = ch_versions.mix(COBALT_NORMALISATION.out.versions)
-
     //
     // SUBWORKFLOW: Run PAVE panel of normals creation
     //
@@ -245,8 +221,6 @@ workflow PANEL_RESOURCE_CREATION {
         ch_sage_somatic_vcf_out,
         ref_data.genome_version,
     )
-
-    ch_versions = ch_versions.mix(PAVE_PON_CREATION.out.versions)
 
     //
     // SUBWORKFLOW: Run Isofox TPM normalisation
@@ -257,8 +231,6 @@ workflow PANEL_RESOURCE_CREATION {
         isofox_gene_ids,
         hmf_data.gene_exp_distribution,
     )
-
-    ch_versions = ch_versions.mix(ISOFOX_NORMALISATION.out.versions)
 
     //
     // TASK: Aggregate software versions
@@ -280,7 +252,7 @@ workflow PANEL_RESOURCE_CREATION {
             "${process}:\n${tool_versions.join('\n')}"
         }
 
-    softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+    softwareVersionsToYAML(topic_versions.versions_file)
         .mix(topic_versions_string)
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",
