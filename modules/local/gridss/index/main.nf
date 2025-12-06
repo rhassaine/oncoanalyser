@@ -15,7 +15,7 @@ process GRIDSS_INDEX {
     path genome_bwa_index
 
     output:
-    path 'gridss_index/', emit: index
+    path 'gridss_index/', emit: gridss_index
     path 'versions.yml' , emit: versions
     path '.command.*'   , emit: command_files
 

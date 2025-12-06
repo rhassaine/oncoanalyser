@@ -13,7 +13,7 @@ process COBALT_PANEL_NORMALISATION {
     path target_regions_bed
 
     output:
-    path 'cobalt.region_normalisation.*.tsv', emit: cobalt_normalisation
+    path 'cobalt.region_normalisation.*.tsv', emit: cobalt_normalisation_tsv
     path 'versions.yml'                     , emit: versions
     path '.command.*'                       , emit: command_files
 

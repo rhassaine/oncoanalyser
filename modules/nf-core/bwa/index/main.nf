@@ -12,8 +12,9 @@ process BWA_INDEX {
     path alt
 
     output:
-    path 'bwa_index/'  , emit: index
+    path 'bwa_index/'  , emit: bwa_index
     path 'versions.yml', emit: versions
+    path '.command.*'  , emit: command_files
 
     when:
     task.ext.when == null || task.ext.when

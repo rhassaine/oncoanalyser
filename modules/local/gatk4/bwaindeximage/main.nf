@@ -11,7 +11,7 @@ process GATK4_BWA_INDEX_IMAGE {
     path genome_fasta
 
     output:
-    path "${genome_fasta}.img", emit: img
+    path "${genome_fasta}.img", emit: gatk4_bwa_index_img
     path 'versions.yml'       , emit: versions
     path '.command.*'         , emit: command_files
 

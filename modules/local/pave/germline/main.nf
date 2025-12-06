@@ -20,8 +20,8 @@ process PAVE_GERMLINE {
     path ensembl_data_resources
 
     output:
-    tuple val(meta), path('*.vcf.gz')    , emit: vcf
-    tuple val(meta), path('*.vcf.gz.tbi'), emit: index
+    tuple val(meta), path('*.vcf.gz')    , emit: pave_germline_vcf
+    tuple val(meta), path('*.vcf.gz.tbi'), emit: pave_germline_index
     path 'versions.yml'                  , emit: versions
     path '.command.*'                    , emit: command_files
 

@@ -11,8 +11,9 @@ process SAMTOOLS_FAIDX {
     path fasta
 
     output:
-    path "*.fai"       , emit: fai
-    path "versions.yml", emit: versions
+    path '*.fai'       , emit: samtools_fai
+    path 'versions.yml', emit: versions
+    path '.command.*'  , emit: command_files
 
     when:
     task.ext.when == null || task.ext.when

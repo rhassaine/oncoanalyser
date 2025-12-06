@@ -24,9 +24,9 @@ process ESVEE {
 
     output:
     tuple val(meta), path('esvee/')                                                                                                    , emit: esvee_dir
-    tuple val(meta), path("esvee/${meta.tumor_id}.esvee.unfiltered.vcf.gz"), path("esvee/${meta.tumor_id}.esvee.unfiltered.vcf.gz.tbi"), emit: unfiltered_vcf
-    tuple val(meta), path("esvee/${meta.tumor_id}.esvee.somatic.vcf.gz"),    path("esvee/${meta.tumor_id}.esvee.somatic.vcf.gz.tbi")   , emit: somatic_vcf
-    tuple val(meta), path("esvee/${meta.tumor_id}.esvee.germline.vcf.gz"),   path("esvee/${meta.tumor_id}.esvee.germline.vcf.gz.tbi")  , emit: germline_vcf, optional: true
+    tuple val(meta), path("esvee/${meta.tumor_id}.esvee.unfiltered.vcf.gz"), path("esvee/${meta.tumor_id}.esvee.unfiltered.vcf.gz.tbi"), emit: esvee_unfiltered_vcf
+    tuple val(meta), path("esvee/${meta.tumor_id}.esvee.somatic.vcf.gz"),    path("esvee/${meta.tumor_id}.esvee.somatic.vcf.gz.tbi")   , emit: esvee_somatic_vcf
+    tuple val(meta), path("esvee/${meta.tumor_id}.esvee.germline.vcf.gz"),   path("esvee/${meta.tumor_id}.esvee.germline.vcf.gz.tbi")  , emit: esvee_germline_vcf, optional: true
     path 'versions.yml'                                                                                                                , emit: versions
     path '.command.*'                                                                                                                  , emit: command_files
 

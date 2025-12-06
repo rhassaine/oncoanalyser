@@ -13,7 +13,7 @@ process LINX_VISUALISER {
     path ensembl_data_resources
 
     output:
-    tuple val(meta), path('plots/'), emit: plots
+    tuple val(meta), path('plots/'), emit: linx_visualiser_plots
     path 'versions.yml'            , emit: versions
     path '.command.*'              , emit: command_files
 

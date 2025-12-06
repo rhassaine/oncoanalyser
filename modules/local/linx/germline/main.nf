@@ -14,7 +14,7 @@ process LINX_GERMLINE {
     path driver_gene_panel
 
     output:
-    tuple val(meta), path('linx_germline/'), emit: annotation_dir
+    tuple val(meta), path('linx_germline/'), emit: linx_germline_annotation_dir
     path 'versions.yml'                    , emit: versions
     path '.command.*'                      , emit: command_files
 

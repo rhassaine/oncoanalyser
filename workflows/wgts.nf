@@ -54,6 +54,10 @@ workflow WGTS {
 
     //for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
+
+    /*
+
+
     // Create channel for versions
     // channel: [ versions.yml ]
     ch_versions = Channel.empty()
@@ -857,6 +861,8 @@ workflow WGTS {
             sort: true,
             newLine: true,
         )
+
+    */
 
 }
 

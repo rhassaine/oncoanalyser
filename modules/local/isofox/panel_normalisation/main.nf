@@ -13,7 +13,7 @@ process ISOFOX_PANEL_NORMALISATION {
     path gene_distribution
 
     output:
-    path 'isofox.gene_normalisation.*.csv', emit: isofox_normalisation
+    path 'isofox.gene_normalisation.*.csv', emit: isofox_normalisation_csv
     path 'versions.yml'                   , emit: versions
     path '.command.*'                     , emit: command_files
 

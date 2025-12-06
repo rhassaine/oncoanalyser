@@ -13,7 +13,7 @@ process BWAMEM2_ALIGN {
     path genome_bwamem2_index
 
     output:
-    tuple val(meta), path('*.bam'), path('*.bai'), emit: bam
+    tuple val(meta), path('*.bam'), path('*.bai'), emit: bwamem2_align_bam
     path 'versions.yml'                          , emit: versions
     path '.command.*'                            , emit: command_files
 

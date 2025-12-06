@@ -27,10 +27,10 @@ include { getGenomeAttribute } from './subworkflows/local/utils_nfcore_oncoanaly
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { PANEL_RESOURCE_CREATION } from './workflows/panel_resource_creation'
-include { PREPARE_REFERENCE       } from './workflows/prepare_reference'
-include { PURITY_ESTIMATE         } from './workflows/purity_estimate'
-include { TARGETED                } from './workflows/targeted'
+//include { PANEL_RESOURCE_CREATION } from './workflows/panel_resource_creation'
+//include { PREPARE_REFERENCE       } from './workflows/prepare_reference'
+//include { PURITY_ESTIMATE         } from './workflows/purity_estimate'
+//include { TARGETED                } from './workflows/targeted'
 include { WGTS                    } from './workflows/wgts'
 
 /*
@@ -51,7 +51,7 @@ workflow NFCORE_ONCOANALYSER {
     // Run selected workflow
     // NOTE(SW): prepare reference is checked early as params.input is not required
     if (run_mode == Constants.RunMode.PREPARE_REFERENCE)  {
-        PREPARE_REFERENCE(params)
+        //PREPARE_REFERENCE(params)
     } else {
         // Parse and validate inputs
         inputs = Utils.parseInput(params.input, workflow.stubRun, log)
@@ -61,12 +61,12 @@ workflow NFCORE_ONCOANALYSER {
         // Run requested workflow
         if (run_mode == Constants.RunMode.WGTS) {
             WGTS(inputs, run_config, params)
-        } else if (run_mode == Constants.RunMode.TARGETED) {
-            TARGETED(inputs, run_config, params)
-        } else if (run_mode == Constants.RunMode.PURITY_ESTIMATE) {
-            PURITY_ESTIMATE(inputs, run_config, params)
-        } else if (run_mode == Constants.RunMode.PANEL_RESOURCE_CREATION) {
-            PANEL_RESOURCE_CREATION(inputs, run_config, params)
+        //} else if (run_mode == Constants.RunMode.TARGETED) {
+        //    TARGETED(inputs, run_config, params)
+        //} else if (run_mode == Constants.RunMode.PURITY_ESTIMATE) {
+        //    PURITY_ESTIMATE(inputs, run_config, params)
+        //} else if (run_mode == Constants.RunMode.PANEL_RESOURCE_CREATION) {
+        //    PANEL_RESOURCE_CREATION(inputs, run_config, params)
         } else {
             log.error("received bad run mode: ${run_mode}")
             exit(1)

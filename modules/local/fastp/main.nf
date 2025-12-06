@@ -15,7 +15,7 @@ process FASTP {
     val umi_skip
 
     output:
-    tuple val(meta), path('*_R1.fastp.fastq.gz'), path('*_R2.fastp.fastq.gz'), emit: fastq
+    tuple val(meta), path('*_R1.fastp.fastq.gz'), path('*_R2.fastp.fastq.gz'), emit: fastp_fastq
     path 'versions.yml'                                                      , emit: versions
     path '.command.*'                                                        , emit: command_files
 
