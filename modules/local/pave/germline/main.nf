@@ -20,10 +20,10 @@ process PAVE_GERMLINE {
     path ensembl_data_resources
 
     output:
-    tuple val(meta), path('*.vcf.gz')    , emit: pave_germline_vcf
-    tuple val(meta), path('*.vcf.gz.tbi'), emit: pave_germline_index
-    path 'versions.yml'                  , emit: versions
-    path '.command.*'                    , emit: command_files
+    tuple val(meta), path('*.vcf.gz')    , topic: pave_germline_vcf
+    tuple val(meta), path('*.vcf.gz.tbi'), topic: pave_germline_index
+    path 'versions.yml'                  , topic: versions
+    path '.command.*'                    , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

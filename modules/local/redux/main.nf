@@ -19,12 +19,12 @@ process REDUX {
     val umi_duplex_delim
 
     output:
-    tuple val(meta), path('*.redux.bam'), path('*.redux.bam.bai'), emit: redux_bam
-    tuple val(meta), path('*.duplicate_freq.tsv')                , emit: redux_dup_freq_tsv
-    tuple val(meta), path('*.jitter_params.tsv')                 , emit: redux_jitter_tsv
-    tuple val(meta), path('*.ms_table.tsv.gz')                   , emit: redux_ms_tsv
-    path 'versions.yml'                                          , emit: versions
-    path '.command.*'                                            , emit: command_files
+    tuple val(meta), path('*.redux.bam'), path('*.redux.bam.bai'), topic: redux_bam
+    tuple val(meta), path('*.duplicate_freq.tsv')                , topic: redux_dup_freq_tsv
+    tuple val(meta), path('*.jitter_params.tsv')                 , topic: redux_jitter_tsv
+    tuple val(meta), path('*.ms_table.tsv.gz')                   , topic: redux_ms_tsv
+    path 'versions.yml'                                          , topic: versions
+    path '.command.*'                                            , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

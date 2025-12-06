@@ -54,15 +54,9 @@ workflow WGTS {
 
     //for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
-
-
-
     // Create input channel from parsed CSV
     // channel: [ meta ]
     ch_inputs = Channel.fromList(inputs)
-
-
-
 
     // Set up reference data, assign more human readable variables
     prep_config = WorkflowMain.getPrepConfigFromSamplesheet(run_config)
@@ -98,39 +92,29 @@ workflow WGTS {
             -1,  // umi_skip
         )
 
-    //    READ_ALIGNMENT_RNA(
-    //        ch_inputs,
-    //        ref_data.genome_star_index,
-    //    )
+        READ_ALIGNMENT_RNA(
+            ch_inputs,
+            ref_data.genome_star_index,
+        )
 
-    //    ch_versions = ch_versions.mix(
-    //        READ_ALIGNMENT_DNA.out.versions,
-    //        READ_ALIGNMENT_RNA.out.versions,
-    //    )
+        ch_align_dna_tumor_out = ch_align_dna_tumor_out.mix(READ_ALIGNMENT_DNA.out.dna_tumor)
+        ch_align_dna_normal_out = ch_align_dna_normal_out.mix(READ_ALIGNMENT_DNA.out.dna_normal)
+        ch_align_dna_donor_out = ch_align_dna_donor_out.mix(READ_ALIGNMENT_DNA.out.dna_donor)
+        ch_align_rna_tumor_out = ch_align_rna_tumor_out.mix(READ_ALIGNMENT_RNA.out.rna_tumor)
 
-    //    ch_align_dna_tumor_out = ch_align_dna_tumor_out.mix(READ_ALIGNMENT_DNA.out.dna_tumor)
-    //    ch_align_dna_normal_out = ch_align_dna_normal_out.mix(READ_ALIGNMENT_DNA.out.dna_normal)
-    //    ch_align_dna_donor_out = ch_align_dna_donor_out.mix(READ_ALIGNMENT_DNA.out.dna_donor)
-    //    ch_align_rna_tumor_out = ch_align_rna_tumor_out.mix(READ_ALIGNMENT_RNA.out.rna_tumor)
+    } else {
 
-    //} else {
-
-    //    ch_align_dna_tumor_out = ch_inputs.map { meta -> [meta, [], []] }
-    //    ch_align_dna_normal_out = ch_inputs.map { meta -> [meta, [], []] }
-    //    ch_align_dna_donor_out = ch_inputs.map { meta -> [meta, [], []] }
-    //    ch_align_rna_tumor_out = ch_inputs.map { meta -> [meta, [], []] }
+        ch_align_dna_tumor_out = ch_inputs.map { meta -> [meta, [], []] }
+        ch_align_dna_normal_out = ch_inputs.map { meta -> [meta, [], []] }
+        ch_align_dna_donor_out = ch_inputs.map { meta -> [meta, [], []] }
+        ch_align_rna_tumor_out = ch_inputs.map { meta -> [meta, [], []] }
 
     }
 
 
 
 
-
-
     /*
-
-
-
 
 
 

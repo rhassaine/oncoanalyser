@@ -19,9 +19,9 @@ process WISP {
     val targeted_mode
 
     output:
-    path 'wisp/'       , emit: wisp_dir
-    path 'versions.yml', emit: versions
-    path '.command.*'  , emit: command_files
+    path 'wisp/'       , topic: wisp_dir
+    path 'versions.yml', topic: versions
+    path '.command.*'  , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

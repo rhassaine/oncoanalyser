@@ -12,9 +12,9 @@ process STAR_ALIGN {
     path genome_star_index
 
     output:
-    tuple val(meta), path('*bam'), emit: star_align_bam
-    path 'versions.yml'          , emit: versions
-    path '.command.*'            , emit: command_files
+    tuple val(meta), path('*bam'), topic: star_align_bam
+    path 'versions.yml'          , topic: versions
+    path '.command.*'            , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

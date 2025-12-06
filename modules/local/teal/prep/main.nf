@@ -12,10 +12,10 @@ process TEAL_PREP {
     val genome_ver
 
     output:
-    tuple val(meta), path("teal_bam/${meta.tumor_id}.teal.telbam{.bam,.bam.bai}") , emit: tumor_teal_prep_bam
-    tuple val(meta), path("teal_bam/${meta.normal_id}.teal.telbam{.bam,.bam.bai}"), emit: normal_teal_prep_bam, optional: true
-    path 'versions.yml'                                                           , emit: versions
-    path '.command.*'                                                             , emit: command_files
+    tuple val(meta), path("teal_bam/${meta.tumor_id}.teal.telbam{.bam,.bam.bai}") , topic: tumor_teal_prep_bam
+    tuple val(meta), path("teal_bam/${meta.normal_id}.teal.telbam{.bam,.bam.bai}"), topic: normal_teal_prep_bam, optional: true
+    path 'versions.yml'                                                           , topic: versions
+    path '.command.*'                                                             , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

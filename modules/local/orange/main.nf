@@ -40,10 +40,10 @@ process ORANGE {
     val pipeline_version
 
     output:
-    tuple val(meta), path('output/*.orange.pdf') , emit: orange_pdf, optional: true
-    tuple val(meta), path('output/*.orange.json'), emit: orange_json, optional: true
-    path 'versions.yml'                          , emit: versions
-    path '.command.*'                            , emit: command_files
+    tuple val(meta), path('output/*.orange.pdf') , topic: orange_pdf, optional: true
+    tuple val(meta), path('output/*.orange.json'), topic: orange_json, optional: true
+    path 'versions.yml'                          , topic: versions
+    path '.command.*'                            , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

@@ -17,10 +17,6 @@ workflow READ_ALIGNMENT_RNA {
     genome_star_index // channel: [mandatory] /path/to/genome_star_index/
 
     main:
-    // Channel for version.yml files
-    // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
-
     // Sort inputs
     // channel: [ meta ]
     ch_inputs_sorted = ch_inputs
@@ -71,14 +67,12 @@ workflow READ_ALIGNMENT_RNA {
         genome_star_index,
     )
 
-    ch_versions = ch_versions.mix(STAR_ALIGN.out.versions)
-
     //
     // MODULE: SAMtools sort
     //
     // Create process input channel
     // channel: [ meta_sort, bam ]
-    ch_sort_inputs = STAR_ALIGN.out.bam
+    ch_sort_inputs = channel.topic('star_align_bam')
         .map { meta_star, bam ->
 
             def meta_sort = meta_star + [prefix: meta_star.read_group]
@@ -90,8 +84,6 @@ workflow READ_ALIGNMENT_RNA {
     SAMTOOLS_SORT(
         ch_sort_inputs,
     )
-
-    ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions)
 
     //
     // MODULE: Sambamba merge
@@ -112,7 +104,7 @@ workflow READ_ALIGNMENT_RNA {
     ch_bams_united = ch_sample_fastq_counts
         .cross(
             // First element to match meta_count above for `cross`
-            SAMTOOLS_SORT.out.bam.map { meta_star, bam -> [[key: meta_star.key], bam] }
+            channel.topic('samtools_sort_bam').map { meta_star, bam -> [[key: meta_star.key], bam] }
         )
         .map { count_tuple, bam_tuple ->
 
@@ -152,8 +144,6 @@ workflow READ_ALIGNMENT_RNA {
         ch_merge_inputs,
     )
 
-    ch_versions = ch_versions.mix(SAMBAMBA_MERGE.out.versions)
-
     //
     // MODULE: GATK4 markduplicates
     //
@@ -161,7 +151,7 @@ workflow READ_ALIGNMENT_RNA {
     // channel: [ meta_markdups, bam ]
     ch_markdups_inputs = Channel.empty()
         .mix(
-            WorkflowOncoanalyser.restoreMeta(SAMBAMBA_MERGE.out.bam, ch_inputs),
+            WorkflowOncoanalyser.restoreMeta(channel.topic('sambamba_merge_bam'), ch_inputs),
             WorkflowOncoanalyser.restoreMeta(ch_bams_united_sorted.skip, ch_inputs),
         )
         .map { meta, bam ->
@@ -180,13 +170,11 @@ workflow READ_ALIGNMENT_RNA {
         [],
     )
 
-    ch_versions = ch_versions.mix(GATK4_MARKDUPLICATES.out.versions)
-
     // Combine BAMs and BAIs
     // channel: [ meta, bam, bai ]
     ch_bams_ready = WorkflowOncoanalyser.groupByMeta(
-        WorkflowOncoanalyser.restoreMeta(GATK4_MARKDUPLICATES.out.bam, ch_inputs),
-        WorkflowOncoanalyser.restoreMeta(GATK4_MARKDUPLICATES.out.bai, ch_inputs),
+        WorkflowOncoanalyser.restoreMeta(channel.topic('gatk4_markduplicates_bam'), ch_inputs),
+        WorkflowOncoanalyser.restoreMeta(channel.topic('gatk4_markduplicates_bai'), ch_inputs),
     )
 
     // Set outputs
@@ -199,6 +187,4 @@ workflow READ_ALIGNMENT_RNA {
 
     emit:
     rna_tumor = ch_bam_out  // channel: [ meta, bam, bai ]
-
-    versions  = ch_versions // channel: [ versions.yml ]
 }

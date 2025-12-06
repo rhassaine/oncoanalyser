@@ -24,9 +24,9 @@ process PURPLE {
     path target_region_msi_indels
 
     output:
-    tuple val(meta), path('purple/'), emit: purple_dir
-    path 'versions.yml'             , emit: versions
-    path '.command.*'               , emit: command_files
+    tuple val(meta), path('purple/'), topic: purple_dir
+    path 'versions.yml'             , topic: versions
+    path '.command.*'               , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

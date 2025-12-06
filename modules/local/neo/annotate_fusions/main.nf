@@ -16,9 +16,9 @@ process NEO_ANNOTATE_FUSIONS {
     path ensembl_data_resources
 
     output:
-    tuple val(meta), path('*isf.neoepitope.tsv'), emit: neo_annotated_fusions
-    path 'versions.yml'                         , emit: versions
-    path '.command.*'                           , emit: command_files
+    tuple val(meta), path('*isf.neoepitope.tsv'), topic: neo_annotated_fusions
+    path 'versions.yml'                         , topic: versions
+    path '.command.*'                           , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

@@ -17,10 +17,10 @@ process VIRUSBREAKEND {
     path gridss_config
 
     output:
-    tuple val(meta), path('*.summary.tsv'), emit: virusbreakend_tsv
-    path '*.virusbreakend.vcf'            , emit: virusbreakend_vcf
-    path 'versions.yml'                   , emit: versions
-    path '.command.*'                     , emit: command_files
+    tuple val(meta), path('*.summary.tsv'), topic: virusbreakend_tsv
+    path '*.virusbreakend.vcf'            , topic: virusbreakend_vcf
+    path 'versions.yml'                   , topic: versions
+    path '.command.*'                     , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

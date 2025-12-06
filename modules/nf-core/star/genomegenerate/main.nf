@@ -12,9 +12,9 @@ process STAR_GENOMEGENERATE {
     path gtf
 
     output:
-    path 'star_index'  , emit: star_index
-    path 'versions.yml', emit: versions
-    path '.command.*'  , emit: command_files
+    path 'star_index'  , topic: star_index
+    path 'versions.yml', topic: versions
+    path '.command.*'  , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

@@ -23,12 +23,12 @@ process ESVEE {
     path target_region_bed
 
     output:
-    tuple val(meta), path('esvee/')                                                                                                    , emit: esvee_dir
-    tuple val(meta), path("esvee/${meta.tumor_id}.esvee.unfiltered.vcf.gz"), path("esvee/${meta.tumor_id}.esvee.unfiltered.vcf.gz.tbi"), emit: esvee_unfiltered_vcf
-    tuple val(meta), path("esvee/${meta.tumor_id}.esvee.somatic.vcf.gz"),    path("esvee/${meta.tumor_id}.esvee.somatic.vcf.gz.tbi")   , emit: esvee_somatic_vcf
-    tuple val(meta), path("esvee/${meta.tumor_id}.esvee.germline.vcf.gz"),   path("esvee/${meta.tumor_id}.esvee.germline.vcf.gz.tbi")  , emit: esvee_germline_vcf, optional: true
-    path 'versions.yml'                                                                                                                , emit: versions
-    path '.command.*'                                                                                                                  , emit: command_files
+    tuple val(meta), path('esvee/')                                                                                                    , topic: esvee_dir
+    tuple val(meta), path("esvee/${meta.tumor_id}.esvee.unfiltered.vcf.gz"), path("esvee/${meta.tumor_id}.esvee.unfiltered.vcf.gz.tbi"), topic: esvee_unfiltered_vcf
+    tuple val(meta), path("esvee/${meta.tumor_id}.esvee.somatic.vcf.gz"),    path("esvee/${meta.tumor_id}.esvee.somatic.vcf.gz.tbi")   , topic: esvee_somatic_vcf
+    tuple val(meta), path("esvee/${meta.tumor_id}.esvee.germline.vcf.gz"),   path("esvee/${meta.tumor_id}.esvee.germline.vcf.gz.tbi")  , topic: esvee_germline_vcf, optional: true
+    path 'versions.yml'                                                                                                                , topic: versions
+    path '.command.*'                                                                                                                  , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

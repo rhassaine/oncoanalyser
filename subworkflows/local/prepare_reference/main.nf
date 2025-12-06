@@ -97,11 +97,13 @@ workflow PREPARE_REFERENCE {
 
         } else if (params.ref_data_genome_bwamem2_index.endsWith('.tar.gz')) {
 
-            ch_genome_bwamem2_index_inputs = Channel.fromPath(params.ref_data_genome_bwamem2_index)
-                .map { [[id: "${it.name.replaceAll('\\.tar\\.gz$', '')}", fp: it], it] }
+            ch_genome_bwamem2_index_inputs = Channel.of(params.ref_data_genome_bwamem2_index)
+                .map { def fp = file(it); return [[key: it, id: "${fp.name.replaceAll('\\.tar\\.gz$', '')}"], fp] }
 
             DECOMP_BWAMEM2_INDEX(ch_genome_bwamem2_index_inputs)
-            ch_genome_bwamem2_index = channel.topic('extracted_dir').filter { meta, dir -> meta.fp == params.ref_data_genome_bwamem2_index }
+            ch_genome_bwamem2_index = channel.topic('extracted_dir')
+                .filter { meta, dir -> meta.key == params.ref_data_genome_bwamem2_index }
+                .map { meta, dir -> dir }
 
         } else {
 
@@ -133,11 +135,13 @@ workflow PREPARE_REFERENCE {
 
         } else if (params.ref_data_genome_gridss_index.endsWith('.tar.gz')) {
 
-            ch_genome_gridss_index_inputs = Channel.fromPath(params.ref_data_genome_gridss_index)
-                .map { [[id: "${it.name.replaceAll('\\.tar\\.gz$', '')}", fp: it], it] }
+            ch_genome_gridss_index_inputs = Channel.of(params.ref_data_genome_gridss_index)
+                .map { def fp = file(it); return [[key: it, id: "${fp.name.replaceAll('\\.tar\\.gz$', '')}"], fp] }
 
             DECOMP_GRIDSS_INDEX(ch_genome_gridss_index_inputs)
-            ch_genome_gridss_index = channel.topic('extracted_dir').filter { meta, dir -> meta.fp == params.ref_data_genome_gridss_index }
+            ch_genome_gridss_index = channel.topic('extracted_dir')
+                .filter { meta, dir -> meta.key == params.ref_data_genome_gridss_index }
+                .map { meta, dir -> dir }
 
         } else {
 
@@ -162,11 +166,13 @@ workflow PREPARE_REFERENCE {
 
         } else if (params.ref_data_genome_star_index.endsWith('.tar.gz')) {
 
-            ch_genome_star_index_inputs = Channel.fromPath(params.ref_data_genome_star_index)
-                .map { [[id: "${it.name.replaceAll('\\.tar\\.gz$', '')}", fp: it], it] }
+            ch_genome_star_index_inputs = Channel.of(params.ref_data_genome_star_index)
+                .map { def fp = file(it); return [[key: it, id: "${fp.name.replaceAll('\\.tar\\.gz$', '')}"], fp] }
 
             DECOMP_STAR_INDEX(ch_genome_star_index_inputs)
-            ch_genome_star_index = channel.topic('extracted_dir').filter { meta, dir -> meta.fp == params.ref_data_genome_star_index }
+            ch_genome_star_index = channel.topic('extracted_dir')
+                .filter { meta, dir -> meta.key == params.ref_data_genome_star_index }
+                .map { meta, dir -> dir }
 
         } else {
 
@@ -185,13 +191,14 @@ workflow PREPARE_REFERENCE {
 
         if (params.ref_data_hmf_data_path.endsWith('tar.gz')) {
 
-            ch_hmf_data_inputs = Channel.fromPath(params.ref_data_hmf_data_path)
-                .map { [[id: "${it.name.replaceAll('\\.tar\\.gz$', '')}", fp: it], it] }
+            ch_hmf_data_inputs = Channel.of(params.ref_data_hmf_data_path)
+                .map { def fp = file(it); [[key: it, id: "${fp.name.replaceAll('\\.tar\\.gz$', '')}"], fp] }
 
             DECOMP_HMF_DATA(ch_hmf_data_inputs)
 
             ch_hmf_data = channel.topic('extracted_dir')
-                .filter { meta, dir -> meta.fp == params.ref_data_hmf_data_path }
+                .filter { meta, dir -> meta.key == params.ref_data_hmf_data_path }
+                .map { meta, dir -> dir }
                 .collect()
                 .map { dir_list ->
                     assert dir_list.size() == 1
@@ -234,13 +241,14 @@ workflow PREPARE_REFERENCE {
 
         if (params.ref_data_panel_data_path.endsWith('tar.gz')) {
 
-            ch_panel_data_inputs = Channel.fromPath(params.ref_data_panel_data_path)
-                .map { [[id: "${it.name.replaceAll('\\.tar\\.gz$', '')}", fp: it], it] }
+            ch_panel_data_inputs = Channel.of(params.ref_data_panel_data_path)
+                .map { def fp = file(it); [[key: it, id: "${fp.name.replaceAll('\\.tar\\.gz$', '')}"], fp] }
 
             DECOMP_PANEL_DATA(ch_panel_data_inputs)
 
             ch_panel_data = channel.topic('extracted_dir')
-                .filter { meta, dir -> meta.fp == params.ref_data_panel_data_path }
+                .filter { meta, dir -> meta.key == params.ref_data_panel_data_path }
+                .map { meta, dir -> dir }
                 .collect()
                 .map { dir_list ->
                     assert dir_list.size() == 1

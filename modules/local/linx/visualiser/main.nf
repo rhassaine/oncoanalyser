@@ -13,9 +13,9 @@ process LINX_VISUALISER {
     path ensembl_data_resources
 
     output:
-    tuple val(meta), path('plots/'), emit: linx_visualiser_plots
-    path 'versions.yml'            , emit: versions
-    path '.command.*'              , emit: command_files
+    tuple val(meta), path('plots/'), topic: linx_visualiser_plots
+    path 'versions.yml'            , topic: versions
+    path '.command.*'              , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

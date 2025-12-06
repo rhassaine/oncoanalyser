@@ -16,9 +16,9 @@ process BAMTOOLS {
     path target_region_bed
 
     output:
-    tuple val(meta), path("bamtools_${meta.sample_id}/"), emit: bamtools_metrics_dir
-    path 'versions.yml'                                 , emit: versions
-    path '.command.*'                                   , emit: command_files
+    tuple val(meta), path("bamtools_${meta.sample_id}/"), topic: bamtools_metrics_dir
+    path 'versions.yml'                                 , topic: versions
+    path '.command.*'                                   , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

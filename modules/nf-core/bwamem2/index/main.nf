@@ -13,9 +13,9 @@ process BWAMEM2_INDEX {
     path alt
 
     output:
-    path 'bwa-mem2_index', emit: bwamem2_index
-    path 'versions.yml'  , emit: versions
-    path '.command.*'    , emit: command_files
+    path 'bwa-mem2_index', topic: bwamem2_index
+    path 'versions.yml'  , topic: versions
+    path '.command.*'    , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

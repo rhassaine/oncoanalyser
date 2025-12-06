@@ -16,9 +16,9 @@ process CIDER {
     file genome_img
 
     output:
-    tuple val(meta), path('cider/*'), emit: cider_dir
-    path 'versions.yml'             , emit: versions
-    path '.command.*'               , emit: command_files
+    tuple val(meta), path('cider/*'), topic: cider_dir
+    path 'versions.yml'             , topic: versions
+    path '.command.*'               , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

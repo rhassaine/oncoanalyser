@@ -11,9 +11,9 @@ process SAMTOOLS_DICT {
     path fasta
 
     output:
-    path '*.dict'      , emit: samtools_dict
-    path 'versions.yml', emit: versions
-    path '.command.*'  , emit: command_files
+    path '*.dict'      , topic: samtools_dict
+    path 'versions.yml', topic: versions
+    path '.command.*'  , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when

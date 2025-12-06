@@ -15,9 +15,9 @@ process CUPPA {
     val categories
 
     output:
-    tuple val(meta), path('cuppa/'), emit: cuppa_dir
-    path 'versions.yml'            , emit: versions
-    path '.command.*'              , emit: command_files
+    tuple val(meta), path('cuppa/'), topic: cuppa_dir
+    path 'versions.yml'            , topic: versions
+    path '.command.*'              , topic: command_files
 
     when:
     task.ext.when == null || task.ext.when
