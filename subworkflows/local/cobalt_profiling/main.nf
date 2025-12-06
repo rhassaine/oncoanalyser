@@ -20,10 +20,6 @@ workflow COBALT_PROFILING {
     targeted_mode               // boolean: [mandatory] Set targeted mode
 
     main:
-    // Channel for version.yml files
-    // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
-
     // Select input sources and sort
     // NOTE(SW): germline mode is not currently supported
     // channel: runnable: [ meta, tumor_bam, tumor_bai, normal_bam, normal_bai]
@@ -88,18 +84,14 @@ workflow COBALT_PROFILING {
         targeted_mode,
     )
 
-    ch_versions = ch_versions.mix(COBALT.out.versions)
-
     // Set outputs, restoring original meta
     // channel: [ meta, cobalt_dir ]
     ch_outputs = Channel.empty()
         .mix(
-            WorkflowOncoanalyser.restoreMeta(COBALT.out.cobalt_dir, ch_inputs),
+            WorkflowOncoanalyser.restoreMeta(channel.topic('cobalt_dir'), ch_inputs),
             ch_inputs_sorted.skip.map { meta -> [meta, []] },
         )
 
     emit:
-    cobalt_dir = ch_outputs  // channel: [ meta, cobalt_dir ]
-
-    versions   = ch_versions // channel: [ versions.yml ]
+    cobalt_dir = ch_outputs // channel: [ meta, cobalt_dir ]
 }

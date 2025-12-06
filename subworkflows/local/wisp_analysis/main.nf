@@ -78,9 +78,4 @@ workflow WISP_ANALYSIS {
         genome_fai,
         purity_estimate_run_mode == Constants.RunMode.TARGETED,
     )
-
-    ch_versions = ch_versions.mix(WISP.out.versions)
-
-    emit:
-    versions = ch_versions // channel: [ versions.yml ]
 }

@@ -17,10 +17,6 @@ workflow PEACH_CALLING {
     peach_drug_info           // channel: [mandatory] /path/to/peach_drug_info
 
     main:
-    // Channel for version.yml files
-    // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
-
     // Select input sources and sort
     // channel: runnable: [ meta, purple_dir ]
     // channel: skip: [ meta ]
@@ -65,18 +61,14 @@ workflow PEACH_CALLING {
         peach_drug_info,
     )
 
-    ch_versions = ch_versions.mix(PEACH.out.versions)
-
     // Set outputs, restoring original meta
     // channel: [ meta, peach_dir ]
     ch_outputs = Channel.empty()
         .mix(
-            WorkflowOncoanalyser.restoreMeta(PEACH.out.peach_dir, ch_inputs),
+            WorkflowOncoanalyser.restoreMeta(channel.topic('peach_dir'), ch_inputs),
             ch_inputs_sorted.skip.map { meta -> [meta, []] },
         )
 
     emit:
-    peach_dir = ch_outputs  // channel: [ meta, peach_dir ]
-
-    versions  = ch_versions // channel: [ versions.yml ]
+    peach_dir = ch_outputs // channel: [ meta, peach_dir ]
 }

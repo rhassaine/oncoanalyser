@@ -111,14 +111,6 @@ workflow WGTS {
 
     }
 
-
-
-
-    /*
-
-
-
-
     //
     // SUBWORKFLOW: Run REDUX for DNA BAMs
     //
@@ -148,8 +140,6 @@ workflow WGTS {
             false,  // umi_enable
             '',  // umi_duplex_delim
         )
-
-        ch_versions = ch_versions.mix(REDUX_PROCESSING.out.versions)
 
         ch_redux_dna_tumor_out = ch_redux_dna_tumor_out.mix(REDUX_PROCESSING.out.dna_tumor)
         ch_redux_dna_normal_out = ch_redux_dna_normal_out.mix(REDUX_PROCESSING.out.dna_normal)
@@ -199,8 +189,6 @@ workflow WGTS {
             isofox_read_length,
         )
 
-        ch_versions = ch_versions.mix(ISOFOX_QUANTIFICATION.out.versions)
-
         ch_isofox_out = ch_isofox_out.mix(ISOFOX_QUANTIFICATION.out.isofox_dir)
 
     } else {
@@ -227,8 +215,6 @@ workflow WGTS {
             [],  // tumor_min_depth
         )
 
-        ch_versions = ch_versions.mix(AMBER_PROFILING.out.versions)
-
         ch_amber_out = ch_amber_out.mix(AMBER_PROFILING.out.amber_dir)
 
     } else {
@@ -254,8 +240,6 @@ workflow WGTS {
             [],  // panel_target_region_normalisation
             false,  // targeted_mode
         )
-
-        ch_versions = ch_versions.mix(COBALT_PROFILING.out.versions)
 
         ch_cobalt_out = ch_cobalt_out.mix(COBALT_PROFILING.out.cobalt_dir)
 
@@ -290,8 +274,6 @@ workflow WGTS {
             hmf_data.unmap_regions,
             [],  // target_region_bed
         )
-
-        ch_versions = ch_versions.mix(ESVEE_CALLING.out.versions)
 
         ch_esvee_germline_out = ch_esvee_germline_out.mix(ESVEE_CALLING.out.germline_vcf)
         ch_esvee_somatic_out = ch_esvee_somatic_out.mix(ESVEE_CALLING.out.somatic_vcf)
@@ -338,8 +320,6 @@ workflow WGTS {
             false, // targeted_mode
         )
 
-        ch_versions = ch_versions.mix(SAGE_CALLING.out.versions)
-
         ch_sage_germline_vcf_out = ch_sage_germline_vcf_out.mix(SAGE_CALLING.out.germline_vcf)
         ch_sage_somatic_vcf_out = ch_sage_somatic_vcf_out.mix(SAGE_CALLING.out.somatic_vcf)
         ch_sage_germline_dir_out = ch_sage_germline_dir_out.mix(SAGE_CALLING.out.germline_dir)
@@ -379,8 +359,6 @@ workflow WGTS {
             hmf_data.ensembl_data_resources,
             hmf_data.gnomad_resource,
         )
-
-        ch_versions = ch_versions.mix(PAVE_ANNOTATION.out.versions)
 
         ch_pave_germline_out = ch_pave_germline_out.mix(PAVE_ANNOTATION.out.germline)
         ch_pave_somatic_out = ch_pave_somatic_out.mix(PAVE_ANNOTATION.out.somatic)
@@ -422,8 +400,6 @@ workflow WGTS {
             [],  // target_region_msi_indels
         )
 
-        ch_versions = ch_versions.mix(PURPLE_CALLING.out.versions)
-
         ch_purple_out = ch_purple_out.mix(PURPLE_CALLING.out.purple_dir)
 
     } else {
@@ -455,8 +431,6 @@ workflow WGTS {
             false,  // purity_estimate_mode
         )
 
-        ch_versions = ch_versions.mix(SAGE_APPEND.out.versions)
-
         ch_sage_somatic_append_out = ch_sage_somatic_append_out.mix(SAGE_APPEND.out.somatic_dir)
         ch_sage_germline_append_out = ch_sage_germline_append_out.mix(SAGE_APPEND.out.germline_dir)
 
@@ -483,8 +457,6 @@ workflow WGTS {
             hmf_data.known_fusion_data,
             hmf_data.driver_gene_panel,
         )
-
-        ch_versions = ch_versions.mix(LINX_ANNOTATION.out.versions)
 
         ch_linx_somatic_out = ch_linx_somatic_out.mix(LINX_ANNOTATION.out.somatic)
         ch_linx_germline_out = ch_linx_germline_out.mix(LINX_ANNOTATION.out.germline)
@@ -513,8 +485,6 @@ workflow WGTS {
             hmf_data.ensembl_data_resources,
         )
 
-        ch_versions = ch_versions.mix(LINX_PLOTTING.out.versions)
-
         ch_linx_somatic_visualiser_dir_out = ch_linx_somatic_visualiser_dir_out.mix(LINX_PLOTTING.out.visualiser_dir)
 
     } else {
@@ -542,8 +512,6 @@ workflow WGTS {
             [], // target_region_bed
         )
 
-        ch_versions = ch_versions.mix(BAMTOOLS_METRICS.out.versions)
-
         ch_bamtools_somatic_out = ch_bamtools_somatic_out.mix(BAMTOOLS_METRICS.out.somatic)
         ch_bamtools_germline_out = ch_bamtools_germline_out.mix(BAMTOOLS_METRICS.out.germline)
 
@@ -569,8 +537,6 @@ workflow WGTS {
             ref_data.genome_img,
         )
 
-        ch_versions = ch_versions.mix(CIDER_CALLING.out.versions)
-
     }
 
     //
@@ -585,8 +551,6 @@ workflow WGTS {
             ch_purple_out,
             hmf_data.sigs_signatures,
         )
-
-        ch_versions = ch_versions.mix(SIGS_FITTING.out.versions)
 
         ch_sigs_out = ch_sigs_out.mix(SIGS_FITTING.out.sigs_dir)
 
@@ -610,8 +574,6 @@ workflow WGTS {
             ref_data.genome_fai,
             ref_data.genome_dict,
         )
-
-        ch_versions = ch_versions.mix(CHORD_PREDICTION.out.versions)
 
         ch_chord_out = ch_chord_out.mix(CHORD_PREDICTION.out.chord_dir)
 
@@ -641,8 +603,6 @@ workflow WGTS {
             false,  // targeted_mode
         )
 
-        ch_versions = ch_versions.mix(LILAC_CALLING.out.versions)
-
         ch_lilac_out = ch_lilac_out.mix(LILAC_CALLING.out.lilac_dir)
 
     } else {
@@ -666,8 +626,6 @@ workflow WGTS {
             ch_purple_out,
             ref_data.genome_version,
         )
-
-        ch_versions = ch_versions.mix(TEAL_CHARACTERISATION.out.versions)
 
     }
 
@@ -694,8 +652,6 @@ workflow WGTS {
             gridss_config,
         )
 
-        ch_versions = ch_versions.mix(VIRUSBREAKEND_CALLING.out.versions)
-
         ch_virusinterpreter_out = ch_virusinterpreter_out.mix(VIRUSBREAKEND_CALLING.out.virusinterpreter_dir)
 
     } else {
@@ -718,8 +674,6 @@ workflow WGTS {
             hmf_data.peach_haplotype_functions,
             hmf_data.peach_drug_info,
         )
-
-        ch_versions = ch_versions.mix(PEACH_CALLING.out.versions)
 
         ch_peach_out = ch_peach_out.mix(PEACH_CALLING.out.peach_dir)
 
@@ -751,8 +705,6 @@ workflow WGTS {
             isofox_read_length,
         )
 
-        ch_versions = ch_versions.mix(NEO_PREDICTION.out.versions)
-
     }
 
     //
@@ -772,8 +724,6 @@ workflow WGTS {
             hmf_data.cuppa_alt_sj,
             hmf_data.cuppa_classifier,
         )
-
-        ch_versions = ch_versions.mix(CUPPA_PREDICTION.out.versions)
 
         ch_cuppa_out = ch_cuppa_out.mix(CUPPA_PREDICTION.out.cuppa_dir)
 
@@ -820,7 +770,6 @@ workflow WGTS {
             'WGS',
         )
 
-        ch_versions = ch_versions.mix(ORANGE_REPORTING.out.versions)
     }
 
     //

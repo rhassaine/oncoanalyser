@@ -30,10 +30,6 @@ workflow NEO_PREDICTION {
     isofox_read_length     //  string: [mandatory] Isofox read length
 
     main:
-    // Channel for versions.yml files
-    // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
-
     //
     // MODULE: Neo finder
     //
@@ -91,11 +87,9 @@ workflow NEO_PREDICTION {
         ensembl_data_resources,
     )
 
-    ch_versions = ch_versions.mix(NEO_FINDER.out.versions)
-
     // Set outputs, restoring original meta
     // channel: [ meta, neo_finder_dir ]
-    ch_finder_out = WorkflowOncoanalyser.restoreMeta(NEO_FINDER.out.neo_finder_dir, ch_inputs)
+    ch_finder_out = WorkflowOncoanalyser.restoreMeta(channel.topic('neo_finder_dir'), ch_inputs)
 
     //
     // MODULE: Fusion annotation (Isofox)
@@ -148,13 +142,11 @@ workflow NEO_PREDICTION {
         ensembl_data_resources,
     )
 
-    ch_versions = ch_versions.mix(NEO_ANNOTATE_FUSIONS.out.versions)
-
     // Set outputs, restoring original meta
     // channel: [ meta, annotated_fusions ]
     ch_annotate_fusions_out = Channel.empty()
         .mix(
-            WorkflowOncoanalyser.restoreMeta(NEO_ANNOTATE_FUSIONS.out.annotated_fusions, ch_inputs),
+            WorkflowOncoanalyser.restoreMeta(channel.topic('neo_annotated_fusions'), ch_inputs),
             ch_isofox_inputs_sorted.skip.map { meta -> [meta, []] },
         )
 
@@ -213,9 +205,4 @@ workflow NEO_PREDICTION {
         neo_resources,
         cohort_tpm_medians,
     )
-
-    ch_versions = ch_versions.mix(NEO_SCORER.out.versions)
-
-    emit:
-    versions = ch_versions // channel: [ versions.yml ]
 }

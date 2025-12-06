@@ -12,8 +12,8 @@ process TEAL_PREP {
     val genome_ver
 
     output:
-    tuple val(meta), path("teal_bam/${meta.tumor_id}.teal.telbam{.bam,.bam.bai}") , topic: tumor_teal_prep_bam
-    tuple val(meta), path("teal_bam/${meta.normal_id}.teal.telbam{.bam,.bam.bai}"), topic: normal_teal_prep_bam, optional: true
+    tuple val(meta), path("teal_bam/${meta.tumor_id}.teal.telbam{.bam,.bam.bai}") , topic: teal_prep_tumor_bam
+    tuple val(meta), path("teal_bam/${meta.normal_id}.teal.telbam{.bam,.bam.bai}"), topic: teal_prep_normal_bam, optional: true
     path 'versions.yml'                                                           , topic: versions
     path '.command.*'                                                             , topic: command_files
 

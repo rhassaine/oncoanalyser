@@ -43,10 +43,6 @@ workflow ORANGE_REPORTING {
     experiment_type             //  string: [mandatory] Experiment type for report (WGS, PANEL)
 
     main:
-    // Channel for version.yml files
-    // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
-
     // Set expected input ordering and size
     input_expected_size = 17
 
@@ -259,9 +255,4 @@ workflow ORANGE_REPORTING {
         experiment_type,
         '2.3.0 [oncoanalyser]',
     )
-
-    ch_versions = ch_versions.mix(ORANGE.out.versions)
-
-    emit:
-    versions = ch_versions // channel: [ versions.yml ]
 }

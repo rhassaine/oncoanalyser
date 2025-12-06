@@ -28,9 +28,6 @@ workflow PAVE_ANNOTATION {
     gnomad_resource        // channel: [mandatory] /path/to/gnomad_resource
 
     main:
-    // Channel for version.yml files
-    ch_versions = Channel.empty()
-
     //
     // MODULE: PAVE germline
     //
@@ -81,8 +78,6 @@ workflow PAVE_ANNOTATION {
         driver_gene_panel,
         ensembl_data_resources,
     )
-
-    ch_versions = ch_versions.mix(PAVE_GERMLINE.out.versions)
 
     //
     // MODULE: PAVE somatic
@@ -136,25 +131,21 @@ workflow PAVE_ANNOTATION {
         gnomad_resource,
     )
 
-    ch_versions = ch_versions.mix(PAVE_SOMATIC.out.versions)
-
     // Set outputs, restoring original meta
     // channel: [ meta, pave_vcf ]
     ch_somatic_out = Channel.empty()
         .mix(
-            WorkflowOncoanalyser.restoreMeta(PAVE_SOMATIC.out.vcf, ch_inputs),
+            WorkflowOncoanalyser.restoreMeta(channel.topic('pave_somatic_vcf'), ch_inputs),
             ch_sage_somatic_inputs_sorted.skip.map { meta -> [meta, []] },
         )
 
     ch_germline_out = Channel.empty()
         .mix(
-            WorkflowOncoanalyser.restoreMeta(PAVE_GERMLINE.out.vcf, ch_inputs),
+            WorkflowOncoanalyser.restoreMeta(channel.topic('pave_germline_vcf'), ch_inputs),
             ch_sage_germline_inputs_sorted.skip.map { meta -> [meta, []] },
         )
 
     emit:
     germline = ch_germline_out // channel: [ meta, pave_vcf ]
     somatic  = ch_somatic_out  // channel: [ meta, pave_vcf ]
-
-    versions = ch_versions     // channel: [ versions.yml ]
 }

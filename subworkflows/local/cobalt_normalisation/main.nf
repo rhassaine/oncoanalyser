@@ -17,10 +17,6 @@ workflow COBALT_NORMALISATION {
     target_region_bed // channel: [mandatory] /path/to/target_region_bed
 
     main:
-    // Channel for version.yml files
-    // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
-
     // Create process input channel
     // channel: [ [amber_dir, ...], [cobalt_dir, ...] ]
     ch_cobalt_inputs = WorkflowOncoanalyser.groupByMeta(
@@ -44,9 +40,4 @@ workflow COBALT_NORMALISATION {
         gc_profile,
         target_region_bed,
     )
-
-    ch_versions = ch_versions.mix(COBALT_PANEL_NORMALISATION.out.versions)
-
-    emit:
-    versions = ch_versions // channel: [ versions.yml ]
 }

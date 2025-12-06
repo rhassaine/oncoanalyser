@@ -186,5 +186,5 @@ workflow READ_ALIGNMENT_RNA {
         )
 
     emit:
-    rna_tumor = ch_bam_out  // channel: [ meta, bam, bai ]
+    rna_tumor = ch_bam_out // channel: [ meta, bam, bai ]
 }

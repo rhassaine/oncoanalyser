@@ -26,10 +26,6 @@ workflow REDUX_PROCESSING {
     umi_duplex_delim // string:  [optional] UMI duplex delimiter
 
     main:
-    // Channel for version.yml files
-    // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
-
     // Select and sort input sources, separating bytumor and normal
     // channel: runnable: [ meta, [bam, ...], [bai, ...] ]
     // channel: skip: [ meta ]
@@ -113,15 +109,13 @@ workflow REDUX_PROCESSING {
         umi_duplex_delim,
     )
 
-    ch_versions = ch_versions.mix(REDUX.out.versions)
-
     // Combine TSV outputs into single channel for processing
     // channel: [ meta_redux, bam, bai, dup_freq_tsv, jitter_tsv, ms_tsv ]
     ch_redux_out = WorkflowOncoanalyser.groupByMeta(
-        REDUX.out.bam,
-        REDUX.out.dup_freq_tsv,
-        REDUX.out.jitter_tsv,
-        REDUX.out.ms_tsv,
+        channel.topic('redux_bam'),
+        channel.topic('redux_dup_freq_tsv'),
+        channel.topic('redux_jitter_tsv'),
+        channel.topic('redux_ms_tsv'),
     )
 
     // Sort into a tumor and normal channel
@@ -175,6 +169,4 @@ workflow REDUX_PROCESSING {
     dna_tumor_tsv  = ch_redux_tumor_out.tsv  // channel: [ meta, dup_freq_tsv, jitter_tsv, ms_tsv ]
     dna_normal_tsv = ch_redux_normal_out.tsv // channel: [ meta, dup_freq_tsv, jitter_tsv, ms_tsv ]
     dna_donor_tsv  = ch_redux_donor_out.tsv  // channel: [ meta, dup_freq_tsv, jitter_tsv, ms_tsv ]
-
-    versions       = ch_versions             // channel: [ versions.yml ]
 }

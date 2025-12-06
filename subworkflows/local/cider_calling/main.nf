@@ -19,10 +19,6 @@ workflow CIDER_CALLING {
     genome_img       // channel: [optional]  /path/to/genome_img
 
     main:
-    // Channel for version.yml files
-    // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
-
     // Sort inputs, separate by DNA and RNA
     // channel: runnable: [ meta, bam, bai ]
     // channel: skip: [ meta ]
@@ -82,9 +78,4 @@ workflow CIDER_CALLING {
         genome_dict,
         genome_img,
     )
-
-    ch_versions = ch_versions.mix(CIDER.out.versions)
-
-    emit:
-    versions = ch_versions // channel: [ versions.yml ]
 }

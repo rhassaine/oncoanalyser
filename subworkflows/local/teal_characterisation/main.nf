@@ -21,10 +21,6 @@ workflow TEAL_CHARACTERISATION {
     genome_version    // channel: [mandatory] genome version
 
     main:
-    // Channel for version.yml files
-    // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
-
     //
     // MODULE: TEAL prep
     //
@@ -76,11 +72,9 @@ workflow TEAL_CHARACTERISATION {
         genome_version,
     )
 
-    ch_versions = ch_versions.mix(TEAL_PREP.out.versions)
-
     // Flatten TEAL_PREP output
     // channel: [ meta, teal_bam, teal_bai ]
-    ch_tumor_teal_bam = WorkflowOncoanalyser.restoreMeta(TEAL_PREP.out.tumor_teal_bam, ch_inputs)
+    ch_tumor_teal_bam = WorkflowOncoanalyser.restoreMeta(channel.topic('teal_prep_tumor_bam'), ch_inputs)
         .map { meta, bam_bai -> [meta] + bam_bai }
 
     ch_normal_teal_bam_placeholder = WorkflowOncoanalyser.restoreMeta(
@@ -90,7 +84,7 @@ workflow TEAL_CHARACTERISATION {
         ch_inputs
     )
 
-    ch_normal_teal_bam = WorkflowOncoanalyser.restoreMeta(TEAL_PREP.out.normal_teal_bam, ch_inputs)
+    ch_normal_teal_bam = WorkflowOncoanalyser.restoreMeta(channel.topic('teal_prep_normal_bam'), ch_inputs)
         .map { meta, bam_bai -> [meta] + bam_bai }
         .mix(ch_normal_teal_bam_placeholder)
 
@@ -151,9 +145,4 @@ workflow TEAL_CHARACTERISATION {
         ch_teal_pipeline_inputs,
         genome_version,
     )
-
-    ch_versions = ch_versions.mix(TEAL_PIPELINE.out.versions)
-
-    emit:
-    versions = ch_versions // channel: [ versions.yml ]
 }

@@ -22,10 +22,6 @@ workflow LILAC_CALLING {
     targeted_mode      // boolean: [mandatory] Set targeted mode
 
     main:
-    // Channel for version.yml files
-    // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
-
     // Select input sources and sort for DNA BAMs
     // channel: runnable: [ meta, tumor_dna_bam, tumor_dna_bai, normal_dna_bam, normal_dna_bai ]
     // channel: skip: [ meta ]
@@ -98,18 +94,14 @@ workflow LILAC_CALLING {
         targeted_mode
     )
 
-    ch_versions = ch_versions.mix(LILAC.out.versions)
-
     // Set outputs, restoring original meta
     // channel: [ meta, amber_dir ]
     ch_outputs = Channel.empty()
         .mix(
-            WorkflowOncoanalyser.restoreMeta(LILAC.out.lilac_dir, ch_inputs),
+            WorkflowOncoanalyser.restoreMeta(channel.topic('lilac_dir'), ch_inputs),
             ch_dna_inputs_sorted.skip.map { meta -> [meta, []] },
         )
 
     emit:
-    lilac_dir = ch_outputs  // channel: [ meta, lilac_dir ]
-
-    versions  = ch_versions // channel: [ versions.yml ]
+    lilac_dir = ch_outputs // channel: [ meta, lilac_dir ]
 }

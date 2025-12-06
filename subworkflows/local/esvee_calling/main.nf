@@ -24,9 +24,6 @@ workflow ESVEE_CALLING {
     target_region_bed        // channel: [optional]  /path/to/target_region_bed
 
     main:
-    // Channel for version.yml files
-    ch_versions = Channel.empty()
-
     // Select input sources and sort
     ch_inputs_sorted = WorkflowOncoanalyser.groupByMeta(
         ch_tumor_bam,
@@ -89,25 +86,23 @@ workflow ESVEE_CALLING {
         target_region_bed,
     )
 
-    ch_versions = ch_versions.mix(ESVEE.out.versions)
-
     // Set outputs, restoring original meta
     ch_somatic_out = Channel.empty()
         .mix(
-            WorkflowOncoanalyser.restoreMeta(ESVEE.out.somatic_vcf, ch_inputs),
+            WorkflowOncoanalyser.restoreMeta(channel.topic('esvee_somatic_vcf'), ch_inputs),
             ch_inputs_sorted.skip.map { meta -> [meta, [], []] }
         )
 
     ch_germline_out = Channel.empty()
         .mix(
-            WorkflowOncoanalyser.restoreMeta(ESVEE.out.germline_vcf, ch_inputs),
+            WorkflowOncoanalyser.restoreMeta(channel.topic('esvee_germline_vcf'), ch_inputs),
             ch_inputs_sorted.runnable_to.map { meta, tumor_bam, tumor_bai -> [meta, [], []] },
             ch_inputs_sorted.skip.map { meta -> [meta, [], []] },
         )
 
     ch_unfiltered_out = Channel.empty()
         .mix(
-            WorkflowOncoanalyser.restoreMeta(ESVEE.out.unfiltered_vcf, ch_inputs),
+            WorkflowOncoanalyser.restoreMeta(channel.topic('esvee_unfiltered_vcf'), ch_inputs),
             ch_inputs_sorted.skip.map { meta -> [meta, [], []] }
         )
 
@@ -115,6 +110,4 @@ workflow ESVEE_CALLING {
     somatic_vcf    = ch_somatic_out    // channel: [ meta, vcf, tbi ]
     germline_vcf   = ch_germline_out   // channel: [ meta, vcf, tbi ]
     unfiltered_vcf = ch_unfiltered_out // channel: [ meta, vcf, tbi ]
-
-    versions       = ch_versions       // channel: [ versions.yml ]
 }

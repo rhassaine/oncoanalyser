@@ -15,10 +15,6 @@ workflow SIGS_FITTING {
     sigs_signatures // channel: [mandatory] /path/to/sigs_signatures
 
     main:
-    // Channel for version.yml files
-    // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
-
     // Select input sources
     // channel: [ meta, purple_dir ]
     ch_inputs_selected = ch_purple
@@ -72,18 +68,14 @@ workflow SIGS_FITTING {
         sigs_signatures,
     )
 
-    ch_versions = ch_versions.mix(SIGS.out.versions)
-
     // Set outputs, restoring original meta
     // channel: [ meta, sigs_dir ]
     ch_outputs = Channel.empty()
         .mix(
-            WorkflowOncoanalyser.restoreMeta(SIGS.out.sigs_dir, ch_inputs),
+            WorkflowOncoanalyser.restoreMeta(channel.topic('sigs_dir'), ch_inputs),
             ch_inputs_sorted.skip.map { meta -> [meta, []] },
         )
 
     emit:
-    sigs_dir = ch_outputs  // channel: [ meta, sigs_dir ]
-
-    versions = ch_versions // channel: [ versions.yml ]
+    sigs_dir = ch_outputs // channel: [ meta, sigs_dir ]
 }

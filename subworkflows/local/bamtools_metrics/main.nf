@@ -20,10 +20,6 @@ workflow BAMTOOLS_METRICS {
     target_region_bed      // channel: [optional]  /path/to/target_region_bed
 
     main:
-    // Channel for version.yml files
-    // channel: [ versions.yml ]
-    ch_versions = Channel.empty()
-
     // Sort inputs, separate by tumor and normal
     // channel: runnable: [ meta, bam, bai ]
     // channel: skip: [ meta ]
@@ -88,10 +84,8 @@ workflow BAMTOOLS_METRICS {
         target_region_bed,
     )
 
-    ch_versions = ch_versions.mix(BAMTOOLS.out.versions)
-
     // Sort into a tumor and normal channel
-    ch_bamtools_out = BAMTOOLS.out.metrics_dir
+    ch_bamtools_out = channel.topic('bamtools_metrics_dir')
         .branch { meta_bamtools, metrics_dir ->
             assert ['tumor', 'normal'].contains(meta_bamtools.sample_type)
             tumor: meta_bamtools.sample_type == 'tumor'
@@ -116,6 +110,4 @@ workflow BAMTOOLS_METRICS {
     emit:
     somatic  = ch_somatic_metrics_dir  // channel: [ meta, metrics_dir ]
     germline = ch_germline_metrics_dir // channel: [ meta, metrics_dir ]
-
-    versions = ch_versions             // channel: [ versions.yml ]
 }
