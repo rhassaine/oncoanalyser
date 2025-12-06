@@ -43,6 +43,7 @@ workflow WGTS {
     take:
     inputs
     run_config
+    params
 
     main:
     // Check input path parameters to see if they exist
@@ -63,17 +64,14 @@ workflow WGTS {
 
 
 
+
     // Set up reference data, assign more human readable variables
     prep_config = WorkflowMain.getPrepConfigFromSamplesheet(run_config)
     PREPARE_REFERENCE(
         prep_config,
         run_config,
+        params,
     )
-
-
-
-/*
-
     ref_data = PREPARE_REFERENCE.out
     hmf_data = PREPARE_REFERENCE.out.hmf_data
 

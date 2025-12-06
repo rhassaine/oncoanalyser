@@ -37,6 +37,7 @@ workflow TARGETED {
     take:
     inputs
     run_config
+    params
 
     main:
     // Check input path parameters to see if they exist
@@ -62,6 +63,7 @@ workflow TARGETED {
     PREPARE_REFERENCE(
         prep_config,
         run_config,
+        params,
     )
     ref_data = PREPARE_REFERENCE.out
     hmf_data = PREPARE_REFERENCE.out.hmf_data

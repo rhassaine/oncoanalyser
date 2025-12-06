@@ -3,12 +3,13 @@
 //
 
 
-include { _BWAMEM2_INDEX         } from '../../../modules/nf-core/bwamem2/index/main'
+include { BWAMEM2_INDEX         } from '../../../modules/nf-core/bwamem2/index/main'
 include { BWA_INDEX             } from '../../../modules/nf-core/bwa/index/main'
 include { SAMTOOLS_DICT         } from '../../../modules/nf-core/samtools/dict/main'
 include { SAMTOOLS_FAIDX        } from '../../../modules/nf-core/samtools/faidx/main'
-include { GATK4_BWA_INDEX_IMAGE } from '../../../modules/local/gatk4/bwaindeximage/main'
 include { STAR_GENOMEGENERATE   } from '../../../modules/nf-core/star/genomegenerate/main'
+
+include { GATK4_BWA_INDEX_IMAGE } from '../../../modules/local/gatk4/bwaindeximage/main'
 include { GRIDSS_INDEX          } from '../../../modules/local/gridss/index/main'
 
 include { CUSTOM_EXTRACTTARBALL as DECOMP_BWAMEM2_INDEX } from '../../../modules/local/custom/extract_tarball/main'
@@ -31,6 +32,7 @@ workflow PREPARE_REFERENCE {
     take:
     prep_config // channel: [mandatory] configuration indicating which reference data is required
     run_config
+    params
 
     main:
     // Channel for version.yml files
@@ -42,51 +44,48 @@ workflow PREPARE_REFERENCE {
     //
     ch_genome_version = Channel.value(params.genome_version)
 
-    println "z ${params.ref_data_genome_fasta}"
-    println "z ${params.ref_data_genome_fasta}"
-    println "z ${params.ref_data_genome_fasta}"
-
-/*
-
     ch_genome_fasta = Channel.empty()
     if (prep_config.require_fasta) {
         ch_genome_fasta = Channel.fromPath(params.ref_data_genome_fasta)
     }
 
-
-
-
     ch_genome_fai = Channel.empty()
     if (prep_config.require_fai) {
 
-        ch_genome_fai = getRefFileChannel('ref_data_genome_fai')
         if (!params.ref_data_genome_fai) {
             SAMTOOLS_FAIDX(ch_genome_fasta)
             ch_genome_fai = SAMTOOLS_FAIDX.out.fai
             ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
+        } else {
+            ch_genome_fai = Channel.of(params.ref_data_genome_fai)
         }
+
     }
 
     ch_genome_dict = Channel.empty()
     if (prep_config.require_dict) {
 
-        ch_genome_dict = getRefFileChannel('ref_data_genome_dict')
         if (!params.ref_data_genome_dict) {
             SAMTOOLS_DICT(ch_genome_fasta)
             ch_genome_dict = SAMTOOLS_DICT.out.dict
             ch_versions = ch_versions.mix(SAMTOOLS_DICT.out.versions)
+        } else {
+            ch_genome_dict = Channel.of(params.ref_data_genome_dict)
         }
+
     }
 
     ch_genome_img = Channel.empty()
     if (prep_config.require_img) {
 
-        ch_genome_img = getRefFileChannel('ref_data_genome_img')
         if (!params.ref_data_genome_img) {
             GATK4_BWA_INDEX_IMAGE(ch_genome_fasta)
             ch_genome_img = GATK4_BWA_INDEX_IMAGE.out.img
             ch_versions = ch_versions.mix(GATK4_BWA_INDEX_IMAGE.out.versions)
+        } else {
+            ch_genome_img = Channel.of(params.ref_data_genome_img)
         }
+
     }
 
     //
@@ -97,12 +96,12 @@ workflow PREPARE_REFERENCE {
 
         if (!params.ref_data_genome_bwamem2_index) {
 
-            _BWAMEM2_INDEX(
+            BWAMEM2_INDEX(
                 ch_genome_fasta,
                 params.ref_data_genome_alt ? file(params.ref_data_genome_alt) : [],
             )
-            ch_genome_bwamem2_index = _BWAMEM2_INDEX.out.index
-            ch_versions = ch_versions.mix(_BWAMEM2_INDEX.out.versions)
+            ch_genome_bwamem2_index = BWAMEM2_INDEX.out.index
+            ch_versions = ch_versions.mix(BWAMEM2_INDEX.out.versions)
 
         } else if (params.ref_data_genome_bwamem2_index.endsWith('.tar.gz')) {
 
@@ -114,7 +113,7 @@ workflow PREPARE_REFERENCE {
 
         } else {
 
-            ch_genome_bwamem2_index = getRefFileChannel('ref_data_genome_bwamem2_index')
+            ch_genome_bwamem2_index = Channel.of(params.ref_data_genome_bwamem2_index)
 
         }
     }
@@ -152,7 +151,7 @@ workflow PREPARE_REFERENCE {
 
         } else {
 
-            ch_genome_gridss_index = getRefFileChannel('ref_data_genome_gridss_index')
+            ch_genome_gridss_index = Channel.of(params.ref_data_genome_gridss_index)
 
         }
     }
@@ -182,7 +181,7 @@ workflow PREPARE_REFERENCE {
 
         } else {
 
-            ch_genome_star_index = getRefFileChannel('ref_data_genome_star_index')
+            ch_genome_star_index = Channel.of(params.ref_data_genome_star_index)
 
         }
     }
@@ -300,18 +299,6 @@ workflow PREPARE_REFERENCE {
     panel_data           = ch_panel_data                   // map:  Panel data paths
 
     versions             = ch_versions                     // channel: [ versions.yml ]
-
-
-
-*/
-
-
-
-}
-
-def getRefFileChannel(key) {
-    def fp = params.get(key) ? file(params.getAt(key)) : []
-    return Channel.of(fp)
 }
 
 def createDataMap(entries, ref_data_path) {

@@ -1,4 +1,4 @@
-process _BWAMEM2_INDEX {
+process BWAMEM2_INDEX {
     tag "$fasta"
     label 'process_single'
     label 'process_high_memory'

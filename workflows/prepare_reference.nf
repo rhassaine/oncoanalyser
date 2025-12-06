@@ -16,6 +16,10 @@ include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pi
 */
 
 workflow PREPARE_REFERENCE {
+    take:
+    params
+
+    main:
     // Create channel for versions
     // channel: [ versions.yml ]
     ch_versions = Channel.empty()
@@ -25,6 +29,7 @@ workflow PREPARE_REFERENCE {
     STAGE_REFERENCE(
         prep_config,
         [:],
+        params,
     )
 
     ch_versions = ch_versions.mix(STAGE_REFERENCE.out.versions)

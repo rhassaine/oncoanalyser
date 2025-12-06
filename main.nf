@@ -51,7 +51,7 @@ workflow NFCORE_ONCOANALYSER {
     // Run selected workflow
     // NOTE(SW): prepare reference is checked early as params.input is not required
     if (run_mode == Constants.RunMode.PREPARE_REFERENCE)  {
-        PREPARE_REFERENCE()
+        PREPARE_REFERENCE(params)
     } else {
         // Parse and validate inputs
         inputs = Utils.parseInput(params.input, workflow.stubRun, log)
@@ -60,13 +60,13 @@ workflow NFCORE_ONCOANALYSER {
 
         // Run requested workflow
         if (run_mode == Constants.RunMode.WGTS) {
-            WGTS(inputs, run_config)
+            WGTS(inputs, run_config, params)
         } else if (run_mode == Constants.RunMode.TARGETED) {
-            TARGETED(inputs, run_config)
+            TARGETED(inputs, run_config, params)
         } else if (run_mode == Constants.RunMode.PURITY_ESTIMATE) {
-            PURITY_ESTIMATE(inputs, run_config)
+            PURITY_ESTIMATE(inputs, run_config, params)
         } else if (run_mode == Constants.RunMode.PANEL_RESOURCE_CREATION) {
-            PANEL_RESOURCE_CREATION(inputs, run_config)
+            PANEL_RESOURCE_CREATION(inputs, run_config, params)
         } else {
             log.error("received bad run mode: ${run_mode}")
             exit(1)
@@ -83,20 +83,9 @@ workflow NFCORE_ONCOANALYSER {
 
 workflow {
 
-
-
-
-
-
-
-    /*
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        SET DEFAULT VALUES
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    */
-
-    println "a ${params.ref_data_genome_fasta} : ${getGenomeAttribute('fasta')}"
-
+    //
+    // BLOCK: Set defaults and apply extended, custom validation
+    //
     params.ref_data_genome_fasta         = getGenomeAttribute('fasta')
     params.ref_data_genome_fai           = getGenomeAttribute('fai')
     params.ref_data_genome_dict          = getGenomeAttribute('dict')
@@ -105,32 +94,15 @@ workflow {
     params.ref_data_genome_gridss_index  = getGenomeAttribute('gridss_index')
     params.ref_data_genome_star_index    = getGenomeAttribute('star_index')
 
-    println "b ${params.ref_data_genome_fasta} : ${getGenomeAttribute('fasta')}"
-
     WorkflowMain.setParamsDefaults(params, log)
     WorkflowMain.validateParams(params, log)
 
-    println "c ${params.ref_data_genome_fasta} : ${getGenomeAttribute('fasta')}"
-
-    /*
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        CREATE PLACEHOLDER FILES FOR STUB RUNS
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    */
-
-    // NOTE(SW): required prior to workflow import
-
+    //
+    // BLOCK: Create placeholders for stub runs if requested
+    //
     if (workflow.stubRun && params.create_stub_placeholders) {
         Utils.createStubPlaceholders(params)
     }
-
-
-
-
-
-
-
-
 
     //
     // SUBWORKFLOW: Run initialisation tasks
@@ -146,10 +118,6 @@ workflow {
         params.help_full,
         params.show_hidden
     )
-
-    //println "${params}"
-
-    println "e ${params.ref_data_genome_fasta} : ${getGenomeAttribute('fasta')}"
 
     //
     // WORKFLOW: Run main workflow

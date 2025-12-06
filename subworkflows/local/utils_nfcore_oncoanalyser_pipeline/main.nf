@@ -18,19 +18,6 @@ include { imNotification            } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NFCORE_PIPELINE     } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NEXTFLOW_PIPELINE   } from '../../nf-core/utils_nextflow_pipeline'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     SUBWORKFLOW TO INITIALISE PIPELINE
@@ -51,56 +38,6 @@ workflow PIPELINE_INITIALISATION {
     show_hidden       // boolean: Show hidden parameters in the help message
 
     main:
-
-
-
-
-
-
-    ///*
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //    SET DEFAULT VALUES
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //*/
-
-    //println "a ${params.ref_data_genome_fasta} : ${getGenomeAttribute('fasta')}"
-
-    //params.ref_data_genome_fasta         = getGenomeAttribute('fasta')
-    //params.ref_data_genome_fai           = getGenomeAttribute('fai')
-    //params.ref_data_genome_dict          = getGenomeAttribute('dict')
-    //params.ref_data_genome_img           = getGenomeAttribute('img')
-    //params.ref_data_genome_bwamem2_index = getGenomeAttribute('bwamem2_index')
-    //params.ref_data_genome_gridss_index  = getGenomeAttribute('gridss_index')
-    //params.ref_data_genome_star_index    = getGenomeAttribute('star_index')
-
-    //println "b ${params.ref_data_genome_fasta} : ${getGenomeAttribute('fasta')}"
-
-    //WorkflowMain.setParamsDefaults(params, log)
-    //WorkflowMain.validateParams(params, log)
-
-    //println "c ${params.ref_data_genome_fasta} : ${getGenomeAttribute('fasta')}"
-
-    ///*
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //    CREATE PLACEHOLDER FILES FOR STUB RUNS
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //*/
-
-    //// NOTE(SW): required prior to workflow import
-
-    //if (workflow.stubRun && params.create_stub_placeholders) {
-    //    Utils.createStubPlaceholders(params)
-    //}
-
-
-
-
-
-
-
-
-
-
 
     ch_versions = channel.empty()
 
@@ -159,8 +96,6 @@ workflow PIPELINE_INITIALISATION {
     // Custom validation for pipeline parameters
     //
     validateInputParameters()
-
-    //println "c ${params.ref_data_genome_fasta} : ${getGenomeAttribute('fasta')}"
 
     emit:
     versions    = ch_versions

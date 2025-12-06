@@ -25,6 +25,7 @@ workflow PURITY_ESTIMATE {
     take:
     inputs
     run_config
+    params
 
     main:
     // Create channel for versions
@@ -43,6 +44,7 @@ workflow PURITY_ESTIMATE {
     PREPARE_REFERENCE(
         prep_config,
         run_config,
+        params,
     )
     ref_data = PREPARE_REFERENCE.out
     hmf_data = PREPARE_REFERENCE.out.hmf_data
