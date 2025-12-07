@@ -77,7 +77,7 @@ process TEAL_PIPELINE {
     mkdir -p teal/
 
     ${ (meta.tumor_id != null) ? "touch teal/${meta.tumor_id}.teal.{tellength.tsv,breakend.tsv.gz}" : '' }
-    ${ (meta.normal_id != null) ? "touch teal/${meta.normal_id}.teal.{tellength.tsv}" : '' }
+    ${ (meta.normal_id != null) ? "touch teal/${meta.normal_id}.teal.tellength.tsv" : '' }
 
     echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
     """
