@@ -38,7 +38,7 @@ workflow PREPARE_OUTPUTS_WGTS_TARGETED_SHARED {
             channel.topic('sage_germline_dir').map { meta, d ->            return ["${meta.key}/sage/germline", d] },
             channel.topic('sage_somatic_dir').map { meta, d ->             return ["${meta.key}/sage/somatic", d] },
 
-            channel.topic('command_files').flatMap { get_command_log_filepath(it, log) }
+            channel.topic('command_files').flatMap { get_command_log_filepath(it) }
         )
         .flatMap { meta, d -> return d instanceof List ? d.collect { [meta, it] } : [[meta, d]] }
 
@@ -96,22 +96,24 @@ workflow PREPARE_OUTPUTS_TARGETED {
 }
 
 
-def get_command_log_filepath(data, log) {
+def get_command_log_filepath(data) {
 
-    def (info, name, fps_all) = data
+    def decom_logs = ['extracttarball']
+    def index_logs = ['gatk4_bwa_index_image', 'gridss_index', 'bwa_index', 'bwamem2_index', 'samtools_dict', 'samtools_faidx', 'star_genomegenerate']
+    def panel_logs = ['cobalt_panel_normalisation', 'pave_pon_panel_creation']
+
+    def (meta, name, fps_all) = data
 
     def fps = fps_all.findAll { it.name.matches(/.*\.command\.(sh|out|err|log|run)/) }
-    def log_type = info instanceof Map ? 'sample' : info
 
-    if (log_type== 'sample') {
-        return fps.collect { d -> ["${info.key}/logs/${name}${d.name}", d] }
-    } else if (log_type == 'index' || log_type == 'decomp') {
-        return fps.collect { d -> ["logs/${name}${d.name}", d] }
-    } else if (log_type == 'panel') {
-        return fps.collect { d -> ["logs/${name}${d.name}", d] }
+    if (decom_logs.contains(name)) {
+        return fps.collect { d -> ["logs/other/${name}.${meta.id}${d.name}", d] }
+    } else if (index_logs.contains(name)) {
+        return fps.collect { d -> ["logs/other/${name}${d.name}", d] }
+    } else if (panel_logs.contains(name)) {
+        return fps.collect { d -> ["logs/panel_resources/${name}${d.name}", d] }
     } else {
-        log.error("got bad log type: ${log_type}")
-        exit(1)
+        return fps.collect { d -> ["logs/${meta.key}/${name}${d.name}", d] }
     }
 
 }
