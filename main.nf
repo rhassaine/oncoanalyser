@@ -160,23 +160,28 @@ workflow {
 
 // NOTE(SW): there is different behaviour between returning a string and using `>>`; the former always placed files under a directory where the path the string i.e. amber/ is always published as `<sample_id>/amber/amber/`; must use `>>` in order to achieve desired behaviour and hence must only provide one file per channel element
 
-
 output {
     results {
         path { filepath, file -> file >> filepath }
-
-
-
-        //     Does not work; `>>` in closure raises error
-        //    if (files instanceof List) {
-        //        files.collect { it >> filepath }
-        //    } else {
-        //        files >> filepath
-        //    }
-        //}
-
     }
 }
+
+//output {
+//    results {
+//        path { filepath, file -> file >> filepath }
+//
+//
+//
+//        //     Does not work; `>>` in closure raises error
+//        //    if (files instanceof List) {
+//        //        files.collect { it >> filepath }
+//        //    } else {
+//        //        files >> filepath
+//        //    }
+//        //}
+//
+//    }
+//}
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
