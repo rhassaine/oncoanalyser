@@ -12,7 +12,7 @@ process LINXREPORT {
 
     output:
     tuple val(meta), path('*_linx.html'), topic: linxreport_html
-    tuple val(meta), path(.command.*)   , topic: command_files
+    tuple val(meta), path('.command.*') , topic: command_files
     path 'versions.yml'                 , topic: versions
 
     when:

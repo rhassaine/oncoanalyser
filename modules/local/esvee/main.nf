@@ -27,7 +27,7 @@ process ESVEE {
     tuple val(meta), path("esvee/${meta.tumor_id}.esvee.unfiltered.vcf.gz"), path("esvee/${meta.tumor_id}.esvee.unfiltered.vcf.gz.tbi"), topic: esvee_unfiltered_vcf
     tuple val(meta), path("esvee/${meta.tumor_id}.esvee.somatic.vcf.gz"),    path("esvee/${meta.tumor_id}.esvee.somatic.vcf.gz.tbi")   , topic: esvee_somatic_vcf
     tuple val(meta), path("esvee/${meta.tumor_id}.esvee.germline.vcf.gz"),   path("esvee/${meta.tumor_id}.esvee.germline.vcf.gz.tbi")  , topic: esvee_germline_vcf, optional: true
-    tuple val(meta), path(.command.*)                                                                                                  , topic: command_files
+    tuple val(meta), path('.command.*')                                                                                                , topic: command_files
     path 'versions.yml'                                                                                                                , topic: versions
 
     when:

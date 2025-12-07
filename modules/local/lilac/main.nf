@@ -16,9 +16,9 @@ process LILAC {
     val targeted_mode
 
     output:
-    tuple val(meta), path('lilac/')  , topic: lilac_dir
-    tuple val(meta), path(.command.*), topic: command_files
-    path 'versions.yml'              , topic: versions
+    tuple val(meta), path('lilac/')    , topic: lilac_dir
+    tuple val(meta), path('.command.*'), topic: command_files
+    path 'versions.yml'                , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

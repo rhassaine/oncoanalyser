@@ -17,7 +17,7 @@ process NEO_ANNOTATE_FUSIONS {
 
     output:
     tuple val(meta), path('*isf.neoepitope.tsv'), topic: neo_annotated_fusions_tsv
-    tuple val(meta), path(.command.*)           , topic: command_files
+    tuple val(meta), path('.command.*')         , topic: command_files
     path 'versions.yml'                         , topic: versions
 
     when:

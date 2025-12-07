@@ -19,7 +19,7 @@ process VIRUSBREAKEND {
     output:
     tuple val(meta), path('*.summary.tsv')      , topic: virusbreakend_tsv
     tuple val(meta), path('*.virusbreakend.vcf'), topic: virusbreakend_vcf
-    tuple val(meta), path(.command.*)           , topic: command_files
+    tuple val(meta), path('.command.*')         , topic: command_files
     path 'versions.yml'                         , topic: versions
 
     when:

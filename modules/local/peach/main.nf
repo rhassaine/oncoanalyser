@@ -15,7 +15,7 @@ process PEACH {
 
     output:
     tuple val(meta), path('peach/')  , topic: peach_dir
-    tuple val(meta), path(.command.*), topic: command_files
+    tuple val(meta), path('.command.*'), topic: command_files
     path 'versions.yml'              , topic: versions
 
     when:

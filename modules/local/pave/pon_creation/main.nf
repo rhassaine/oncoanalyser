@@ -12,7 +12,7 @@ process PAVE_PON_PANEL_CREATION {
 
     output:
     path 'pave.somatic_artefacts.*.tsv', topic: pave_artefacts
-    tuple val(meta), path(.command.*)  , topic: command_files
+    tuple val(meta), path('.command.*'), topic: command_files
     path 'versions.yml'                , topic: versions
 
     when:

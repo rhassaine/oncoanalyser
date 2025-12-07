@@ -18,7 +18,7 @@ process GATK4_MARKDUPLICATES {
     tuple val(meta), path('*.crai')   , topic: gatk4_markduplicates_crai, optional: true
     tuple val(meta), path('*.bai')    , topic: gatk4_markduplicates_bai, optional: true
     tuple val(meta), path('*.metrics'), topic: gatk4_markduplicates_metrics
-    tuple val(meta), path(.command.*) , topic: command_files
+    tuple val(meta), path('.command.*') , topic: command_files
     path 'versions.yml'               , topic: versions
 
     when:
