@@ -14,7 +14,7 @@ process BWAMEM2_ALIGN {
 
     output:
     tuple val(meta), path('*.bam'), path('*.bai'), topic: bwamem2_align_bam
-    path '.command.*'                            , topic: command_files
+    tuple val(meta), path(.command.*)            , topic: command_files
     path 'versions.yml'                          , topic: versions
 
     when:

@@ -42,7 +42,7 @@ process ORANGE {
     output:
     tuple val(meta), path('output/*.orange.pdf') , topic: orange_pdf, optional: true
     tuple val(meta), path('output/*.orange.json'), topic: orange_json, optional: true
-    path '.command.*'                            , topic: command_files
+    tuple val(meta), path(.command.*)            , topic: command_files
     path 'versions.yml'                          , topic: versions
 
     when:

@@ -11,9 +11,9 @@ process SAMBAMBA_MERGE {
     tuple val(meta), path(bams)
 
     output:
-    tuple val(meta), path('*bam'), topic: sambamba_merge_bam
-    path '.command.*'            , topic: command_files
-    path 'versions.yml'          , topic: versions
+    tuple val(meta), path('*bam')    , topic: sambamba_merge_bam
+    tuple val(meta), path(.command.*), topic: command_files
+    path 'versions.yml'              , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

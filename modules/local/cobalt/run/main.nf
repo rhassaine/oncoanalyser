@@ -16,9 +16,9 @@ process COBALT {
     val targeted_mode
 
     output:
-    tuple val(meta), path('cobalt/'), topic: cobalt_dir
-    path '.command.*'               , topic: command_files
-    path 'versions.yml'             , topic: versions
+    tuple val(meta), path('cobalt/') , topic: cobalt_dir
+    tuple val(meta), path(.command.*), topic: command_files
+    path 'versions.yml'              , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

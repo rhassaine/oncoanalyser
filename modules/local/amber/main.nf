@@ -15,9 +15,9 @@ process AMBER {
     val tumor_min_depth
 
     output:
-    tuple val(meta), path('amber/'), topic: amber_dir
-    path '.command.*'              , topic: command_files
-    path 'versions.yml'            , topic: versions
+    tuple val(meta), path('amber/')  , topic: amber_dir
+    tuple val(meta), path(.command.*), topic: command_files
+    path 'versions.yml'              , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

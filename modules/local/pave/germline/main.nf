@@ -22,7 +22,7 @@ process PAVE_GERMLINE {
     output:
     tuple val(meta), path('*.vcf.gz')    , topic: pave_germline_vcf
     tuple val(meta), path('*.vcf.gz.tbi'), topic: pave_germline_index
-    path '.command.*'                    , topic: command_files
+    tuple val(meta), path(.command.*)    , topic: command_files
     path 'versions.yml'                  , topic: versions
 
     when:

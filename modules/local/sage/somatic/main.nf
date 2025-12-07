@@ -26,7 +26,7 @@ process SAGE_SOMATIC {
     output:
     tuple val(meta), path('somatic/*.sage.somatic.vcf.gz'), path('somatic/*.sage.somatic.vcf.gz.tbi'), topic: sage_somatic_vcf
     tuple val(meta), path('somatic/')                                                                , topic: sage_somatic_dir
-    path '.command.*'                                                                                , topic: command_files
+    tuple val(meta), path(.command.*)                                                                , topic: command_files
     path 'versions.yml'                                                                              , topic: versions
 
     when:

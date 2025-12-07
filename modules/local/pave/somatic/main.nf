@@ -23,7 +23,7 @@ process PAVE_SOMATIC {
     output:
     tuple val(meta), path('*.vcf.gz')    , topic: pave_somatic_vcf
     tuple val(meta), path('*.vcf.gz.tbi'), topic: pave_somatic_index
-    path '.command.*'                    , topic: command_files
+    tuple val(meta), path(.command.*)    , topic: command_files
     path 'versions.yml'                  , topic: versions
 
     when:

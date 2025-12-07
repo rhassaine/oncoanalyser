@@ -16,7 +16,7 @@ process NEO_FINDER {
 
     output:
     tuple val(meta), path('neo_finder/'), topic: neo_finder_dir
-    path '.command.*'                   , topic: command_files
+    tuple val(meta), path(.command.*)   , topic: command_files
     path 'versions.yml'                 , topic: versions
 
     when:
