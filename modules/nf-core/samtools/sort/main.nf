@@ -11,9 +11,9 @@ process SAMTOOLS_SORT {
     tuple val(meta), path(bam)
 
     output:
-    tuple val(meta), path('*.bam')   , topic: samtools_sort_bam
-    tuple val(meta), path('.command.*'), topic: command_files
-    path 'versions.yml'              , topic: versions
+    tuple val(meta), path('*.bam')                           , topic: samtools_sort_bam
+    tuple val(meta), val('samtools_sort'), path('.command.*'), topic: command_files
+    path 'versions.yml'                                      , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

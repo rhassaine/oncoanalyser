@@ -20,9 +20,9 @@ process TEAL_PIPELINE {
     val genome_ver
 
     output:
-    tuple val(meta), path('teal/*.tsv*'), topic: teal_tsvs
-    tuple val(meta), path('.command.*') , topic: command_files
-    path 'versions.yml'                 , topic: versions
+    tuple val(meta), path('teal/*.tsv*')                     , topic: teal_tsvs
+    tuple val(meta), val('teal_pipeline'), path('.command.*'), topic: command_files
+    path 'versions.yml'                                      , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

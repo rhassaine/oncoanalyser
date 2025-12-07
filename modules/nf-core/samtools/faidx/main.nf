@@ -11,9 +11,9 @@ process SAMTOOLS_FAIDX {
     path fasta
 
     output:
-    path '*.fai'       , topic: samtools_fai
-    path '.command.*'  , topic: command_files
-    path 'versions.yml', topic: versions
+    path '*.fai'                                             , topic: samtools_fai
+    tuple val([:]), val('samtools_faidx'), path('.command.*'), topic: command_files
+    path 'versions.yml'                                      , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

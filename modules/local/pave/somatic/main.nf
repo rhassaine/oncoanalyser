@@ -21,10 +21,10 @@ process PAVE_SOMATIC {
     path gnomad_resource
 
     output:
-    tuple val(meta), path('*.vcf.gz')    , topic: pave_somatic_vcf
-    tuple val(meta), path('*.vcf.gz.tbi'), topic: pave_somatic_index
-    tuple val(meta), path('.command.*')  , topic: command_files
-    path 'versions.yml'                  , topic: versions
+    tuple val(meta), path('*.vcf.gz')                       , topic: pave_somatic_vcf
+    tuple val(meta), path('*.vcf.gz.tbi')                   , topic: pave_somatic_index
+    tuple val(meta), val('pave_somatic'), path('.command.*'), topic: command_files
+    path 'versions.yml'                                     , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

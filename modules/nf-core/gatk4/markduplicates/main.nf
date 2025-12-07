@@ -13,13 +13,13 @@ process GATK4_MARKDUPLICATES {
     path  fasta_fai
 
     output:
-    tuple val(meta), path('*cram')    , topic: gatk4_markduplicates_cram, optional: true
-    tuple val(meta), path('*bam')     , topic: gatk4_markduplicates_bam, optional: true
-    tuple val(meta), path('*.crai')   , topic: gatk4_markduplicates_crai, optional: true
-    tuple val(meta), path('*.bai')    , topic: gatk4_markduplicates_bai, optional: true
-    tuple val(meta), path('*.metrics'), topic: gatk4_markduplicates_metrics
-    tuple val(meta), path('.command.*') , topic: command_files
-    path 'versions.yml'               , topic: versions
+    tuple val(meta), path('*cram')                                  , topic: gatk4_markduplicates_cram, optional: true
+    tuple val(meta), path('*bam')                                   , topic: gatk4_markduplicates_bam, optional: true
+    tuple val(meta), path('*.crai')                                 , topic: gatk4_markduplicates_crai, optional: true
+    tuple val(meta), path('*.bai')                                  , topic: gatk4_markduplicates_bai, optional: true
+    tuple val(meta), path('*.metrics')                              , topic: gatk4_markduplicates_metrics
+    tuple val(meta), val('gatk4_markduplicates'), path('.command.*'), topic: command_files
+    path 'versions.yml'                                             , topic: versions
 
     when:
     task.ext.when == null || task.ext.when
