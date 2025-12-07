@@ -9,24 +9,22 @@ include { SAMTOOLS_DICT         } from '../../../modules/nf-core/samtools/dict/m
 include { SAMTOOLS_FAIDX        } from '../../../modules/nf-core/samtools/faidx/main'
 include { STAR_GENOMEGENERATE   } from '../../../modules/nf-core/star/genomegenerate/main'
 
-include { GATK4_BWA_INDEX_IMAGE } from '../../../modules/local/gatk4/bwaindeximage/main'
-include { GRIDSS_INDEX          } from '../../../modules/local/gridss/index/main'
-
 include { CUSTOM_EXTRACTTARBALL as DECOMP_BWAMEM2_INDEX } from '../../../modules/local/custom/extract_tarball/main'
 include { CUSTOM_EXTRACTTARBALL as DECOMP_GRIDSS_INDEX  } from '../../../modules/local/custom/extract_tarball/main'
 include { CUSTOM_EXTRACTTARBALL as DECOMP_HMF_DATA      } from '../../../modules/local/custom/extract_tarball/main'
 include { CUSTOM_EXTRACTTARBALL as DECOMP_PANEL_DATA    } from '../../../modules/local/custom/extract_tarball/main'
 include { CUSTOM_EXTRACTTARBALL as DECOMP_STAR_INDEX    } from '../../../modules/local/custom/extract_tarball/main'
-
-include { WRITE_REFERENCE_DATA as WRITE_FASTA           } from '../../../modules/local/custom/write_reference_data/main'
-include { WRITE_REFERENCE_DATA as WRITE_FAI             } from '../../../modules/local/custom/write_reference_data/main'
-include { WRITE_REFERENCE_DATA as WRITE_DICT            } from '../../../modules/local/custom/write_reference_data/main'
-include { WRITE_REFERENCE_DATA as WRITE_IMG             } from '../../../modules/local/custom/write_reference_data/main'
+include { GATK4_BWA_INDEX_IMAGE                         } from '../../../modules/local/gatk4/bwaindeximage/main'
+include { GRIDSS_INDEX                                  } from '../../../modules/local/gridss/index/main'
 include { WRITE_REFERENCE_DATA as WRITE_BWA_INDEX       } from '../../../modules/local/custom/write_reference_data/main'
+include { WRITE_REFERENCE_DATA as WRITE_DICT            } from '../../../modules/local/custom/write_reference_data/main'
+include { WRITE_REFERENCE_DATA as WRITE_FAI             } from '../../../modules/local/custom/write_reference_data/main'
+include { WRITE_REFERENCE_DATA as WRITE_FASTA           } from '../../../modules/local/custom/write_reference_data/main'
 include { WRITE_REFERENCE_DATA as WRITE_GRIDSS_INDEX    } from '../../../modules/local/custom/write_reference_data/main'
-include { WRITE_REFERENCE_DATA as WRITE_STAR_INDEX      } from '../../../modules/local/custom/write_reference_data/main'
 include { WRITE_REFERENCE_DATA as WRITE_HMF_DATA        } from '../../../modules/local/custom/write_reference_data/main'
+include { WRITE_REFERENCE_DATA as WRITE_IMG             } from '../../../modules/local/custom/write_reference_data/main'
 include { WRITE_REFERENCE_DATA as WRITE_PANEL_DATA      } from '../../../modules/local/custom/write_reference_data/main'
+include { WRITE_REFERENCE_DATA as WRITE_STAR_INDEX      } from '../../../modules/local/custom/write_reference_data/main'
 
 workflow PREPARE_REFERENCE {
     take:
@@ -74,7 +72,7 @@ workflow PREPARE_REFERENCE {
 
         if (!params.ref_data_genome_img) {
             GATK4_BWA_INDEX_IMAGE(ch_genome_fasta)
-            ch_genome_img = channel.topic('gatk4_bwa_index_image')
+            ch_genome_img = channel.topic('gatk4_bwa_index_img')
         } else {
             ch_genome_img = channel.of(params.ref_data_genome_img)
         }

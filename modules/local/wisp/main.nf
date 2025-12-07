@@ -19,7 +19,7 @@ process WISP {
     val targeted_mode
 
     output:
-    tuple val(meta), val('wisp/')                   , topic: wisp_dir
+    tuple val(meta), path('wisp/')                  , topic: wisp_dir
     tuple val(meta), val('wisp'), path('.command.*'), topic: command_files
     path 'versions.yml'                             , topic: versions
 

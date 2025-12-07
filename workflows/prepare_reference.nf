@@ -5,6 +5,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
+include { PREPARE_OUTPUTS_PREPARE_REFERENCE    } from '../subworkflows/local/prepare_outputs'
 include { PREPARE_REFERENCE as STAGE_REFERENCE } from '../subworkflows/local/prepare_reference'
 
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -29,9 +30,14 @@ workflow PREPARE_REFERENCE {
     )
 
     //
+    // SUBWORKFLOW: Prepare results for publishing
+    //
+    PREPARE_OUTPUTS_PREPARE_REFERENCE()
+
+    //
     // TASK: Aggregate software versions
     //
-    def topic_versions = channel.topic("versions")
+    def topic_versions = channel.topic('versions')
         .distinct()
         .branch { entry ->
             versions_file: entry instanceof Path
@@ -56,6 +62,9 @@ workflow PREPARE_REFERENCE {
             sort: true,
             newLine: true,
         )
+
+    emit:
+    results = PREPARE_OUTPUTS_PREPARE_REFERENCE.out.results
 }
 
 /*
