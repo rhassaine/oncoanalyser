@@ -23,8 +23,8 @@ process REDUX {
     tuple val(meta), path('*.duplicate_freq.tsv')                , topic: redux_dup_freq_tsv
     tuple val(meta), path('*.jitter_params.tsv')                 , topic: redux_jitter_tsv
     tuple val(meta), path('*.ms_table.tsv.gz')                   , topic: redux_ms_tsv
-    path 'versions.yml'                                          , topic: versions
     path '.command.*'                                            , topic: command_files
+    path 'versions.yml'                                          , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

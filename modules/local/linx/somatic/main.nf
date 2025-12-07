@@ -16,8 +16,8 @@ process LINX_SOMATIC {
 
     output:
     tuple val(meta), path('linx_somatic/'), topic: linx_somatic_annotation_dir
-    path 'versions.yml'                   , topic: versions
     path '.command.*'                     , topic: command_files
+    path 'versions.yml'                   , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

@@ -15,8 +15,8 @@ process LINX_GERMLINE {
 
     output:
     tuple val(meta), path('linx_germline/'), topic: linx_germline_annotation_dir
-    path 'versions.yml'                    , topic: versions
     path '.command.*'                      , topic: command_files
+    path 'versions.yml'                    , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

@@ -17,8 +17,8 @@ process CIDER {
 
     output:
     tuple val(meta), path('cider/*'), topic: cider_results
-    path 'versions.yml'             , topic: versions
     path '.command.*'               , topic: command_files
+    path 'versions.yml'             , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

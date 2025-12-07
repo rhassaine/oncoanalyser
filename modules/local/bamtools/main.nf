@@ -17,8 +17,8 @@ process BAMTOOLS {
 
     output:
     tuple val(meta), path("bamtools_${meta.sample_id}/"), topic: bamtools_metrics_dir
-    path 'versions.yml'                                 , topic: versions
     path '.command.*'                                   , topic: command_files
+    path 'versions.yml'                                 , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

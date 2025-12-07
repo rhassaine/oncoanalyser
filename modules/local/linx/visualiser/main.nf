@@ -14,8 +14,8 @@ process LINX_VISUALISER {
 
     output:
     tuple val(meta), path('plots/'), topic: linx_visualiser_plots
-    path 'versions.yml'            , topic: versions
     path '.command.*'              , topic: command_files
+    path 'versions.yml'            , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

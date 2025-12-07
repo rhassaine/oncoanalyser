@@ -12,8 +12,8 @@ process LINXREPORT {
 
     output:
     tuple val(meta), path('*_linx.html'), topic: linxreport_html
-    path 'versions.yml'                 , topic: versions
     path '.command.*'                   , topic: command_files
+    path 'versions.yml'                 , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

@@ -13,8 +13,8 @@ process STAR_ALIGN {
 
     output:
     tuple val(meta), path('*bam'), topic: star_align_bam
-    path 'versions.yml'          , topic: versions
     path '.command.*'            , topic: command_files
+    path 'versions.yml'          , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

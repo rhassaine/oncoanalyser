@@ -16,8 +16,8 @@ process FASTP {
 
     output:
     tuple val(meta), path('*_R1.fastp.fastq.gz'), path('*_R2.fastp.fastq.gz'), topic: fastp_fastq
-    path 'versions.yml'                                                      , topic: versions
     path '.command.*'                                                        , topic: command_files
+    path 'versions.yml'                                                      , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

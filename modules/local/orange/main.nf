@@ -42,8 +42,8 @@ process ORANGE {
     output:
     tuple val(meta), path('output/*.orange.pdf') , topic: orange_pdf, optional: true
     tuple val(meta), path('output/*.orange.json'), topic: orange_json, optional: true
-    path 'versions.yml'                          , topic: versions
     path '.command.*'                            , topic: command_files
+    path 'versions.yml'                          , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

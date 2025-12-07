@@ -12,8 +12,8 @@ process SAMTOOLS_FAIDX {
 
     output:
     path '*.fai'       , topic: samtools_fai
-    path 'versions.yml', topic: versions
     path '.command.*'  , topic: command_files
+    path 'versions.yml', topic: versions
 
     when:
     task.ext.when == null || task.ext.when

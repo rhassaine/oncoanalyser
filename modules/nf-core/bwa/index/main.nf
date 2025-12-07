@@ -13,8 +13,8 @@ process BWA_INDEX {
 
     output:
     path 'bwa_index/'  , topic: bwa_index
-    path 'versions.yml', topic: versions
     path '.command.*'  , topic: command_files
+    path 'versions.yml', topic: versions
 
     when:
     task.ext.when == null || task.ext.when

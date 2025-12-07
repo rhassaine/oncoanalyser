@@ -17,8 +17,8 @@ process COBALT {
 
     output:
     tuple val(meta), path('cobalt/'), topic: cobalt_dir
-    path 'versions.yml'             , topic: versions
     path '.command.*'               , topic: command_files
+    path 'versions.yml'             , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

@@ -12,8 +12,8 @@ process SAMTOOLS_DICT {
 
     output:
     path '*.dict'      , topic: samtools_dict
-    path 'versions.yml', topic: versions
     path '.command.*'  , topic: command_files
+    path 'versions.yml', topic: versions
 
     when:
     task.ext.when == null || task.ext.when

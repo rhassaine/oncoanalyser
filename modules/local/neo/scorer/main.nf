@@ -15,8 +15,8 @@ process NEO_SCORER {
 
     output:
     tuple val(meta), path('neo_scorer/'), topic: neo_scorer_dir
-    path 'versions.yml'                 , topic: versions
     path '.command.*'                   , topic: command_files
+    path 'versions.yml'                 , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

@@ -18,8 +18,8 @@ process GATK4_MARKDUPLICATES {
     tuple val(meta), path('*.crai')   , topic: gatk4_markduplicates_crai, optional: true
     tuple val(meta), path('*.bai')    , topic: gatk4_markduplicates_bai, optional: true
     tuple val(meta), path('*.metrics'), topic: gatk4_markduplicates_metrics
-    path 'versions.yml'               , topic: versions
     path '.command.{sh,log}'          , topic: command_files
+    path 'versions.yml'               , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

@@ -14,8 +14,8 @@ process TEAL_PREP {
     output:
     tuple val(meta), path("teal_bam/${meta.tumor_id}.teal.telbam{.bam,.bam.bai}") , topic: teal_prep_tumor_bam
     tuple val(meta), path("teal_bam/${meta.normal_id}.teal.telbam{.bam,.bam.bai}"), topic: teal_prep_normal_bam, optional: true
-    path 'versions.yml'                                                           , topic: versions
     path '.command.*'                                                             , topic: command_files
+    path 'versions.yml'                                                           , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

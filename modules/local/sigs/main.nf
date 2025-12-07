@@ -13,8 +13,8 @@ process SIGS {
 
     output:
     tuple val(meta), path('sigs/'), topic: sigs_dir
-    path 'versions.yml'           , topic: versions
     path '.command.*'             , topic: command_files
+    path 'versions.yml'           , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

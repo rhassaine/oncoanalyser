@@ -17,8 +17,8 @@ process SAGE_APPEND {
 
     output:
     tuple val(meta), path('sage_append'), topic: sage_append_dir
-    path 'versions.yml'                 , topic: versions
     path '.command.*'                   , topic: command_files
+    path 'versions.yml'                 , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

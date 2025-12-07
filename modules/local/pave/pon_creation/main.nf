@@ -12,8 +12,8 @@ process PAVE_PON_PANEL_CREATION {
 
     output:
     path 'pave.somatic_artefacts.*.tsv', topic: pave_artefacts
-    path 'versions.yml'                , topic: versions
     path '.command.*'                  , topic: command_files
+    path 'versions.yml'                , topic: versions
 
     when:
     task.ext.when == null || task.ext.when

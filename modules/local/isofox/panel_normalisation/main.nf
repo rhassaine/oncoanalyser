@@ -14,8 +14,8 @@ process ISOFOX_PANEL_NORMALISATION {
 
     output:
     path 'isofox.gene_normalisation.*.csv', topic: isofox_normalisation_csv
-    path 'versions.yml'                   , topic: versions
     path '.command.*'                     , topic: command_files
+    path 'versions.yml'                   , topic: versions
 
     when:
     task.ext.when == null || task.ext.when
