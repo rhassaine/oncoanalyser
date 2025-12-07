@@ -44,9 +44,17 @@ include { WGTS                    } from './workflows/wgts'
 //
 
 workflow NFCORE_ONCOANALYSER {
-
+    main:
     // Get run mode
     run_mode = Utils.getRunMode(params.mode, log)
+
+
+
+
+    ch_results = channel.empty()
+
+
+
 
     // Run selected workflow
     // NOTE(SW): prepare reference is checked early as params.input is not required
@@ -60,7 +68,10 @@ workflow NFCORE_ONCOANALYSER {
 
         // Run requested workflow
         if (run_mode == Constants.RunMode.WGTS) {
+
             WGTS(inputs, run_config, params)
+            ch_results = ch_results.mix(WGTS.out.results)
+
         //} else if (run_mode == Constants.RunMode.TARGETED) {
         //    TARGETED(inputs, run_config, params)
         //} else if (run_mode == Constants.RunMode.PURITY_ESTIMATE) {
@@ -73,6 +84,8 @@ workflow NFCORE_ONCOANALYSER {
         }
     }
 
+    emit:
+    results = ch_results
 }
 
 /*
@@ -82,7 +95,7 @@ workflow NFCORE_ONCOANALYSER {
 */
 
 workflow {
-
+    main:
     //
     // BLOCK: Set defaults and apply extended, custom validation
     //
@@ -138,6 +151,31 @@ workflow {
         params,
     )
 
+    publish:
+    results = NFCORE_ONCOANALYSER.out.results
+}
+
+
+
+
+// NOTE(SW): there is different behaviour between returning a string and using `>>`; the former always placed files under a directory where the path the string i.e. amber/ is always published as `<sample_id>/amber/amber/`; must use `>>` in order to achieve desired behaviour and hence must only provide one file per channel element
+
+
+output {
+    results {
+        path { filepath, file -> file >> filepath }
+
+
+
+        //     Does not work; `>>` in closure raises error
+        //    if (files instanceof List) {
+        //        files.collect { it >> filepath }
+        //    } else {
+        //        files >> filepath
+        //    }
+        //}
+
+    }
 }
 
 /*

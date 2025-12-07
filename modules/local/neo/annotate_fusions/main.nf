@@ -16,7 +16,7 @@ process NEO_ANNOTATE_FUSIONS {
     path ensembl_data_resources
 
     output:
-    tuple val(meta), path('*isf.neoepitope.tsv'), topic: neo_annotated_fusions
+    tuple val(meta), path('*isf.neoepitope.tsv'), topic: neo_annotated_fusions_tsv
     path 'versions.yml'                         , topic: versions
     path '.command.*'                           , topic: command_files
 

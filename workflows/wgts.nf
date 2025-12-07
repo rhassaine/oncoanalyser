@@ -821,12 +821,10 @@ workflow WGTS {
     //    ,  //
     //)
 
-    PREPARE_OUTPUTS_WGTS(
-        ch_inputs,
-    )
+    PREPARE_OUTPUTS_WGTS()
 
     emit:
-    results_samples = PREPARE_OUTPUTS_WGTS.out.sample_results
+    results = PREPARE_OUTPUTS_WGTS.out.results
 }
 
 /*

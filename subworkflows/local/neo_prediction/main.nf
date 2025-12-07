@@ -146,7 +146,7 @@ workflow NEO_PREDICTION {
     // channel: [ meta, annotated_fusions ]
     ch_annotate_fusions_out = channel.empty()
         .mix(
-            WorkflowOncoanalyser.restoreMeta(channel.topic('neo_annotated_fusions'), ch_inputs),
+            WorkflowOncoanalyser.restoreMeta(channel.topic('neo_annotated_fusions_tsv'), ch_inputs),
             ch_isofox_inputs_sorted.skip.map { meta -> [meta, []] },
         )
 
