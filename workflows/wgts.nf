@@ -20,6 +20,7 @@ include { NEO_PREDICTION        } from '../subworkflows/local/neo_prediction'
 include { ORANGE_REPORTING      } from '../subworkflows/local/orange_reporting'
 include { PAVE_ANNOTATION       } from '../subworkflows/local/pave_annotation'
 include { PEACH_CALLING         } from '../subworkflows/local/peach_calling'
+include { PREPARE_OUTPUTS_WGTS  } from '../subworkflows/local/prepare_outputs'
 include { PREPARE_REFERENCE     } from '../subworkflows/local/prepare_reference'
 include { PURPLE_CALLING        } from '../subworkflows/local/purple_calling'
 include { READ_ALIGNMENT_DNA    } from '../subworkflows/local/read_alignment_dna'
@@ -801,6 +802,31 @@ workflow WGTS {
             newLine: true,
         )
 
+    ////
+    //// TASK: Aggregate results per sample
+    ////
+    //ch_sample_results = WorkflowOncoanalyser.groupByMeta(
+    //    ch_redux_dna_tumor_out, // 2
+    //    ch_redux_dna_normal_out, // 2
+    //    ch_redux_dna_donor_out, // 2
+    //    ch_redux_dna_tumor_tsv_out, // 3
+    //    ch_redux_dna_normal_tsv_out, // 3
+    //    ch_redux_dna_donor_tsv_out, // 3
+    //    ch_isofox_out,  // 1
+    //    ch_amber_out,  // 1
+    //    ch_cobalt_out,  // 1
+    //    ch_esvee_germline_out,  // 2
+    //    ch_esvee_somatic_out,  // 2
+    //    ,  //
+    //    ,  //
+    //)
+
+    PREPARE_OUTPUTS_WGTS(
+        ch_inputs,
+    )
+
+    emit:
+    results_samples = PREPARE_OUTPUTS_WGTS.out.sample_results
 }
 
 /*

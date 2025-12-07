@@ -146,8 +146,6 @@ workflow READ_ALIGNMENT_DNA {
             return [meta_bwamem2, fastq_fwd, fastq_rev]
         }
 
-    genome_bwamem2_index.collect().map { ['index', it] }.view()
-
     // Run process
     BWAMEM2_ALIGN(
         ch_bwamem2_inputs,
