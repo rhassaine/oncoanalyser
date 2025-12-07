@@ -2,6 +2,5 @@ name: amber
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
   - bioconda::hmftools-amber=4.2

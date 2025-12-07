@@ -2,6 +2,5 @@ name: bamtools
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
   - bioconda::hmftools-bam-tools=1.5
