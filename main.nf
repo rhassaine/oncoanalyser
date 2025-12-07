@@ -27,10 +27,10 @@ include { getGenomeAttribute } from './subworkflows/local/utils_nfcore_oncoanaly
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-//include { PANEL_RESOURCE_CREATION } from './workflows/panel_resource_creation'
+include { PANEL_RESOURCE_CREATION } from './workflows/panel_resource_creation'
 //include { PREPARE_REFERENCE       } from './workflows/prepare_reference'
-//include { PURITY_ESTIMATE         } from './workflows/purity_estimate'
-//include { TARGETED                } from './workflows/targeted'
+include { PURITY_ESTIMATE         } from './workflows/purity_estimate'
+include { TARGETED                } from './workflows/targeted'
 include { WGTS                    } from './workflows/wgts'
 
 /*
@@ -48,13 +48,9 @@ workflow NFCORE_ONCOANALYSER {
     // Get run mode
     run_mode = Utils.getRunMode(params.mode, log)
 
-
-
-
+    // Results channel for eventual publishing
+    // channel: [filepath, file]
     ch_results = channel.empty()
-
-
-
 
     // Run selected workflow
     // NOTE(SW): prepare reference is checked early as params.input is not required
@@ -68,16 +64,16 @@ workflow NFCORE_ONCOANALYSER {
 
         // Run requested workflow
         if (run_mode == Constants.RunMode.WGTS) {
-
             WGTS(inputs, run_config, params)
             ch_results = ch_results.mix(WGTS.out.results)
-
-        //} else if (run_mode == Constants.RunMode.TARGETED) {
-        //    TARGETED(inputs, run_config, params)
-        //} else if (run_mode == Constants.RunMode.PURITY_ESTIMATE) {
-        //    PURITY_ESTIMATE(inputs, run_config, params)
-        //} else if (run_mode == Constants.RunMode.PANEL_RESOURCE_CREATION) {
-        //    PANEL_RESOURCE_CREATION(inputs, run_config, params)
+        } else if (run_mode == Constants.RunMode.TARGETED) {
+            TARGETED(inputs, run_config, params)
+            ch_results = ch_results.mix(TARGETED.out.results)
+        } else if (run_mode == Constants.RunMode.PURITY_ESTIMATE) {
+            PURITY_ESTIMATE(inputs, run_config, params)
+            ch_results = ch_results.mix(PURITY_ESTIMATE.out.results)
+        } else if (run_mode == Constants.RunMode.PANEL_RESOURCE_CREATION) {
+            PANEL_RESOURCE_CREATION(inputs, run_config, params)
         } else {
             log.error("received bad run mode: ${run_mode}")
             exit(1)
@@ -155,33 +151,11 @@ workflow {
     results = NFCORE_ONCOANALYSER.out.results
 }
 
-
-
-
-// NOTE(SW): there is different behaviour between returning a string and using `>>`; the former always placed files under a directory where the path the string i.e. amber/ is always published as `<sample_id>/amber/amber/`; must use `>>` in order to achieve desired behaviour and hence must only provide one file per channel element
-
 output {
     results {
         path { filepath, file -> file >> filepath }
     }
 }
-
-//output {
-//    results {
-//        path { filepath, file -> file >> filepath }
-//
-//
-//
-//        //     Does not work; `>>` in closure raises error
-//        //    if (files instanceof List) {
-//        //        files.collect { it >> filepath }
-//        //    } else {
-//        //        files >> filepath
-//        //    }
-//        //}
-//
-//    }
-//}
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

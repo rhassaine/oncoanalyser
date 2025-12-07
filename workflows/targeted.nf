@@ -5,25 +5,26 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { AMBER_PROFILING       } from '../subworkflows/local/amber_profiling'
-include { BAMTOOLS_METRICS      } from '../subworkflows/local/bamtools_metrics'
-include { CIDER_CALLING         } from '../subworkflows/local/cider_calling'
-include { COBALT_PROFILING      } from '../subworkflows/local/cobalt_profiling'
-include { ESVEE_CALLING         } from '../subworkflows/local/esvee_calling'
-include { ISOFOX_QUANTIFICATION } from '../subworkflows/local/isofox_quantification'
-include { LILAC_CALLING         } from '../subworkflows/local/lilac_calling'
-include { LINX_ANNOTATION       } from '../subworkflows/local/linx_annotation'
-include { LINX_PLOTTING         } from '../subworkflows/local/linx_plotting'
-include { ORANGE_REPORTING      } from '../subworkflows/local/orange_reporting'
-include { PAVE_ANNOTATION       } from '../subworkflows/local/pave_annotation'
-include { PEACH_CALLING         } from '../subworkflows/local/peach_calling'
-include { PREPARE_REFERENCE     } from '../subworkflows/local/prepare_reference'
-include { PURPLE_CALLING        } from '../subworkflows/local/purple_calling'
-include { READ_ALIGNMENT_DNA    } from '../subworkflows/local/read_alignment_dna'
-include { READ_ALIGNMENT_RNA    } from '../subworkflows/local/read_alignment_rna'
-include { REDUX_PROCESSING      } from '../subworkflows/local/redux_processing'
-include { SAGE_APPEND           } from '../subworkflows/local/sage_append'
-include { SAGE_CALLING          } from '../subworkflows/local/sage_calling'
+include { AMBER_PROFILING          } from '../subworkflows/local/amber_profiling'
+include { BAMTOOLS_METRICS         } from '../subworkflows/local/bamtools_metrics'
+include { CIDER_CALLING            } from '../subworkflows/local/cider_calling'
+include { COBALT_PROFILING         } from '../subworkflows/local/cobalt_profiling'
+include { ESVEE_CALLING            } from '../subworkflows/local/esvee_calling'
+include { ISOFOX_QUANTIFICATION    } from '../subworkflows/local/isofox_quantification'
+include { LILAC_CALLING            } from '../subworkflows/local/lilac_calling'
+include { LINX_ANNOTATION          } from '../subworkflows/local/linx_annotation'
+include { LINX_PLOTTING            } from '../subworkflows/local/linx_plotting'
+include { ORANGE_REPORTING         } from '../subworkflows/local/orange_reporting'
+include { PAVE_ANNOTATION          } from '../subworkflows/local/pave_annotation'
+include { PEACH_CALLING            } from '../subworkflows/local/peach_calling'
+include { PREPARE_REFERENCE        } from '../subworkflows/local/prepare_reference'
+include { PREPARE_OUTPUTS_TARGETED } from '../subworkflows/local/prepare_outputs'
+include { PURPLE_CALLING           } from '../subworkflows/local/purple_calling'
+include { READ_ALIGNMENT_DNA       } from '../subworkflows/local/read_alignment_dna'
+include { READ_ALIGNMENT_RNA       } from '../subworkflows/local/read_alignment_rna'
+include { REDUX_PROCESSING         } from '../subworkflows/local/redux_processing'
+include { SAGE_APPEND              } from '../subworkflows/local/sage_append'
+include { SAGE_CALLING             } from '../subworkflows/local/sage_calling'
 
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 
@@ -634,9 +635,14 @@ workflow TARGETED {
     }
 
     //
+    // SUBWORKFLOW: Prepare results for publishing
+    //
+    PREPARE_OUTPUTS_TARGETED()
+
+    //
     // TASK: Aggregate software versions
     //
-    def topic_versions = channel.topic("versions")
+    def topic_versions = channel.topic('versions')
         .distinct()
         .branch { entry ->
             versions_file: entry instanceof Path
@@ -661,6 +667,9 @@ workflow TARGETED {
             sort: true,
             newLine: true,
         )
+
+    emit:
+    results = PREPARE_OUTPUTS_TARGETED.out.results
 }
 
 /*

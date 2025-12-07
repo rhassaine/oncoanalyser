@@ -80,15 +80,48 @@ workflow PREPARE_OUTPUTS_TARGETED {
     main:
     PREPARE_OUTPUTS_WGTS_TARGETED_SHARED()
 
+    // NOTE(SW): additional processing here if needed
     ch_results = channel.empty()
         .mix(
-
-        // NOTE(SW): noop, placeholder
-
-        )
-        .flatMap { meta, d -> return d instanceof List ? d.collect { [meta, it] } : [[meta, d]] }
-        .mix(
             PREPARE_OUTPUTS_WGTS_TARGETED_SHARED.out.results,
+        )
+
+    emit:
+    results = ch_results
+}
+
+workflow PREPARE_OUTPUTS_PURITY_ESTIMATE {
+    main:
+    ch_results = channel.empty()
+        //.mix(
+        //
+        //)
+
+    emit:
+    results = ch_results
+}
+
+workflow PREPARE_OUTPUTS_PANEL_RESOURCE_CREATION {
+    main:
+    ch_results = channel.empty()
+        .mix(
+            channel.topic('amber_dir').map { meta, d ->                    return ["${meta.key}/${d.name}", d] },
+            channel.topic('cobalt_dir').map { meta, d ->                   return ["${meta.key}/${d.name}", d] },
+            channel.topic('isofox_dir').map { meta, d ->                   return ["${meta.key}/${d.name}", d] },
+            channel.topic('redux_bam').flatMap { def meta = it[0];         return it[1..-1].collect { d -> ["${meta.key}/alignments/dna/${d.name}", d] } },
+            channel.topic('redux_dup_freq_tsv').map { meta, d ->           return ["${meta.key}/alignments/dna/", d] },
+            channel.topic('redux_jitter_tsv').map { meta, d ->             return ["${meta.key}/alignments/dna/", d] },
+            channel.topic('redux_ms_tsv').map { meta, d ->                 return ["${meta.key}/alignments/dna/", d] },
+            channel.topic('gatk4_markduplicates_bai').map { meta, d ->     return ["${meta.key}/alignments/rna/${d.name}", d] },
+            channel.topic('gatk4_markduplicates_bam').map { meta, d ->     return ["${meta.key}/alignments/rna/${d.name}", d] },
+            channel.topic('sage_germline_dir').map { meta, d ->            return ["${meta.key}/sage/germline", d] },
+            channel.topic('sage_somatic_dir').map { meta, d ->             return ["${meta.key}/sage/somatic", d] },
+
+            channel.topic('cobalt_normalisation_tsv').map { meta, d ->                   return ["${meta.key}/${d.name}", d] },
+            channel.topic('isofox_normalisation_csv').map { meta, d ->                   return ["${meta.key}/${d.name}", d] },
+            channel.topic('pave_pon_panel_creation_artefacts').map { meta, d ->                   return ["${meta.key}/${d.name}", d] },
+
+            channel.topic('command_files').flatMap { get_command_log_filepath(it) }
         )
 
     emit:

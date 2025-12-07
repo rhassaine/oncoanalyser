@@ -774,9 +774,14 @@ workflow WGTS {
     }
 
     //
+    // SUBWORKFLOW: Prepare results for publishing
+    //
+    PREPARE_OUTPUTS_WGTS()
+
+    //
     // TASK: Aggregate software versions
     //
-    def topic_versions = channel.topic("versions")
+    def topic_versions = channel.topic('versions')
         .distinct()
         .branch { entry ->
             versions_file: entry instanceof Path
@@ -801,27 +806,6 @@ workflow WGTS {
             sort: true,
             newLine: true,
         )
-
-    ////
-    //// TASK: Aggregate results per sample
-    ////
-    //ch_sample_results = WorkflowOncoanalyser.groupByMeta(
-    //    ch_redux_dna_tumor_out, // 2
-    //    ch_redux_dna_normal_out, // 2
-    //    ch_redux_dna_donor_out, // 2
-    //    ch_redux_dna_tumor_tsv_out, // 3
-    //    ch_redux_dna_normal_tsv_out, // 3
-    //    ch_redux_dna_donor_tsv_out, // 3
-    //    ch_isofox_out,  // 1
-    //    ch_amber_out,  // 1
-    //    ch_cobalt_out,  // 1
-    //    ch_esvee_germline_out,  // 2
-    //    ch_esvee_somatic_out,  // 2
-    //    ,  //
-    //    ,  //
-    //)
-
-    PREPARE_OUTPUTS_WGTS()
 
     emit:
     results = PREPARE_OUTPUTS_WGTS.out.results

@@ -5,13 +5,14 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { AMBER_PROFILING    } from '../subworkflows/local/amber_profiling'
-include { COBALT_PROFILING   } from '../subworkflows/local/cobalt_profiling'
-include { PREPARE_REFERENCE  } from '../subworkflows/local/prepare_reference'
-include { READ_ALIGNMENT_DNA } from '../subworkflows/local/read_alignment_dna'
-include { REDUX_PROCESSING   } from '../subworkflows/local/redux_processing'
-include { SAGE_APPEND        } from '../subworkflows/local/sage_append'
-include { WISP_ANALYSIS      } from '../subworkflows/local/wisp_analysis'
+include { AMBER_PROFILING                 } from '../subworkflows/local/amber_profiling'
+include { COBALT_PROFILING                } from '../subworkflows/local/cobalt_profiling'
+include { PREPARE_REFERENCE               } from '../subworkflows/local/prepare_reference'
+include { PREPARE_OUTPUTS_PURITY_ESTIMATE } from '../subworkflows/local/prepare_outputs'
+include { READ_ALIGNMENT_DNA              } from '../subworkflows/local/read_alignment_dna'
+include { REDUX_PROCESSING                } from '../subworkflows/local/redux_processing'
+include { SAGE_APPEND                     } from '../subworkflows/local/sage_append'
+include { WISP_ANALYSIS                   } from '../subworkflows/local/wisp_analysis'
 
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 
@@ -230,9 +231,14 @@ workflow PURITY_ESTIMATE {
     }
 
     //
+    // SUBWORKFLOW: Prepare results for publishing
+    //
+    PREPARE_OUTPUTS_PURITY_ESTIMATE()
+
+    //
     // TASK: Aggregate software versions
     //
-    def topic_versions = channel.topic("versions")
+    def topic_versions = channel.topic('versions')
         .distinct()
         .branch { entry ->
             versions_file: entry instanceof Path
@@ -257,6 +263,9 @@ workflow PURITY_ESTIMATE {
             sort: true,
             newLine: true,
         )
+
+    emit:
+    results = PREPARE_OUTPUTS_PURITY_ESTIMATE.out.results
 }
 
 /*
