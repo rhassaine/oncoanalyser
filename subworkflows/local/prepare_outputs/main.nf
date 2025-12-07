@@ -2,7 +2,7 @@
 // Prepare results to be published by entry workflow output block
 //
 
-// NOTE(SW): this approach is used so that linkage does not need to be maintained until the `output` block and absent outputs are handled implicitly
+// NOTE(SW): this approach is used so that linkage does not need to be maintained until the `output` block and absent outputs are handled implicitly and to avoid have verbose / repetitive emit blocks
 
 
 workflow PREPARE_OUTPUTS_WGTS {

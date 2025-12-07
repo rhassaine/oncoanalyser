@@ -67,28 +67,6 @@ class WorkflowOncoanalyser {
         return groupByMeta([:], *channels)
     }
 
-
-
-
-
-
-
-
-
-
-    // NOTE(SW): Groovy resolves to the most specific method so the below does work for invokes with a single list of channels; usage currently only in 'prepare outputs' subworkflow
-    public static groupByMeta(channel_list) {
-        return groupByMeta([:], *channel_list)
-    }
-
-
-
-
-
-
-
-
-
     public static getInput(Map named_args, meta, key) {
 
         def result
