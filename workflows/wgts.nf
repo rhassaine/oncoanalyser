@@ -53,7 +53,7 @@ workflow WGTS {
         params.isofox_gc_ratios,
     ]
 
-    //for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
+    checkPathParamList.each { param -> if (param) { file(param, checkIfExists: true) } }
 
     // Create input channel from parsed CSV
     // channel: [ meta ]

@@ -49,7 +49,7 @@ workflow TARGETED {
         params.isofox_tpm_norm,
     ]
 
-    //for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
+    checkPathParamList.each { param -> if (param) { file(param, checkIfExists: true) } }
 
     // Create input channel from parsed CSV
     // channel: [ meta ]

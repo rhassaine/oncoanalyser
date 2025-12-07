@@ -43,7 +43,7 @@ workflow PANEL_RESOURCE_CREATION {
         params.target_regions_bed,
     ]
 
-    //for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
+    checkPathParamList.each { param -> if (param) { file(param, checkIfExists: true) } }
 
     // Set input paths
     target_regions_bed = params.target_regions_bed ? file(params.target_regions_bed) : []
