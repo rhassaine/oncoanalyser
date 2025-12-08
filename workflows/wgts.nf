@@ -86,7 +86,7 @@ workflow WGTS {
             ch_inputs,
             ref_data.genome_fasta,
             ref_data.genome_bwamem2_index,
-            params.max_fastq_records,
+            params.max_fastq_records.toInteger(),
             false,  // umi_enable
             '',  // umi_location
             0,  // umi_length

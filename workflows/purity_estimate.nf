@@ -60,7 +60,7 @@ workflow PURITY_ESTIMATE {
             ch_inputs,
             ref_data.genome_fasta,
             ref_data.genome_bwamem2_index,
-            params.max_fastq_records,
+            params.max_fastq_records.toInteger(),
             params.fastp_umi_enabled,
             params.fastp_umi_location,
             params.fastp_umi_length,
