@@ -50,7 +50,7 @@ workflow PREPARE_REFERENCE {
             SAMTOOLS_FAIDX(ch_genome_fasta)
             ch_genome_fai = channel.topic('samtools_fai')
         } else {
-            ch_genome_fai = channel.of(params.ref_data_genome_fai)
+            ch_genome_fai = channel.fromPath(params.ref_data_genome_fai)
         }
 
     }
@@ -62,7 +62,7 @@ workflow PREPARE_REFERENCE {
             SAMTOOLS_DICT(ch_genome_fasta)
             ch_genome_dict = channel.topic('samtools_dict')
         } else {
-            ch_genome_dict = channel.of(params.ref_data_genome_dict)
+            ch_genome_dict = channel.fromPath(params.ref_data_genome_dict)
         }
 
     }
@@ -74,7 +74,7 @@ workflow PREPARE_REFERENCE {
             GATK4_BWA_INDEX_IMAGE(ch_genome_fasta)
             ch_genome_img = channel.topic('gatk4_bwa_index_img')
         } else {
-            ch_genome_img = channel.of(params.ref_data_genome_img)
+            ch_genome_img = channel.fromPath(params.ref_data_genome_img)
         }
 
     }
@@ -105,7 +105,7 @@ workflow PREPARE_REFERENCE {
 
         } else {
 
-            ch_genome_bwamem2_index = channel.of(params.ref_data_genome_bwamem2_index)
+            ch_genome_bwamem2_index = channel.fromPath(params.ref_data_genome_bwamem2_index)
 
         }
     }
@@ -143,7 +143,7 @@ workflow PREPARE_REFERENCE {
 
         } else {
 
-            ch_genome_gridss_index = channel.of(params.ref_data_genome_gridss_index)
+            ch_genome_gridss_index = channel.fromPath(params.ref_data_genome_gridss_index)
 
         }
     }
@@ -174,7 +174,7 @@ workflow PREPARE_REFERENCE {
 
         } else {
 
-            ch_genome_star_index = channel.of(params.ref_data_genome_star_index)
+            ch_genome_star_index = channel.fromPath(params.ref_data_genome_star_index)
 
         }
     }
