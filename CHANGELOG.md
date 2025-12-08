@@ -3,7 +3,7 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project mostly adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [[2.3.0](https://github.com/nf-core/oncoanalyser/releases/tag/2.3.0)] Spotted Nightjar
+## [[2.3.0](https://github.com/nf-core/oncoanalyser/releases/tag/2.3.0)] Spotted Nightjar - 2025-12-09
 
 - [268](https://github.com/nf-core/oncoanalyser/pull/268) - Apply minor fixes and updates
   - Samplesheet / version collection fixes, misc adjustments
