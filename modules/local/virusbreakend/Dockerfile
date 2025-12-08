@@ -7,13 +7,14 @@ RUN \
     echo -e > ~/.condarc '\
 solver: libmamba\n\
 channels:\n\
+    - scwatts\n\
     - conda-forge\n\
-    - bioconda\n\
-    - defaults'
+    - bioconda'
 
 RUN \
     conda create -y -p /env/ \
         'gridss=2.13.2=h50ea8bc_3' \
+        'scwatts::repeatmasker=4.1.5' \
         'grep'
 
 # Install Dfam database required for RepeatMasker
