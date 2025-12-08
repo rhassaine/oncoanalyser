@@ -1,5 +1,6 @@
 name: Run nf-test
 on:
+  push:
   pull_request:
     paths-ignore:
       - "docs/**"
