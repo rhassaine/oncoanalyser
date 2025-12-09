@@ -142,7 +142,7 @@ row as the first line with the below columns:
 | `sample_id`     | Sample identifier                                                                                                                                                   |
 | `sample_type`   | Sample type: `tumor`, `normal`                                                                                                                                      |
 | `sequence_type` | Sequence type: `dna`, `rna`                                                                                                                                         |
-| `filetype`      | File type: e.g. `fastq`, `bam`, `bai`; a full list of valid values can be found [here](https://github.com/nf-core/oncoanalyser/blob/2.3.0/lib/Constants.groovy#L82) |
+| `filetype`      | File type: e.g. `fastq`, `bam`, `bai`; a full list of valid values can be found [here](https://github.com/nf-core/oncoanalyser/blob/2.3.0/lib/Constants.groovy#L80) |
 | `info`          | Additional sample information such as sequencing library and lane for [FASTQ](#fastq) files, this column is only required when running an analysis from FASTQ       |
 | `filepath`      | Absolute filepath to input file, which can be a local filepath or supported protocol (http, https, ftp, s3, az, gz)                                                 |
 
@@ -743,7 +743,7 @@ Please see: [Staging reference data: Automatic staging](#automatic-staging)
 ## Process selection
 
 It is possible to exclude or manually select specific processes when running `oncoanalyser`. The full list of processes that can
-be selected is available [here](https://github.com/nf-core/oncoanalyser/blob/2.3.0/lib/Constants.groovy#L55).
+be selected is available [here](https://github.com/nf-core/oncoanalyser/blob/2.3.0/lib/Constants.groovy#L53).
 
 :::warning
 
