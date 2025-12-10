@@ -46,7 +46,7 @@ process CIDER {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        cider: \$(cider -ref_genome_version 38 -output_dir ./ | sed -n '/ Cider version: / { s/^.*version: \\([0-9.]\\+\\),.*\$/\\1/p }')
+        cider: \$(cider -version | sed -n '/^Cider version/ { s/^.* //p }')
     END_VERSIONS
     """
 

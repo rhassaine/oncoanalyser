@@ -3,4 +3,4 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - bioconda::hmftools-sage=4.1
+  - bioconda::hmftools-sage=4.2
