@@ -30,8 +30,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 | `LILAC`            | 1.7.1       | 1.7.3       |
 | `LINX`             | 2.1         | 2.2         |
 | `ORANGE`           | 4.1         | 4.1.2       |
+| `PAVE`             | 1.8         | 1.8.2       |
 | `PURPLE`           | 4.2         | 4.3         |
 | `REDUX`            | 1.2         | 1.2.2       |
+| `SAGE`             | 4.1         | 4.2         |
 | `TEAL`             | 1.3.5       | 1.3.6       |
 | `VirusInterpreter` | 1.7.1       | 1.7.2       |
 
