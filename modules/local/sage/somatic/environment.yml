@@ -2,6 +2,5 @@ name: sage_somatic
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
-  - bioconda::hmftools-sage=4.1
+  - bioconda::hmftools-sage=4.2

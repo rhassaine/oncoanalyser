@@ -44,7 +44,7 @@ A typical command for running `oncoanalyser` is shown below:
 
 ```bash
 nextflow run nf-core/oncoanalyser \
-  -revision 2.2.0 \
+  -revision 2.3.0 \
   -config reference_data.config \ # Optional but recommended
   -profile docker \
   --mode wgts \
@@ -68,7 +68,7 @@ Below is a brief description of each argument:
 :::tip
 
 If you encounter any issues setting up or running `oncoanalyser`, please see
-[FAQ and troubleshooting](/oncoanalyser/2.2.0/docs/usage/faq_and_troubleshooting)
+[FAQ and troubleshooting](/oncoanalyser/2.3.0/docs/usage/faq_and_troubleshooting)
 
 :::
 
@@ -101,7 +101,7 @@ outdir: 'output/'
 and be run using this command:
 
 ```bash
-nextflow run nf-core/oncoanalyser -revision 2.2.0 -profile docker -params-file params.yaml
+nextflow run nf-core/oncoanalyser -revision 2.3.0 -profile docker -params-file params.yaml
 ```
 
 You can also generate such `yaml`/`json` files via [nf-core/launch](https://nf-co.re/launch).
@@ -116,9 +116,9 @@ nextflow pull nf-core/oncoanalyser
 
 ### Reproducibility
 
-It is a good idea to specify a pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
+It is a good idea to specify the pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
 
-First, go to the [nf-core/oncoanalyser releases page](https://github.com/nf-core/oncoanalyser/releases) and find the latest pipeline version - numeric only (e.g. `2.2.0`). Then specify this when running the pipeline with `-revision` (one hyphen) - e.g. `-revision 2.2.0`. Of course, you can switch to another version by changing the number after the `-revision` flag.
+First, go to the [nf-core/oncoanalyser releases page](https://github.com/nf-core/oncoanalyser/releases) and find the latest pipeline version - numeric only (e.g. `2.3.0`). Then specify this when running the pipeline with `-revision` (one hyphen) - e.g. `-revision 2.3.0`. Of course, you can switch to another version by changing the number after the `-revision` flag.
 
 This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future. For example, in the `<outdir>/pipeline_info/software_versions.yml` file.
 
@@ -142,7 +142,7 @@ row as the first line with the below columns:
 | `sample_id`     | Sample identifier                                                                                                                                                   |
 | `sample_type`   | Sample type: `tumor`, `normal`                                                                                                                                      |
 | `sequence_type` | Sequence type: `dna`, `rna`                                                                                                                                         |
-| `filetype`      | File type: e.g. `fastq`, `bam`, `bai`; a full list of valid values can be found [here](https://github.com/nf-core/oncoanalyser/blob/2.2.0/lib/Constants.groovy#L80) |
+| `filetype`      | File type: e.g. `fastq`, `bam`, `bai`; a full list of valid values can be found [here](https://github.com/nf-core/oncoanalyser/blob/2.3.0/lib/Constants.groovy#L80) |
 | `info`          | Additional sample information such as sequencing library and lane for [FASTQ](#fastq) files, this column is only required when running an analysis from FASTQ       |
 | `filepath`      | Absolute filepath to input file, which can be a local filepath or supported protocol (http, https, ftp, s3, az, gz)                                                 |
 
@@ -251,51 +251,49 @@ used throughout the WiGiTS tools). We plan to address this issue in future relea
 #### REDUX BAM / CRAM
 
 When running an analysis with DNA data from FASTQ, two of the most time consuming and resource intensive pipeline steps
-are [BWA-MEM2](https://github.com/bwa-mem2/bwa-mem2) read alignment and
-[REDUX](https://github.com/hartwigmedical/hmftools/tree/master/redux) alignment processing.
+are read alignment by [BWA-MEM2](https://github.com/bwa-mem2/bwa-mem2) and read post-processing by
+[REDUX](https://github.com/hartwigmedical/hmftools/tree/master/redux).
 
-`oncoanalyser` can be run starting from REDUX BAMs or CRAMs if they already exist from a prior analysis.
-
-For REDUX BAMs, provide `bam_redux`/`cram_redux` in the `filetype` field, and optionally the BAM/CRAM index to `bai`/`crai` (only required
-if indexes are not in the same directory as the BAM/CRAM):
-
-```csv title="samplesheet.redux_bam_bai.csv"
-group_id,subject_id,sample_id,sample_type,sequence_type,filetype,filepath
-PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bam_redux,/path/to/PATIENT1-T.dna.redux.bam
-PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bai,/other/dir/PATIENT1-T.dna.redux.bam.bai
-PATIENT2,PATIENT2,PATIENT2-T,tumor,dna,cram_redux,/path/to/PATIENT2-T.dna.redux.cram
-PATIENT2,PATIENT2,PATIENT2-T,tumor,dna,crai,/other/dir/PATIENT2-T.dna.redux.cram.crai
-```
-
-The `*.jitter_params.tsv` and `*.ms_table.tsv.gz` REDUX output files are expected to be in the same directory as the
-REDUX BAM, and are required to run [SAGE](https://github.com/hartwigmedical/hmftools/tree/master/sage). If these files
-are located elsewhere, their paths can be explicitly provided by specifying `redux_jitter_tsv` and `redux_ms_tsv`in the
-`filetype` field:
-
-```csv title="samplesheet.redux_inputs.csv"
-group_id,subject_id,sample_id,sample_type,sequence_type,filetype,filepath
-PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bam_redux,/path/to/PATIENT1-T.dna.redux.bam
-PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,redux_jitter_tsv,/other/dir/PATIENT1-T.dna.jitter_params.tsv
-PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,redux_ms_tsv,/path/dir/PATIENT1-T.dna.ms_table.tsv.gz
-```
-
-:::tip
-
-You can also [start from existing inputs](#starting-from-existing-inputs) other than from REDUX BAM
-
-:::
-
-:::warning
-
-When starting from REDUX BAM/CRAM, the filenames must have the format:
+`oncoanalyser` can be run starting from existing REDUX output BAMs/CRAMs, as well the associated TSV files (which are
+used during small variant calling by [SAGE](https://github.com/hartwigmedical/hmftools/tree/master/sage)):
 
 - `<sample_id>.redux.bam` or `<sample_id>.redux.cram`
 - `<sample_id>.redux.bam.bai` or `<sample_id>.redux.cram.crai`
 - `<sample_id>.jitter_params.tsv`
 - `<sample_id>.ms_table.tsv.gz`
 
-For example, if `sample_id` is `PATIENT1-T`, the BAM filename must be `PATIENT1-T.redux.bam` and not e.g.
-`PATIENT1.redux.bam`
+When running `oncoanalyser` on local file systems (non-cloud storage), only the BAM/CRAM files need to be provided to
+the samplesheet assuming the REDUX output files are in the same directory. For example:
+
+```csv title="samplesheet.redux_bam_bai.csv"
+group_id,subject_id,sample_id,sample_type,sequence_type,filetype,filepath
+PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bam_redux,/path/to/PATIENT1-T.dna.redux.bam
+PATIENT2,PATIENT2,PATIENT2-T,tumor,dna,cram_redux,/path/to/PATIENT2-T.dna.redux.cram
+```
+
+However, all REDUX files must be provided explicitly to the sample sheet if running on `oncoanalyser` using
+cloud storage (i.e. using a [cloud executor](#executors)), or if not all REDUX files are not in the same directory.
+Below is an example samplesheet with Google Cloud Storage URIs:
+
+```csv title="samplesheet.redux_inputs.csv"
+group_id,subject_id,sample_id,sample_type,sequence_type,filetype,filepath
+PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bam_redux,gs://bucket/PATIENT1-T.dna.redux.bam
+PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bai,gs://bucket/PATIENT1-T.dna.redux.bam.bai
+PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,redux_jitter_tsv,gs://bucket/PATIENT1-T.dna.jitter_params.tsv
+PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,redux_ms_tsv,gs://bucket/PATIENT1-T.dna.ms_table.tsv.gz
+```
+
+:::info
+
+Cloud storage does not have real directories. Two files such as `gs://bucket/file1.tsv` and `gs://bucket/file2.tsv`,
+even if they share same "directory" or more precisely URI prefix, are independent objects and unrelated. This is why
+all REDUX files must be provided explicitly to the sample sheet.
+
+:::
+
+:::tip
+
+You can also [start from existing inputs](#starting-from-existing-inputs) other than from REDUX BAM
 
 :::
 
@@ -387,7 +385,7 @@ analysis from BAM.
 
 ```bash
 nextflow run nf-core/oncoanalyser \
-  -revision 2.2.0 \
+  -revision 2.3.0 \
   -profile docker \
   --mode prepare_reference \
   --ref_data_types wgs \
@@ -395,7 +393,7 @@ nextflow run nf-core/oncoanalyser \
   --outdir output/
 ```
 
-Once the above commands complete, the stated reference data can be found in `<outdir>/reference_data/2.2.0`. You will
+Once the above commands complete, the stated reference data can be found in `<outdir>/reference_data/2.3.0`. You will
 then need to provide a config file that points to these reference files (see [Configuring reference data](#configuring-reference-data))
 which can be used for subsequent `oncoanalyser` runs. The Nextflow work directory can also be removed to free up disk
 space.
@@ -449,7 +447,7 @@ The configuration file can then be supplied to `oncoanalyser` via the `-config <
 
 ```bash
 nextflow run nf-core/oncoanalyser \
-  -revision 2.2.0 \
+  -revision 2.3.0 \
   -config reference_data.config  \
   <...>
 ```
@@ -486,7 +484,7 @@ Each index can then be created in by using `--mode prepare_reference` and `--ref
 
 ```bash
 nextflow run nf-core/oncoanalyser \
-  -revision 2.2.0 \
+  -revision 2.3.0 \
   -config genome.custom.config \
   -profile docker \
   --mode prepare_reference \
@@ -529,8 +527,8 @@ _GRCh37 genome (Hartwig): `GRCh37_hmf`_
 | BWA-MEM2 index       | [bwa-mem2_index-2.2.1.tar.gz](https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/genomes/GRCh37_hmf/25.1/bwa-mem2_index-2.2.1.tar.gz)                                                              |
 | GRIDSS index         | [gridss_index-2.13.2.tar.gz](https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/genomes/GRCh37_hmf/25.1/gridss_index-2.13.2.tar.gz)                                                                |
 | STAR index           | [star_index-gencode_19-2.7.3a.tar.gz](https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/genomes/GRCh37_hmf/25.1/star_index-gencode_19-2.7.3a.tar.gz)                                              |
-| WiGiTS data          | [hmf_pipeline_resources.37_v2.2.0--3.tar.gz](https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/hmf_reference_data/hmftools/hmf_pipeline_resources.37_v2.2.0--3.tar.gz)                            |
-| TSO500 panel data    | [hmf_panel_resources.tso500.37_v2.2.0--3.tar.gz](https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/hmf_reference_data/panels/hmf_panel_resources.tso500.37_v2.2.0--3.tar.gz)                      |
+| WiGiTS data          | [hmf_pipeline_resources.37_v2.3.0--2.tar.gz](https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/hmf_reference_data/hmftools/hmf_pipeline_resources.37_v2.3.0--2.tar.gz)                            |
+| TSO500 panel data    | [hmf_panel_resources.tso500.37_v2.3.0--2.tar.gz](https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/hmf_reference_data/panels/hmf_panel_resources.tso500.37_v2.3.0--2.tar.gz)                      |
 
 _GRCh38 genome (Hartwig): `GRCh38_hmf`_
 
@@ -543,8 +541,8 @@ _GRCh38 genome (Hartwig): `GRCh38_hmf`_
 | BWA-MEM2 index       | [bwa-mem2_index-2.2.1.tar.gz](https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/genomes/GRCh38_hmf/25.1/bwa-mem2_index-2.2.1.tar.gz)                                                                |
 | GRIDSS index         | [gridss_index-2.13.2.tar.gz](https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/genomes/GRCh38_hmf/25.1/gridss_index-2.13.2.tar.gz)                                                                  |
 | STAR index           | [star_index-gencode_38-2.7.3a.tar.gz](https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/genomes/GRCh38_hmf/25.1/star_index-gencode_38-2.7.3a.tar.gz)                                                |
-| WiGiTS data          | [hmf_pipeline_resources.38_v2.2.0--3.tar.gz](https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/hmf_reference_data/hmftools/hmf_pipeline_resources.38_v2.2.0--3.tar.gz)                              |
-| TSO500 panel data    | [hmf_panel_resources.tso500.38_v2.2.0--3.tar.gz](https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/hmf_reference_data/panels/hmf_panel_resources.tso500.38_v2.2.0--3.tar.gz)                        |
+| WiGiTS data          | [hmf_pipeline_resources.38_v2.3.0--2.tar.gz](https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/hmf_reference_data/hmftools/hmf_pipeline_resources.38_v2.3.0--2.tar.gz)                              |
+| TSO500 panel data    | [hmf_panel_resources.tso500.38_v2.3.0--2.tar.gz](https://pub-cf6ba01919994c3cbd354659947f74d8.r2.dev/hmf_reference_data/panels/hmf_panel_resources.tso500.38_v2.3.0--2.tar.gz)                        |
 
 ## Run modes
 
@@ -554,7 +552,7 @@ _GRCh38 genome (Hartwig): `GRCh38_hmf`_
 
 ```bash
 nextflow run nf-core/oncoanalyser \
-  -revision 2.2.0 \
+  -revision 2.3.0 \
   -config reference_data.config \
   -profile docker \
   --mode wgts \
@@ -570,7 +568,7 @@ nextflow run nf-core/oncoanalyser \
 
 ```bash
 nextflow run nf-core/oncoanalyser \
-  -revision 2.2.0 \
+  -revision 2.3.0 \
   -config reference_data.config \
   -profile docker \
   --mode targeted \
@@ -627,7 +625,7 @@ to arguments `--driver_gene_panel`, `--target_regions_bed`, and `--isofox_gene_i
 
 ```bash
 nextflow run nf-core/oncoanalyser \
-  -revision 2.2.0 \
+  -revision 2.3.0 \
   -config reference_data.config \
   -profile docker \
   --mode panel_resource_creation \
@@ -639,7 +637,7 @@ nextflow run nf-core/oncoanalyser \
   --outdir output/
 ```
 
-Place the all the custom panel reference data files in a directory, and define the paths / file names in a configuration file:
+Place all the custom panel reference data files in a directory and define the paths / file names in a configuration file:
 
 ```groovy title="panel.config"
 params {
@@ -659,11 +657,13 @@ params {
                 target_region_ratios        = 'target_regions_ratios.38.tsv'
                 target_region_msi_indels    = 'target_regions_msi_indels.38.tsv'
 
-                // RNA. Optional, only provide if panel supports RNA data.
+                // (Optional) RNA reference data
+                // Paths can be omitted (e.g. for panels without RNA) by providing an empty list:
+                // isofox_counts = []
+                isofox_counts               = 'read_151_exp_counts.38.csv'
+                isofox_gc_ratios            = 'read_100_exp_gc_ratios.38.csv'
                 isofox_gene_ids             = 'rna_gene_ids.csv'
                 isofox_tpm_norm             = 'isofox.gene_normalisation.38.csv'
-                isofox_counts               = 'read_151_exp_counts.37.csv'
-                isofox_gc_ratios            = 'read_100_exp_gc_ratios.37.csv'
             }
         }
     }
@@ -678,7 +678,7 @@ Lastly, run `oncoanalyser` with `--mode targeted` to analyse your panel sequenci
 
 ```bash
 nextflow run nf-core/oncoanalyser \
-  -revision 2.2.0 \
+  -revision 2.3.0 \
   -config reference_data.config \
   -config panel_data.config \
   -profile docker \
@@ -718,7 +718,7 @@ was sequenced):
 
 ```bash
 nextflow run nf-core/oncoanalyser \
-  -revision 2.2.0 \
+  -revision 2.3.0 \
   -config reference_data.config \
   -profile docker \
   --mode purity_estimate \
@@ -743,7 +743,7 @@ Please see: [Staging reference data: Automatic staging](#automatic-staging)
 ## Process selection
 
 It is possible to exclude or manually select specific processes when running `oncoanalyser`. The full list of processes that can
-be selected is available [here](https://github.com/nf-core/oncoanalyser/blob/2.2.0/lib/Constants.groovy#L53).
+be selected is available [here](https://github.com/nf-core/oncoanalyser/blob/2.3.0/lib/Constants.groovy#L53).
 
 :::warning
 
@@ -760,7 +760,7 @@ skip resource intensive processes like Virusbreakend, or ORANGE because you do n
 
 ```bash
 nextflow run nf-core/oncoanalyser \
-  -revision 2.2.0 \
+  -revision 2.3.0 \
   -profile docker \
   --mode wgts \
   --processes_exclude virusinterpreter,orange \
@@ -776,7 +776,7 @@ you may only want to run alignment and SNV/indel, SV and CNV calling from DNA FA
 
 ```bash
 nextflow run nf-core/oncoanalyser \
-  -revision 2.2.0 \
+  -revision 2.3.0 \
   -profile docker \
   --mode wgts \
   --processes_manual alignment,redux,sage,amber,cobalt,esvee,sage,pave,purple \
@@ -816,7 +816,7 @@ Then, run `oncoanalyser` skipping all processes except for `neo`:
 
 ```bash
 nextflow run nf-core/oncoanalyser \
-  -revision 2.2.0 \
+  -revision 2.3.0 \
   -profile docker \
   --mode wgts \
   --processes_manual neo \
@@ -837,25 +837,20 @@ These options are part of Nextflow and use a _single_ hyphen (pipeline parameter
 
 Use this parameter to choose a configuration profile. Profiles can give configuration presets for different compute environments.
 
-Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker,
-Singularity, Podman, Shifter, Charliecloud, Apptainer, Conda) - see below.
+Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, Podman, Shifter, Charliecloud, Apptainer, Conda) - see below.
 
 :::info
 
-We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility, however when this is not possible,
-Conda is also supported.
+We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility, however when this is not possible, Conda is also supported.
 
 :::
 
-The pipeline also dynamically loads configurations from [https://github.com/nf-core/configs](https://github.com/nf-core/configs) when it
-runs, making multiple config profiles for various institutional clusters available at run time. For more information and to see if your
-system is available in these configs please see the [nf-core/configs documentation](https://github.com/nf-core/configs#documentation).
+The pipeline also dynamically loads configurations from [https://github.com/nf-core/configs](https://github.com/nf-core/configs) when it runs, making multiple config profiles for various institutional clusters available at run time. For more information and to check if your system is supported, please see the [nf-core/configs documentation](https://github.com/nf-core/configs#documentation).
 
 Note that multiple profiles can be loaded, for example: `-profile test,docker` - the order of arguments is important!
 They are loaded in sequence, so later profiles can overwrite earlier profiles.
 
-If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is
-_not_ recommended, since it can lead to different results on different machines dependent on the computer environment.
+If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended, since it can lead to different results on different machines dependent on the computer environment.
 
 - `test`
   - A profile with a complete configuration for automated testing
@@ -869,7 +864,7 @@ _not_ recommended, since it can lead to different results on different machines 
 - `shifter`
   - A generic configuration profile to be used with [Shifter](https://nersc.gitlab.io/development/shifter/how-to-use/)
 - `charliecloud`
-  - A generic configuration profile to be used with [Charliecloud](https://hpc.github.io/charliecloud/)
+  - A generic configuration profile to be used with [Charliecloud](https://charliecloud.io/)
 - `apptainer`
   - A generic configuration profile to be used with [Apptainer](https://apptainer.org/)
 - `wave`
@@ -879,16 +874,13 @@ _not_ recommended, since it can lead to different results on different machines 
 
 ### `-resume`
 
-Specify this when restarting a pipeline. Nextflow will use cached results from any pipeline steps where the inputs are the same, continuing
-from where it got to previously. For input to be considered the same, not only the names must be identical but the files' contents as well.
-For more info about this parameter, see [this blog post](https://www.nextflow.io/blog/2019/demystifying-nextflow-resume.html).
+Specify this when restarting a pipeline. Nextflow will use cached results from any pipeline steps where the inputs are the same, continuing from where it got to previously. For input to be considered the same, not only the names must be identical but the files' contents as well. For more info about this parameter, see [this blog post](https://www.nextflow.io/blog/2019/demystifying-nextflow-resume.html).
 
 You can also supply a run name to resume a specific run: `-resume [run-name]`. Use the `nextflow log` command to show previous run names.
 
 ### `-c`
 
-Specify the path to a specific config file (this is a core Nextflow command). See the
-[nf-core website documentation](https://nf-co.re/usage/configuration) for more information.
+Specify the path to a specific config file (this is a core Nextflow command). See the [nf-core website documentation](https://nf-co.re/usage/configuration) for more information.
 
 ## Custom configuration
 
@@ -898,58 +890,9 @@ Syntax and examples of config items are described in the [Nextflow documentation
 
 ### Compute resources
 
-The default compute resources (e.g. CPUs, RAM, disk space) configured in `oncoanalyser` may not be sufficient for one or
-more processes (nf-core documentation: [tuning workflow resources](https://nf-co.re/docs/usage/configuration#tuning-workflow-resources)).
-For example, for high depth samples (e.g. panel samples), you may need increase the memory for alignment, read processing (REDUX),
-small variant calling (SAGE), or structural variant calling (ESVEE) steps.
-
-Below are the settings per tool that Hartwig Medical Foundation uses when running `oncoanalyser` in Google cloud:
-
-```groovy
-process {
-    withName: '.*ALIGN'          { memory = 72.GB; cpus = 12; disk = 750.GB }
-    withName: 'AMBER'            { memory = 24.GB; cpus = 16; disk = 375.GB }
-    withName: 'BAMTOOLS'         { memory = 24.GB; cpus = 16; disk = 375.GB }
-    withName: 'CHORD'            { memory = 12.GB; cpus = 4 ; disk = 375.GB }
-    withName: 'CIDER'            { memory = 24.GB; cpus = 16; disk = 375.GB }
-    withName: 'COBALT'           { memory = 24.GB; cpus = 16; disk = 375.GB }
-    withName: 'CUPPA'            { memory = 16.GB; cpus = 4 ; disk = 375.GB }
-    withName: 'ESVEE'            { memory = 96.GB; cpus = 32; disk = 375.GB }
-    withName: 'ISOFOX'           { memory = 24.GB; cpus = 16; disk = 375.GB }
-    withName: 'LILAC'            { memory = 24.GB; cpus = 16; disk = 375.GB }
-    withName: 'LINX_.*'          { memory = 16.GB; cpus = 8 ; disk = 375.GB }
-    withName: 'REDUX'            { memory = 64.GB; cpus = 32; disk = 750.GB }
-    withName: 'ORANGE'           { memory = 16.GB; cpus = 4 ; disk = 375.GB }
-    withName: 'PAVE.*'           { memory = 32.GB; cpus = 8 ; disk = 375.GB }
-    withName: 'PEACH'            { memory = 4.GB ; cpus = 2 ; disk = 375.GB }
-    withName: 'PURPLE'           { memory = 40.GB; cpus = 8 ; disk = 375.GB }
-    withName: 'SAGE.*'           { memory = 64.GB; cpus = 32; disk = 375.GB }
-    withName: 'TEAL.*'           { memory = 32.GB; cpus = 32; disk = 375.GB }
-    withName: 'VIRUSBREAKEND'    { memory = 64.GB; cpus = 16; disk = 375.GB }
-    withName: 'VIRUSINTERPRETER' { memory = 8.GB ; cpus = 2 ; disk = 375.GB }
-    withName: 'WISP'             { memory = 16.GB; cpus = 4 ; disk = 375.GB }
-}
-```
-
-We recommend setting an upper limit on total resources that `oncoanalyser` is allowed to use (nf-core
-documentation: [max resources](https://nf-co.re/docs/usage/configuration#max-resources)). Otherwise, `oncoanalyser` may
-crash when it tries to request more resources than available on a machine or compute job.
-Below are some recommended resource limit settings:
-
-```groovy
-process {
-    resourceLimits = [
-        cpus:   64,
-        memory: 120.GB, // Provides leeway on a 128.GB machine
-        disk:   1500.GB,
-        time:   48.h
-    ]
-}
-```
-
-The total runtime of `oncoanalyser` is ~3h for a paired 100x/30x tumor/normal WGS run starting from BAMs with parallel job execution via
-Google batch. However, your runtime will vary depending on several factors such as sequencing depth, number of small/structural variants, or
-parallel vs. non-parallel job execution.
+Compute resources (e.g. CPUs, RAM, disk space) can be configured in `oncoanalyser` if the defaults are not sufficient
+for one or more processes. Please see [Usage: Compute resources](./usage/compute_resources.md) for recommendations on
+compute resource configuration.
 
 ### Container images
 
@@ -961,11 +904,11 @@ instructions.
 
 #### Default containers
 
-By default, `oncoanalyser` runs each tool using [Docker](https://docs.docker.com/engine/install/) or
-[Singularity](https://docs.sylabs.io/guides/3.0/user-guide/quick_start.html#) container images which are built by the
-[Bioconda recipes](https://github.com/bioconda/bioconda-recipes/) CI/CD infrastructure. Below are links to these default
-images should you want to download images manually (e.g. to [run `oncoanalyser`
-offline](https://nf-co.re/docs/usage/getting_started/offline)).
+By default, nf-core pipelines use containers and software from the [biocontainers](https://biocontainers.pro/) or [bioconda](https://bioconda.github.io/) projects.
+
+To use a different container from the default container or conda environment specified in a pipeline, please see the [updating tool versions](https://nf-co.re/docs/usage/configuration#updating-tool-versions) section of the nf-core website.
+
+Below are links to these default images should you want to download images manually (e.g. to [run `oncoanalyser` offline](https://nf-co.re/docs/usage/getting_started/offline)).
 
 **Docker (Bioconda)**
 
@@ -1042,11 +985,9 @@ executor {
 
 ### Custom tool arguments
 
-A pipeline might not always support every possible argument or option of a particular tool used in pipeline. Fortunately, nf-core pipelines
-provide some freedom to users to insert additional parameters that the pipeline does not include by default.
+A pipeline might not always support every possible argument or option of a particular tool used in pipeline. Fortunately, nf-core pipelines provide some freedom to users to insert additional parameters that the pipeline does not include by default.
 
-To learn how to provide additional arguments to a particular tool of the pipeline, please see the
-[customising tool arguments](https://nf-co.re/docs/usage/configuration#customising-tool-arguments) section of the nf-core website.
+To learn how to provide additional arguments to a particular tool of the pipeline, please see the [customising tool arguments](https://nf-co.re/docs/usage/configuration#customising-tool-arguments) section of the nf-core website.
 
 ### UMI processing
 
@@ -1071,35 +1012,20 @@ params {
 
 ### nf-core/configs
 
-In most cases, you will only need to create a custom config as a one-off but if you and others within your organisation are likely to be
-running nf-core pipelines regularly and need to use the same settings regularly it may be a good idea to request that your custom config
-file is uploaded to the `nf-core/configs` git repository. Before you do this please can you test that the config file works with your
-pipeline of choice using the `-c` parameter. You can then create a pull request to the `nf-core/configs` repository with the addition of
-your config file, associated documentation file (see examples in
-[`nf-core/configs/docs`](https://github.com/nf-core/configs/tree/master/docs)), and amending
-[`nfcore_custom.config`](https://github.com/nf-core/configs/blob/master/nfcore_custom.config) to include your custom profile.
+In most cases, you will only need to create a custom config as a one-off but if you and others within your organisation are likely to be running nf-core pipelines regularly and need to use the same settings regularly it may be a good idea to request that your custom config file is uploaded to the `nf-core/configs` git repository. Before you do this please can you test that the config file works with your pipeline of choice using the `-c` parameter. You can then create a pull request to the `nf-core/configs` repository with the addition of your config file, associated documentation file (see examples in [`nf-core/configs/docs`](https://github.com/nf-core/configs/tree/master/docs)), and amending [`nfcore_custom.config`](https://github.com/nf-core/configs/blob/master/nfcore_custom.config) to include your custom profile.
 
-See the main [Nextflow documentation](https://www.nextflow.io/docs/latest/config.html) for more information about creating your own
-configuration files.
+See the main [Nextflow documentation](https://www.nextflow.io/docs/latest/config.html) for more information about creating your own configuration files.
 
-If you have any questions or issues please send us a message on [Slack](https://nf-co.re/join/slack) on the
-[`#configs` channel](https://nfcore.slack.com/channels/configs).
-
-## Azure resource requests
-
-To be used with the `azurebatch` profile by specifying the `-profile azurebatch`.
-We recommend providing a compute `params.vm_type` of `Standard_D16_v3` VMs by default but these options can be changed if required.
-
-Note that the choice of VM size depends on your quota and the overall workload during the analysis.
-For a thorough list, please refer to the [Azure Sizes for virtual machines in Azure](https://docs.microsoft.com/en-us/azure/virtual-machines/sizes).
+If you have any questions or issues please send us a message on [Slack](https://nf-co.re/join/slack) on the [`#configs` channel](https://nfcore.slack.com/channels/configs).
 
 ## Running in the background
 
-The Nextflow `-bg` flag launches Nextflow in the background, detached from your terminal so that the workflow does not stop if you log out
-of your session. The logs are saved to a file.
+Nextflow handles job submissions and supervises the running jobs. The Nextflow process must run until the pipeline is finished.
+
+The Nextflow `-bg` flag launches Nextflow in the background, detached from your terminal so that the workflow does not stop if you log out of your session. The logs are saved to a file.
 
 Alternatively, you can use `screen` / `tmux` or similar tool to create a detached session which you can log back into at a later time.
-Some HPC setups also allow you to run nextflow within a cluster job submitted via your job scheduler (from where it submits more jobs).
+Some HPC setups also allow you to run nextflow within a cluster job submitted your job scheduler (from where it submits more jobs).
 
 ## Nextflow memory requirements
 

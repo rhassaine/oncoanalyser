@@ -20,6 +20,15 @@ input:
   - linx_annotation_dir:
       type: directory
       description: LINX somatic annotation output directory
+  - amber_dir:
+      type: directory
+      description: AMBER output directory
+  - cobalt_dir:
+      type: directory
+      description: COBALT output directory
+  - purple_dir:
+      type: directory
+      description: PURPLE output directory
   - genome_ver:
       type: string
       description: Reference genome version

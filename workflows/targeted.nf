@@ -50,12 +50,6 @@ workflow TARGETED {
         params.isofox_tpm_norm,
     ]
 
-    if (run_config.stages.lilac) {
-        if (params.genome_version.toString() == '38' && params.genome_type == 'alt' && params.containsKey('ref_data_hla_slice_bed')) {
-            checkPathParamList.add(params.ref_data_hla_slice_bed)
-        }
-    }
-
     for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
     // Create channel for versions
@@ -256,6 +250,7 @@ workflow TARGETED {
             ch_inputs,
             ch_redux_dna_tumor_out,
             ch_redux_dna_normal_out,
+            ref_data.genome_version,
             hmf_data.gc_profile,
             hmf_data.diploid_bed,
             panel_data.target_region_normalisation,
@@ -290,11 +285,12 @@ workflow TARGETED {
             ref_data.genome_dict,
             ref_data.genome_img,
             hmf_data.known_fusions,
-            hmf_data.gridss_pon_breakends,
-            hmf_data.gridss_pon_breakpoints,
+            hmf_data.esvee_pon_breakends,
+            hmf_data.esvee_pon_breakpoints,
             hmf_data.decoy_sequences_image,
             hmf_data.repeatmasker_annotations,
             hmf_data.unmap_regions,
+            panel_data.target_region_bed,
         )
 
         ch_versions = ch_versions.mix(ESVEE_CALLING.out.versions)
@@ -511,6 +507,9 @@ workflow TARGETED {
         LINX_PLOTTING(
             ch_inputs,
             ch_linx_somatic_out,
+            ch_amber_out,
+            ch_cobalt_out,
+            ch_purple_out,
             ref_data.genome_version,
             hmf_data.ensembl_data_resources,
         )
@@ -541,6 +540,7 @@ workflow TARGETED {
             ref_data.genome_version,
             panel_data.driver_gene_panel,
             hmf_data.ensembl_data_resources,
+            panel_data.target_region_bed,
         )
 
         ch_versions = ch_versions.mix(BAMTOOLS_METRICS.out.versions)
@@ -564,8 +564,10 @@ workflow TARGETED {
             ch_inputs,
             ch_redux_dna_tumor_out,
             ch_align_rna_tumor_out,
+            ref_data.genome_fasta,
             ref_data.genome_version,
-            hmf_data.cider_blastdb,
+            ref_data.genome_dict,
+            ref_data.genome_img,
         )
 
         ch_versions = ch_versions.mix(CIDER_CALLING.out.versions)
@@ -579,9 +581,6 @@ workflow TARGETED {
     ch_lilac_out = Channel.empty()
     if (run_config.stages.lilac) {
 
-        // Set HLA slice BED if provided in params
-        ref_data_hla_slice_bed = params.containsKey('ref_data_hla_slice_bed') ? params.ref_data_hla_slice_bed : []
-
         LILAC_CALLING(
             ch_inputs,
             ch_redux_dna_tumor_out,
@@ -592,7 +591,6 @@ workflow TARGETED {
             ref_data.genome_version,
             ref_data.genome_fai,
             hmf_data.lilac_resources,
-            ref_data_hla_slice_bed,
             true,  // targeted_mode
         )
 
@@ -679,7 +677,25 @@ workflow TARGETED {
     //
     // TASK: Aggregate software versions
     //
-    softwareVersionsToYAML(ch_versions)
+    def topic_versions = Channel.topic("versions")
+        .distinct()
+        .branch { entry ->
+            versions_file: entry instanceof Path
+            versions_tuple: true
+        }
+
+    def topic_versions_string = topic_versions.versions_tuple
+        .map { process, tool, version ->
+            [ process[process.lastIndexOf(':')+1..-1], "  ${tool}: ${version}" ]
+        }
+        .groupTuple(by:0)
+        .map { process, tool_versions ->
+            tool_versions.unique().sort()
+            "${process}:\n${tool_versions.join('\n')}"
+        }
+
+    softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+        .mix(topic_versions_string)
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",
             name: 'software_versions.yml',

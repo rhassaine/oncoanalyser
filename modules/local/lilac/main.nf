@@ -4,14 +4,14 @@ process LILAC {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/hmftools-lilac:1.7.1--hdfd78af_0' :
-        'biocontainers/hmftools-lilac:1.7.1--hdfd78af_0' }"
+        'https://depot.galaxyproject.org/singularity/hmftools-lilac:1.7.3--hdfd78af_0' :
+        'biocontainers/hmftools-lilac:1.7.3--hdfd78af_0' }"
 
     input:
     tuple val(meta), path(normal_dna_bam), path(normal_dna_bai), path(tumor_dna_bam), path(tumor_dna_bai), path(tumor_rna_bam), path(tumor_rna_bai), path(purple_dir)
     path genome_fasta
-    path genome_fai
     val genome_ver
+    path genome_fai
     path lilac_resources, stageAs: 'lilac_resources'
     val targeted_mode
 
