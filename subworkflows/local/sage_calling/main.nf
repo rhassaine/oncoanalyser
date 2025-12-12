@@ -206,7 +206,7 @@ workflow SAGE_CALLING {
             ch_inputs_sorted.skip.map { meta -> [meta, [], []] },
         )
 
-    // channel: [ meta, ')sage_dir ]
+    // channel: [ meta, sage_dir ]
     ch_somatic_dir = channel.empty()
         .mix(
             WorkflowOncoanalyser.restoreMeta(channel.topic('sage_somatic_dir'), ch_inputs),
