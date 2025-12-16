@@ -85,9 +85,6 @@ process ESVEE {
 
     ${ (meta.normal_id != null) ? "touch esvee/${meta.tumor_id}.esvee.germline.vcf.gz{,.tbi}" : '' }
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        esvee: \$(echo "1.0-beta")
-    END_VERSIONS
+    echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
     """
 }
