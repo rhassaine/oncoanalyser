@@ -82,8 +82,8 @@ process ESVEE {
     touch esvee/${meta.tumor_id}.esvee.unfiltered.vcf.gz.tbi
     touch esvee/${meta.tumor_id}.esvee.somatic.vcf.gz
     touch esvee/${meta.tumor_id}.esvee.somatic.vcf.gz.tbi
-    touch esvee/${meta.tumor_id}.esvee.germline.vcf.gz
-    touch esvee/${meta.tumor_id}.esvee.germline.vcf.gz.tbi
+
+    ${ (meta.normal_id != null) ? "touch esvee/${meta.tumor_id}.esvee.germline.vcf.gz{,.tbi}" : '' }
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
