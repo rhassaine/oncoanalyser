@@ -270,7 +270,7 @@ workflow TARGETED {
     //
     // SUBWORKFLOW: Call structural variants with ESVEE
     //
-    // channel: [ meta, esvee_vcf ]
+    // channel: [ meta, esvee_vcf, esvee_tbi ]
     ch_esvee_germline_out = Channel.empty()
     ch_esvee_somatic_out = Channel.empty()
     if (run_config.stages.esvee) {
@@ -300,8 +300,8 @@ workflow TARGETED {
 
     } else {
 
-        ch_esvee_germline_out = ch_inputs.map { meta -> [meta, []] }
-        ch_esvee_somatic_out = ch_inputs.map { meta -> [meta, []] }
+        ch_esvee_germline_out = ch_inputs.map { meta -> [meta, [], []] }
+        ch_esvee_somatic_out = ch_inputs.map { meta -> [meta, [], []] }
 
     }
 
