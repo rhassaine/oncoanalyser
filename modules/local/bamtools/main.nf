@@ -16,8 +16,6 @@ process BAMTOOLS {
     path target_region_bed
 
     output:
-    // NOTE(LN): We add the "bamtools_" prefix to prevent potential collision
-    // with other tools that may want to use sample_id as the output dir name
     tuple val(meta), path("bamtools_${meta.sample_id}/"), emit: metrics_dir
     path 'versions.yml'                                 , emit: versions
     path '.command.*'                                   , emit: command_files

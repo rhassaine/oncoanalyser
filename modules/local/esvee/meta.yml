@@ -11,7 +11,6 @@ tools:
       licence: ["GPL v3"]
 input:
   - meta:
-  - meta:
       type: map
       description: |
         Groovy Map containing sample information
@@ -36,6 +35,9 @@ input:
       type: file
       description: Reference genome assembly FASTA file
       pattern: "*.{fa,fasta}"
+  - genome_ver:
+      type: string
+      description: Reference genome version
   - genome_fai:
       type: file
       description: Reference genome assembly fai file
@@ -48,9 +50,6 @@ input:
       type: file
       description: Reference genome assembly img file
       pattern: "*.{img}"
-  - genome_ver:
-      type: string
-      description: Reference genome version
   - pon_breakends:
       type: file
       description: GRIDSS breakend PON file
@@ -74,6 +73,10 @@ input:
       type: file
       description: Hartwig unmap regions file
       pattern: "*.{tsv}"
+  - target_region_bed:
+      type: file
+      description: Target regions BED file (optional)
+      pattern: "*.{bed}"
 output:
   - meta:
       type: map

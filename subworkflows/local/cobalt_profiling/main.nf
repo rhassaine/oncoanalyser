@@ -19,7 +19,7 @@ workflow COBALT_PROFILING {
     gc_profile                  // channel: [mandatory] /path/to/gc_profile
     diploid_bed                 // channel: [optional]  /path/to/diploid_bed
     target_region_normalisation // channel: [optional]  /path/to/target_region_normalisation
-    targeted_mode               // boolean: [mandatory] Running COBALT with targeted mode args?
+    targeted_mode               // boolean: [mandatory] Set targeted mode
 
     main:
     // Channel for version.yml files

@@ -54,12 +54,6 @@ workflow WGTS {
         params.isofox_gc_ratios,
     ]
 
-    if (run_config.stages.lilac) {
-        if (params.genome_version.toString() == '38' && params.genome_type == 'alt' && params.containsKey('ref_data_hla_slice_bed')) {
-            checkPathParamList.add(params.ref_data_hla_slice_bed)
-        }
-    }
-
     for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
     // Create channel for versions
@@ -453,7 +447,7 @@ workflow WGTS {
         SAGE_APPEND(
             ch_inputs,
             ch_purple_out,
-            ch_inputs.map { meta -> [meta, [], []] },      // ch_tumor_redux_bam
+            ch_inputs.map { meta -> [meta, [], []] },  // ch_tumor_redux_bam
             ch_inputs.map { meta -> [meta, [], [], []] },  // ch_tumor_redux_tsv
             ch_align_rna_tumor_out,
             ref_data.genome_fasta,
@@ -461,7 +455,7 @@ workflow WGTS {
             ref_data.genome_fai,
             ref_data.genome_dict,
             run_config.stages.orange,  // enable_germline [run for ORANGE but not Neo]
-            false, // targeted_mode
+            false,  // targeted_mode
         )
 
         ch_versions = ch_versions.mix(SAGE_APPEND.out.versions)
@@ -515,9 +509,9 @@ workflow WGTS {
         LINX_PLOTTING(
             ch_inputs,
             ch_linx_somatic_out,
-            ch_inputs.map { meta -> [meta, []] }, // amber_dir
-            ch_inputs.map { meta -> [meta, []] }, // cobalt_dir
-            ch_inputs.map { meta -> [meta, []] }, // purple_dir
+            ch_inputs.map { meta -> [meta, []] },  // ch_amber
+            ch_inputs.map { meta -> [meta, []] },  // ch_cobalt
+            ch_inputs.map { meta -> [meta, []] },  // ch_purple
             ref_data.genome_version,
             hmf_data.ensembl_data_resources,
         )
@@ -572,8 +566,8 @@ workflow WGTS {
             ch_inputs,
             ch_redux_dna_tumor_out,
             ch_align_rna_tumor_out,
-            ref_data.genome_version,
             ref_data.genome_fasta,
+            ref_data.genome_version,
             ref_data.genome_dict,
             ref_data.genome_img,
         )
@@ -637,9 +631,6 @@ workflow WGTS {
     ch_lilac_out = Channel.empty()
     if (run_config.stages.lilac) {
 
-        // Use HLA slice BED if provided in params or set as default requirement
-        ref_data_hla_slice_bed = params.containsKey('ref_data_hla_slice_bed') ? params.ref_data_hla_slice_bed : []
-
         LILAC_CALLING(
             ch_inputs,
             ch_redux_dna_tumor_out,
@@ -650,7 +641,6 @@ workflow WGTS {
             ref_data.genome_version,
             ref_data.genome_fai,
             hmf_data.lilac_resources,
-            ref_data_hla_slice_bed,
             false,  // targeted_mode
         )
 
@@ -838,7 +828,25 @@ workflow WGTS {
     //
     // TASK: Aggregate software versions
     //
-    softwareVersionsToYAML(ch_versions)
+    def topic_versions = Channel.topic("versions")
+        .distinct()
+        .branch { entry ->
+            versions_file: entry instanceof Path
+            versions_tuple: true
+        }
+
+    def topic_versions_string = topic_versions.versions_tuple
+        .map { process, tool, version ->
+            [ process[process.lastIndexOf(':')+1..-1], "  ${tool}: ${version}" ]
+        }
+        .groupTuple(by:0)
+        .map { process, tool_versions ->
+            tool_versions.unique().sort()
+            "${process}:\n${tool_versions.join('\n')}"
+        }
+
+    softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+        .mix(topic_versions_string)
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",
             name: 'software_versions.yml',

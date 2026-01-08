@@ -9,10 +9,10 @@ process ORANGE {
 
     input:
     tuple val(meta),
-        path(bamtools_somatic_dir, stageAs: "bamtools_somatic"),
-        path(bamtools_germline_dir, stageAs: "bamtools_germline"),
-        path(sage_somatic_dir, stageAs: "sage_somatic"),
-        path(sage_germline_dir, stageAs: "sage_germline"),
+        path(bamtools_somatic_dir, stageAs: 'bamtools_somatic'),
+        path(bamtools_germline_dir, stageAs: 'bamtools_germline'),
+        path(sage_somatic_dir, stageAs: 'sage_somatic'),
+        path(sage_germline_dir, stageAs: 'sage_germline'),
         path(smlv_somatic_vcf),
         path(smlv_germline_vcf),
         path(purple_dir),

@@ -2,6 +2,5 @@ name: isofox_panel_normalisation
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
   - bioconda::hmftools-isofox=1.7.2

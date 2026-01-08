@@ -1,6 +1,7 @@
 process CIDER {
     tag "${meta.id}"
-    label 'process_high'
+    label 'process_medium'
+    label 'process_medium_memory'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -9,8 +10,8 @@ process CIDER {
 
     input:
     tuple val(meta), path(bam), path(bai)
-    val genome_ver
     file genome_fasta
+    val genome_ver
     file genome_dict
     file genome_img
 
@@ -45,7 +46,7 @@ process CIDER {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        cider: \$(cider -ref_genome_version 38 -output_dir ./ | sed -n '/ Cider version: / { s/^.*version: \\([0-9.]\\+\\),.*\$/\\1/p }')
+        cider: \$(cider -version | sed -n '/^Cider version/ { s/^.* //p }')
     END_VERSIONS
     """
 

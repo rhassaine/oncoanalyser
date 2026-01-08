@@ -21,8 +21,7 @@ workflow LILAC_CALLING {
     genome_version     // channel: [mandatory] genome version
     genome_fai         // channel: [mandatory] /path/to/genome_fai
     lilac_resource_dir // channel: [mandatory] /path/to/lilac_resource_dir/
-    hla_slice_bed      // channel: [mandatory] /path/to/hla_slice_bed
-    targeted_mode   // boolean: [mandatory] Running in targeted/panel mode?
+    targeted_mode      // boolean: [mandatory] Set targeted mode
 
     main:
     // Channel for version.yml files
@@ -95,8 +94,8 @@ workflow LILAC_CALLING {
     LILAC(
         ch_lilac_inputs,
         genome_fasta,
-        genome_fai,
         genome_version,
+        genome_fai,
         lilac_resource_dir,
         targeted_mode
     )

@@ -1,4 +1,5 @@
 Changes in component 'nf-core/gatk4/markduplicates'
+'modules/nf-core/gatk4/markduplicates/environment.yml' was created
 'modules/nf-core/gatk4/markduplicates/meta.yml' is unchanged
 Changes in 'gatk4/markduplicates/main.nf':
 --- modules/nf-core/gatk4/markduplicates/main.nf
@@ -8,7 +9,7 @@ Changes in 'gatk4/markduplicates/main.nf':
      label 'process_medium'
  
 -    conda "bioconda::gatk4=4.4.0.0"
-+    conda "bioconda::gatk4=4.6.1.0"
++    conda "${moduleDir}/environment.yml"
      container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
 -        'https://depot.galaxyproject.org/singularity/gatk4:4.4.0.0--py36hdfd78af_0':
 -        'biocontainers/gatk4:4.4.0.0--py36hdfd78af_0' }"

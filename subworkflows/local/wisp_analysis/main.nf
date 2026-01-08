@@ -16,11 +16,11 @@ workflow WISP_ANALYSIS {
     ch_sage_somatic_append_out // channel: [mandatory] [ meta, sage_append_dir ]
 
     // Reference data
-    genome_fasta     // channel: [mandatory] /path/to/genome_fasta
-    genome_fai       // channel: [mandatory] /path/to/genome_fai
+    genome_fasta               // channel: [mandatory] /path/to/genome_fasta
+    genome_fai                 // channel: [mandatory] /path/to/genome_fai
 
     // Params
-    targeted_mode // boolean: [mandatory] Running in targeted/panel mode?
+    targeted_mode              // boolean: [mandatory] Set targeted mode
 
     main:
     // Channel for version.yml files

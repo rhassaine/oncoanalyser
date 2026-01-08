@@ -24,12 +24,21 @@ input:
       type: file
       description: BAI file
       pattern: "*.{bai}"
+  - genome_fasta:
+      type: file
+      description: Reference genome assembly FASTA file
+      pattern: "*.{fa,fasta}"
   - genome_ver:
       type: string
       description: Reference genome version
-  - human_blastdb:
-      type: directory
-      description: Human BLASTDB directory
+  - genome_dict:
+      type: file
+      description: Reference genome assembly dict file
+      pattern: "*.{dict}"
+  - genome_img:
+      type: file
+      description: Reference genome assembly img file
+      pattern: "*.{img}"
 output:
   - meta:
       type: map

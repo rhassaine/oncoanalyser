@@ -78,6 +78,8 @@ input:
   - ensembl_data_resources:
       type: directory
       description: HMF ensembl data resources directory
+  - gnomad_resource:
+      description: gnomAD resource
   - targeted_mode:
       type: boolean
       description: Flag indicating whether targeted mode is set

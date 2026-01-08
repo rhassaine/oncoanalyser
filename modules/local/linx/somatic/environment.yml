@@ -2,6 +2,5 @@ name: linx_somatic
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
-  - bioconda::hmftools-linx=2.1
+  - bioconda::hmftools-linx=2.2

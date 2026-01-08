@@ -2,6 +2,5 @@ name: cobalt_panel_normalisation
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
-  - bioconda::hmftools-cobalt=2.1
+  - bioconda::hmftools-cobalt=2.2

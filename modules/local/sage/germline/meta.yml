@@ -66,6 +66,9 @@ input:
   - ensembl_data_resources:
       type: directory
       description: HMF ensembl data resources directory
+  - targeted_mode:
+      type: boolean
+      description: Flag indicating whether targeted mode is set
 output:
   - meta:
       type: map

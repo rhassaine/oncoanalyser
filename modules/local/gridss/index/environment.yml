@@ -2,6 +2,5 @@ name: gridss_index
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
   - bioconda::gridss=2.13.2=h50ea8bc_3
