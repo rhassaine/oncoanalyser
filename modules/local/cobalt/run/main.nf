@@ -1,14 +1,15 @@
 process COBALT {
     tag "${meta.id}"
-    label 'process_medium'
+    label 'process_high'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/hmftools-cobalt:2.1--hdfd78af_1' :
-        'biocontainers/hmftools-cobalt:2.1--hdfd78af_1' }"
+        'https://depot.galaxyproject.org/singularity/hmftools-cobalt:2.2--hdfd78af_0' :
+        'biocontainers/hmftools-cobalt:2.2--hdfd78af_0' }"
 
     input:
     tuple val(meta), path(tumor_bam), path(normal_bam), path(tumor_bai), path(normal_bai)
+    val genome_ver
     path gc_profile
     path diploid_regions
     path target_region_normalisation
@@ -49,6 +50,7 @@ process COBALT {
         ${pcf_gamma_arg} \\
         ${reference_arg} \\
         ${reference_bam_arg} \\
+        -ref_genome_version ${genome_ver} \\
         -gc_profile ${gc_profile} \\
         ${diploid_regions_arg} \\
         ${target_region_norm_file_arg} \\
@@ -58,7 +60,7 @@ process COBALT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        cobalt_run: \$(cobalt -version | sed -n '/^Cobalt version/ { s/^.* //p }')
+        cobalt: \$(cobalt -version | sed -n '/^Cobalt version/ { s/^.* //p }')
     END_VERSIONS
     """
 

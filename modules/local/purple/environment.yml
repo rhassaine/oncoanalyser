@@ -2,6 +2,5 @@ name: purple
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
-  - bioconda::hmftools-purple=4.2
+  - bioconda::hmftools-purple=4.3

@@ -13,7 +13,6 @@
 - [My compute environment does not allow Docker](#my-compute-environment-does-not-allow-docker)
 - [Running `oncoanalyser` offline](#running-oncoanalyser-offline)
 - [Network timeout](#network-timeout)
-- [Run fails due to insufficient CPUs/RAM/disk](#run-fails-due-to-insufficient-cpusramdisk)
 - [Automatically increasing compute resources after failed
   runs](#automatically-increasing-compute-resources-after-failed-runs)
 - [Placing `oncoanalyser` CLI arguments into a configuration
@@ -93,7 +92,7 @@ example, you would run `oncoanalyser` with the below command (assuming starting 
 
 ```bash
 nextflow run nf-core/oncoanalyser \
-  -revision 2.2.0 \
+  -revision 2.3.0 \
   -profile docker \
   --mode wgts \
   --processes_manual alignment,redux,amber,cobalt,sage,pave,esvee,purple \
@@ -176,32 +175,6 @@ env { // Shell environment variables
 Network timeout may also occur when downloading reference data. While the above solution might also work, we recommend
 downloading and setting up reference data [manually](./#staging-reference-data) instead.
 
-## Run fails due to insufficient CPUs/RAM/disk
-
-You may want to increase the compute resources `oncoanalyser` can request. Please see section: [Compute
-resources](./#compute-resources).
-
-## Automatically increasing compute resources after failed runs
-
-We can tell `oncoanalyser` to retry when a run crashes using
-[errorStrategy](https://www.nextflow.io/docs/latest/reference/process.html#errorstrategy) and
-[maxRetries](https://www.nextflow.io/docs/latest/reference/process.html#maxretries), and upon each retry, increase the
-memory that a problematic process (e.g. REDUX) can request:
-
-```groovy
-process {
-  // Currently, all of WiGiTS tools return a exit code of 1 on failure.
-  // We only want to retry for other exit codes which relate to Nextflow or the environment (e.g. out of memory error).
-  errorStrategy = { task.exitStatus != 1 ? 'retry' : 'finish' }
-
-  maxRetries = 3
-
-  withName: REDUX {
-    memory = check_max( 64.GB * task.attempt, 'memory' )
-  }
-}
-```
-
 ## Placing `oncoanalyser` CLI arguments into a configuration file
 
 Almost all `oncoanalyser` arguments in the [Parameters tab](https://nf-co.re/oncoanalyser/parameters/) can be placed
@@ -211,7 +184,7 @@ For example, the `oncoanalyser` arguments which start with `--` in this command:
 
 ```shell
 nextflow run nf-core/oncoanalyser \
-  -revision 2.2.0 \
+  -revision 2.3.0 \
   -profile docker \
   -config refdata.config \
   --mode wgts \
@@ -235,7 +208,7 @@ and provided as a config file when running `oncoanalyser`:
 
 ```shell
 nextflow run nf-core/oncoanalyser \
-  -revision 2.2.0 \
+  -revision 2.3.0 \
   -config refdata.config \
   -config params.config \
   -profile docker \

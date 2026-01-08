@@ -2,6 +2,5 @@ name: neo_scorer
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
   - bioconda::hmftools-neo=1.2.1

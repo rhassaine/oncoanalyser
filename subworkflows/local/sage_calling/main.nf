@@ -35,7 +35,7 @@ workflow SAGE_CALLING {
     ensembl_data_resources       // channel: [mandatory] /path/to/ensembl_data_resources/
     gnomad_resource              // channel: [mandatory] /path/to/gnomad_resource
     enable_germline              // boolean: [mandatory] Enable germline mode
-    targeted_mode             // boolean: [mandatory] Running in targeted/panel mode?
+    targeted_mode                // boolean: [mandatory] Set targeted mode
 
     main:
     // Channel for version.yml files
