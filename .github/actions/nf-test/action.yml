@@ -67,12 +67,8 @@ runs:
           du -sh reference_data 2>/dev/null
           echo "Directory structure:"
           find reference_data -maxdepth 4 -type d 2>/dev/null
-          echo "Checking for index directories:"
-          ls -lah reference_data/2.3.0dev/ 2>/dev/null | grep -E "(bwa-mem2|star_index|gridss)" || echo "No index directories found"
-          echo "Files in bwa-mem2 index (if exists):"
-          ls -lah reference_data/2.3.0dev/bwa-mem2_index-2.2.1/ 2>/dev/null | head -5 || echo "bwa-mem2 index directory not found"
-          echo "Files in STAR index (if exists):"
-          ls -lah reference_data/2.3.0dev/star_index-gencode_38-2.7.3a/ 2>/dev/null | head -5 || echo "STAR index directory not found"
+          echo "Index directories:"
+          find reference_data -type d -name "*bwa-mem2*" -o -type d -name "*star_index*" -o -type d -name "*gridss*" 2>/dev/null
         else
           echo "reference_data does not exist"
         fi

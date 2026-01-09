@@ -20,7 +20,6 @@ lint:
     - lib/WorkflowMain.groovy
     - lib/WorkflowOncoanalyser.groovy
   files_unchanged:
-    - .gitignore
     - assets/nf-core-oncoanalyser_logo_light.png
     - docs/images/nf-core-oncoanalyser_logo_dark.png
     - docs/images/nf-core-oncoanalyser_logo_light.png

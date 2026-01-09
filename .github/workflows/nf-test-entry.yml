@@ -36,12 +36,12 @@ jobs:
         include:
           - name: small
             tags: cicd
-            runson_instance_type: 16cpu-linux-x64
-            runson_volume_size: 200gb
+            runson_instance_type: 4cpu-linux-x64
+            runson_volume_size: 60gb
           - name: large
             tags: cicd.large
             runson_instance_type: 32cpu-linux-x64
-            runson_volume_size: 300gb
+            runson_volume_size: 200gb
     with:
       name: ${{ matrix.name }}
       tags: ${{ matrix.tags }}
@@ -54,10 +54,7 @@ jobs:
     runs-on: # use self-hosted runners
       - runs-on=${{ github.run_id }}-confirm-pass
       - runner=1cpu-linux-x64
-      - extras=s3-cache
     steps:
-      - uses: runs-on/action@v2
-
       - name: One or more tests failed (excluding latest-everything)
         if: ${{ contains(needs.*.result, 'failure') }}
         run: exit 1
