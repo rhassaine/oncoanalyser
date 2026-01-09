@@ -22,7 +22,7 @@ on:
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   NFT_VER: "0.9.3"
-  NFT_WORKDIR: "~"
+  NFT_WORKDIR: ".nf-test"
   NXF_ANSI_LOG: false
   NXF_SINGULARITY_CACHEDIR: ${{ github.workspace }}/.singularity
   NXF_SINGULARITY_LIBRARYDIR: ${{ github.workspace }}/.singularity
@@ -79,6 +79,7 @@ jobs:
       - uses: runs-on/action@v2
 
       - name: Restore HMF reference cache
+        if: ${{ inputs.tags != 'cicd' }}
         id: cache-hmf-ref
         uses: actions/cache@v4
         with:
@@ -86,13 +87,13 @@ jobs:
           key: hmf-reference-${{ env.HMF_REF_VERSION }}-${{ hashFiles('nextflow.config', 'conf/hmf_data.config', 'conf/hmf_genomes.config') }}
 
       - name: Setup Nextflow for reference download
-        if: steps.cache-hmf-ref.outputs.cache-hit != 'true'
+        if: ${{ inputs.tags != 'cicd' && steps.cache-hmf-ref.outputs.cache-hit != 'true' }}
         uses: nf-core/setup-nextflow@v2
         with:
           version: "25.04.0"
 
       - name: Download HMF reference data from R2
-        if: steps.cache-hmf-ref.outputs.cache-hit != 'true'
+        if: ${{ inputs.tags != 'cicd' && steps.cache-hmf-ref.outputs.cache-hit != 'true' }}
         run: |
           nextflow run . \
             -profile docker \
@@ -103,6 +104,7 @@ jobs:
             -c <(echo "aws.client.anonymous=true")
 
       - name: Verify reference data
+        if: ${{ inputs.tags != 'cicd' }}
         run: |
           echo "Reference data size:"
           du -sh reference_data/ || echo "reference_data/ not found"
@@ -146,12 +148,14 @@ jobs:
       - uses: runs-on/action@v2
 
       - name: Restore HMF reference cache
+        if: ${{ inputs.tags != 'cicd' }}
         uses: actions/cache@v4
         with:
           path: reference_data/
           key: hmf-reference-${{ env.HMF_REF_VERSION }}-${{ hashFiles('nextflow.config', 'conf/hmf_data.config', 'conf/hmf_genomes.config') }}
 
       - name: Set reference data paths
+        if: ${{ inputs.tags != 'cicd' }}
         run: |
           # Find the versioned subdirectory containing the reference FASTA and convert to absolute path
           REF_DIR=$(find reference_data -type f -name "GRCh38_masked_exclusions_alts_hlas.fasta" -printf '%h\n' 2>/dev/null | head -1)
