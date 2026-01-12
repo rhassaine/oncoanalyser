@@ -88,7 +88,7 @@ process SAGE_SOMATIC {
         ${ref_sample_count_arg} \\
         -tumor ${meta.tumor_id} \\
         -tumor_bam ${tumor_bam} \\
-        -jitter_param_dir ./ \\
+        -jitter_bqr_dir ./ \\
         -ref_genome ${genome_fasta} \\
         -ref_genome_version ${genome_ver} \\
         -hotspots ${sage_known_hotspots_somatic} \\
@@ -99,7 +99,6 @@ process SAGE_SOMATIC {
         ${gnomad_arg} \\
         ${run_tinc_arg} \\
         ${high_depth_mode_arg} \\
-        -bqr_write_plot \\
         -include_mt \\
         ${write_fit_variants_arg} \\
         -threads ${task.cpus} \\

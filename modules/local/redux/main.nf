@@ -22,6 +22,7 @@ process REDUX {
     tuple val(meta), path('*.redux.bam'), path('*.redux.bam.bai'), emit: bam
     tuple val(meta), path('*.duplicate_freq.tsv')                , emit: dup_freq_tsv
     tuple val(meta), path('*.jitter_params.tsv')                 , emit: jitter_tsv
+    tuple val(meta), path('*.bqr.tsv')                           , emit: bqr_tsv
     tuple val(meta), path('*.ms_table.tsv.gz')                   , emit: ms_tsv
     path 'versions.yml'                                          , emit: versions
     path '.command.*'                                            , emit: command_files
@@ -57,7 +58,6 @@ process REDUX {
         -ref_genome_msi_file ${msi_jitter_sites} \\
         -unmap_regions ${unmap_regions} \\
         -bamtool \$(which samtools) \\
-        -write_stats \\
         -threads ${task.cpus} \\
         ${log_level_arg} \\
         -output_dir ./
