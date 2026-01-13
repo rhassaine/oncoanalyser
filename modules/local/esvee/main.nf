@@ -63,7 +63,8 @@ process ESVEE {
         -unmap_regions ${unmap_regions} \\
         ${target_region_bed_arg} \\
         -bamtool \$(which sambamba) \\
-        -write_types 'PREP_JUNCTION;PREP_BAM;FRAGMENT_LENGTH_DIST;PREP_READ;CACHE_BAM;DISCORDANT_STATS' \\
+        -stages 'PREP;ASSEMBLY;REF_DEPTH;CALLING' \\
+        -write_types 'PREP_STANDARD;VCF;BREAKEND;JUNC_ASSEMBLY;PHASED_ASSEMBLY;ALIGNMENT;ASSEMBLY_READ;DECOY_MATCHES;PHASE_GROUP_BUILDING;PREP_READ;CACHE_BAM;UNSORTED_BAM' \\
         -threads ${task.cpus} \\
         ${log_level_arg} \\
         -output_dir esvee/
