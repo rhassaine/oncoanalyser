@@ -80,6 +80,12 @@ process SAGE_SOMATIC {
     """
     mkdir -p somatic/
 
+    # Create dummy BQR file if it doesn't exist (SAGE 5.0 bug workaround)
+    # SAGE tries to read BQR files even when they might not exist
+    if [[ ! -f "${meta.tumor_id}.redux.bqr.tsv" ]]; then
+        echo -e "Alt\\tRef\\tTrinucleotideContext\\tReadType\\tCount\\tOriginalQual\\tRecalibratedQual" > "${meta.tumor_id}.redux.bqr.tsv"
+    fi
+
     sage \\
         -Xmx${Math.round(task.memory.bytes * 0.95)} \\
         ${args} \\

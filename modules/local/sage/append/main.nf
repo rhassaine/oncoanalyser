@@ -36,6 +36,17 @@ process SAGE_APPEND {
     """
     mkdir -p sage_append/
 
+    # Create dummy BQR files for RNA samples (REDUX doesn't run on RNA)
+    for bam in *.bam; do
+        if [[ \$bam == *"rna"* ]]; then
+            sample_name="\${bam%.md.bam}"
+            sample_name="\${sample_name%.bam}"
+            if [[ ! -f "\${sample_name}.redux.bqr.tsv" ]]; then
+                echo -e "Alt\\tRef\\tTrinucleotideContext\\tReadType\\tCount\\tOriginalQual\\tRecalibratedQual" > "\${sample_name}.redux.bqr.tsv"
+            fi
+        fi
+    done
+
     sage \\
         -Xmx${Math.round(task.memory.bytes * xmx_mod)} \\
         com.hartwig.hmftools.sage.append.SageAppendApplication \\
