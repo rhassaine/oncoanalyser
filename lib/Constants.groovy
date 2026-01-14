@@ -90,6 +90,7 @@ class Constants {
         CRAM_REDUX,
         REDUX_JITTER_TSV,
         REDUX_BQR_TSV,
+        REDUX_BQR_PNG,
         REDUX_MS_TSV,
 
         // Process
@@ -211,6 +212,12 @@ class Constants {
             SequenceType.DNA,
         ],
 
+        REDUX_BQR_PNG_TUMOR: [
+            FileType.REDUX_BQR_PNG,
+            SampleType.TUMOR,
+            SequenceType.DNA,
+        ],
+
         REDUX_MS_TSV_TUMOR: [
             FileType.REDUX_MS_TSV,
             SampleType.TUMOR,
@@ -235,6 +242,12 @@ class Constants {
             SequenceType.DNA,
         ],
 
+        REDUX_BQR_PNG_NORMAL: [
+            FileType.REDUX_BQR_PNG,
+            SampleType.NORMAL,
+            SequenceType.DNA,
+        ],
+
         REDUX_MS_TSV_NORMAL: [
             FileType.REDUX_MS_TSV,
             SampleType.NORMAL,
@@ -255,6 +268,12 @@ class Constants {
 
         REDUX_BQR_TSV_DONOR: [
             FileType.REDUX_BQR_TSV,
+            SampleType.DONOR,
+            SequenceType.DNA,
+        ],
+
+        REDUX_BQR_PNG_DONOR: [
+            FileType.REDUX_BQR_PNG,
             SampleType.DONOR,
             SequenceType.DNA,
         ],
