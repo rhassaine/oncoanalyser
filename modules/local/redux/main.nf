@@ -23,6 +23,7 @@ process REDUX {
     tuple val(meta), path('*.duplicate_freq.tsv')                , emit: dup_freq_tsv
     tuple val(meta), path('*.jitter_params.tsv')                 , emit: jitter_tsv
     tuple val(meta), path('*.bqr.tsv')                           , emit: bqr_tsv
+    tuple val(meta), path('*.bqr.png')                           , emit: bqr_png
     tuple val(meta), path('*.ms_table.tsv.gz')                   , emit: ms_tsv
     path 'versions.yml'                                          , emit: versions
     path '.command.*'                                            , emit: command_files
@@ -60,6 +61,7 @@ process REDUX {
         -bamtool \$(which samtools) \\
         -threads ${task.cpus} \\
         ${log_level_arg} \\
+        -bqr_write_plot \\
         -output_dir ./
 
     cat <<-END_VERSIONS > versions.yml
