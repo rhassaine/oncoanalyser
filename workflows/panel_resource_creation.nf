@@ -129,7 +129,7 @@ workflow PANEL_RESOURCE_CREATION {
     ch_redux_dna_normal_tsv_out = REDUX_PROCESSING.out.dna_normal_tsv
 
     //
-    // MODULE: Run Isofox to analyse RNA data
+    // SUBWORKFLOW: Run Isofox to analyse RNA data
     //
     isofox_counts = params.isofox_counts ? file(params.isofox_counts) : hmf_data.isofox_counts
     isofox_gc_ratios = params.isofox_gc_ratios ? file(params.isofox_gc_ratios) : hmf_data.isofox_gc_ratios

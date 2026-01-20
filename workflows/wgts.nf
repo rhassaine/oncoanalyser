@@ -176,7 +176,7 @@ workflow WGTS {
     }
 
     //
-    // MODULE: Run Isofox to analyse RNA data
+    // SUBWORKFLOW: Run Isofox to analyse RNA data
     //
 
     isofox_counts = params.isofox_counts ? file(params.isofox_counts) : hmf_data.isofox_counts
