@@ -201,8 +201,9 @@ PATIENT1,PATIENT1,PATIENT1-T,tumor,dna,bai,/other/dir/PATIENT1-T.dna.bam.bai
 
 :::info
 
-To run analyses starting from CRAM, you must use the CRAM format version ≤3.0 with the reference fully embedded. An
-example command converting to the appropriate CRAM format is shown:
+To run analyses starting from CRAM, you must use the CRAM format version ≤3.0 and if starting from REDUX CRAM (or
+skipping REDUX altogether) the reference needs to also be embedded within the CRAM. An example command converting to the
+appropriate CRAM format is shown:
 
 ```bash
 samtools view \
@@ -215,6 +216,9 @@ samtools view \
   --write-index \
   sample.bam
 ```
+
+Note that the `embed_ref=1` option is only required for REDUX CRAMs or when running WiGiTS tools directly on plain (i.e.
+non-REDUX) CRAMs.
 
 :::
 
