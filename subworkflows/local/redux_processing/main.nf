@@ -32,7 +32,7 @@ workflow REDUX_PROCESSING {
     // channel: [ versions.yml ]
     ch_versions = Channel.empty()
 
-    // Select and sort input sources, separating bytumor and normal
+    // Select and sort input sources, separating by tumor and normal
     // channel: runnable: [ meta, [bam, ...], [bai, ...] ]
     // channel: skip: [ meta ]
     ch_inputs_tumor_sorted = ch_dna_tumor
