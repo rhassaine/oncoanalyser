@@ -36,6 +36,8 @@ process ESVEE {
     script:
     def args = task.ext.args ?: ''
 
+    def xmx_mod = task.ext.xmx_mod ?: 0.95
+
     def log_level_arg = task.ext.log_level ? "-log_level ${task.ext.log_level}" : ''
 
     def reference_arg = meta.normal_id ? "-reference ${meta.normal_id}" : ''
@@ -47,7 +49,7 @@ process ESVEE {
     mkdir -p esvee/
 
     esvee \\
-        -Xmx${Math.round(task.memory.bytes * 0.95)} \\
+        -Xmx${Math.round(task.memory.bytes * xmx_mod)} \\
         ${args} \\
         -tumor ${meta.tumor_id} \\
         -tumor_bam ${tumor_bam} \\

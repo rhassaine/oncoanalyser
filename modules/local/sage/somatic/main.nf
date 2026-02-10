@@ -35,6 +35,8 @@ process SAGE_SOMATIC {
     script:
     def args = task.ext.args ?: ''
 
+    def xmx_mod = task.ext.xmx_mod ?: 0.95
+
     def log_level_arg = task.ext.log_level ? "-log_level ${task.ext.log_level}" : ''
 
     // Sample IDs
@@ -81,7 +83,7 @@ process SAGE_SOMATIC {
     mkdir -p somatic/
 
     sage \\
-        -Xmx${Math.round(task.memory.bytes * 0.95)} \\
+        -Xmx${Math.round(task.memory.bytes * xmx_mod)} \\
         ${args} \\
         ${reference_arg} \\
         ${reference_bam_arg} \\

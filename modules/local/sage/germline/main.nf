@@ -31,6 +31,8 @@ process SAGE_GERMLINE {
     script:
     def args = task.ext.args ?: ''
 
+    def xmx_mod = task.ext.xmx_mod ?: 0.95
+
     def log_level_arg = task.ext.log_level ? "-log_level ${task.ext.log_level}" : ''
 
     def high_depth_mode_arg = targeted_mode ? '-high_depth_mode' : ''
@@ -39,7 +41,7 @@ process SAGE_GERMLINE {
     mkdir -p germline/
 
     sage \\
-        -Xmx${Math.round(task.memory.bytes * 0.95)} \\
+        -Xmx${Math.round(task.memory.bytes * xmx_mod)} \\
         ${args} \\
         -tumor ${meta.normal_id} \\
         -tumor_bam ${normal_bam} \\

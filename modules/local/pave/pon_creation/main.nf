@@ -21,6 +21,8 @@ process PAVE_PON_PANEL_CREATION {
     script:
     def args = task.ext.args ?: ''
 
+    def xmx_mod = task.ext.xmx_mod ?: 0.95
+
     def log_level_arg = task.ext.log_level ? "-log_level ${task.ext.log_level}" : ''
 
     """
@@ -30,7 +32,7 @@ process PAVE_PON_PANEL_CREATION {
     ) > sample_ids.txt
 
     pave \\
-        -Xmx${Math.round(task.memory.bytes * 0.95)} \\
+        -Xmx${Math.round(task.memory.bytes * xmx_mod)} \\
         com.hartwig.hmftools.pave.pon_gen.PonBuilder \\
         ${args} \\
         -sample_id_file sample_ids.txt \\
