@@ -23,6 +23,8 @@ process ISOFOX_PANEL_NORMALISATION {
     script:
     def args = task.ext.args ?: ''
 
+    def xmx_mod = task.ext.xmx_mod ?: 0.95
+
     def log_level_arg = task.ext.log_level ? "-log_level ${task.ext.log_level}" : ''
 
     """
@@ -35,7 +37,7 @@ process ISOFOX_PANEL_NORMALISATION {
     ) > sample_ids.txt
 
     isofox \\
-        -Xmx${Math.round(task.memory.bytes * 0.95)} \\
+        -Xmx${Math.round(task.memory.bytes * xmx_mod)} \\
         com.hartwig.hmftools.isofox.cohort.CohortAnalyser \\
         ${args} \\
         -sample_data_file sample_ids.txt \\

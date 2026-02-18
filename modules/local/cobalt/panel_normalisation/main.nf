@@ -23,6 +23,8 @@ process COBALT_PANEL_NORMALISATION {
     script:
     def args = task.ext.args ?: ''
 
+    def xmx_mod = task.ext.xmx_mod ?: 0.95
+
     def log_level_arg = task.ext.log_level ? "-log_level ${task.ext.log_level}" : ''
 
     """
@@ -38,7 +40,7 @@ process COBALT_PANEL_NORMALISATION {
     ) > sample_ids.txt
 
     cobalt \\
-        -Xmx${Math.round(task.memory.bytes * 0.95)} \\
+        -Xmx${Math.round(task.memory.bytes * xmx_mod)} \\
         com.hartwig.hmftools.cobalt.norm.NormalisationFileBuilder \\
         ${args} \\
         -sample_id_file sample_ids.txt \\
