@@ -59,6 +59,7 @@ class Constants {
         COBALT,
         CUPPA,
         ESVEE,
+        HEALTHCHECKER,
         ISOFOX,
         LILAC,
         LINX,
@@ -71,6 +72,7 @@ class Constants {
         SAGE,
         SIGS,
         TEAL,
+        VCHORD,
         VIRUSINTERPRETER,
         WISP,
     }
@@ -97,6 +99,7 @@ class Constants {
         COBALT_DIR,
         ESVEE_VCF,
         ESVEE_VCF_TBI,
+        HEALTHCHECKER_DIR,
         ISOFOX_DIR,
         LILAC_DIR,
         LINX_ANNO_DIR,
@@ -105,6 +108,7 @@ class Constants {
         SAGE_VCF,
         SAGE_VCF_TBI,
         SAGE_APPEND_DIR,
+        VCHORD_DIR,
         VIRUSINTERPRETER_DIR,
 
         // ORANGE specific
@@ -373,6 +377,16 @@ class Constants {
 
         CHORD_DIR: [
             FileType.CHORD_DIR,
+            SampleType.TUMOR,
+            SequenceType.DNA,
+        ],
+        HEALTHCHECKER_DIR: [
+            FileType.HEALTHCHECKER_DIR,
+            [SampleType.TUMOR, SampleType.TUMOR_NORMAL],
+            SequenceType.DNA,
+        ],
+        VCHORD_DIR: [
+            FileType.VCHORD_DIR,
             SampleType.TUMOR,
             SequenceType.DNA,
         ],

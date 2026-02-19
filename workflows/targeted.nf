@@ -13,6 +13,7 @@ include { BAMTOOLS_METRICS      } from '../subworkflows/local/bamtools_metrics'
 include { CIDER_CALLING         } from '../subworkflows/local/cider_calling'
 include { COBALT_PROFILING      } from '../subworkflows/local/cobalt_profiling'
 include { ESVEE_CALLING         } from '../subworkflows/local/esvee_calling'
+include { HEALTHCHECKER_QC      } from '../subworkflows/local/healthchecker_qc'
 include { ISOFOX_QUANTIFICATION } from '../subworkflows/local/isofox_quantification'
 include { LILAC_CALLING         } from '../subworkflows/local/lilac_calling'
 include { LINX_ANNOTATION       } from '../subworkflows/local/linx_annotation'
@@ -27,6 +28,7 @@ include { READ_ALIGNMENT_RNA    } from '../subworkflows/local/read_alignment_rna
 include { REDUX_PROCESSING      } from '../subworkflows/local/redux_processing'
 include { SAGE_APPEND           } from '../subworkflows/local/sage_append'
 include { SAGE_CALLING          } from '../subworkflows/local/sage_calling'
+include { VCHORD_PREDICTION    } from '../subworkflows/local/vchord_prediction'
 
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 
@@ -552,6 +554,55 @@ workflow TARGETED {
 
         ch_bamtools_somatic_out = ch_inputs.map { meta -> [meta, []] }
         ch_bamtools_germline_out = ch_inputs.map { meta -> [meta, []] }
+
+    }
+
+    //
+    // SUBWORKFLOW: Run Health Checker to validate sample QC metrics
+    //
+    // channel: [ meta, healthchecker_dir ]
+    ch_healthchecker_out = Channel.empty()
+    if (run_config.stages.healthchecker) {
+
+        HEALTHCHECKER_QC(
+            ch_inputs,
+            ch_redux_dna_tumor_out,
+            ch_redux_dna_normal_out,
+            ch_bamtools_somatic_out,
+            ch_bamtools_germline_out,
+            ch_purple_out,
+        )
+
+        ch_versions = ch_versions.mix(HEALTHCHECKER_QC.out.versions)
+
+        ch_healthchecker_out = ch_healthchecker_out.mix(HEALTHCHECKER_QC.out.healthchecker_dir)
+
+    } else {
+
+        ch_healthchecker_out = ch_inputs.map { meta -> [meta, []] }
+
+    }
+
+    //
+    // SUBWORKFLOW: Run V-CHORD to predict HR deficiency status using CNN
+    //
+    // channel: [ meta, vchord_dir ]
+    ch_vchord_out = Channel.empty()
+    if (run_config.stages.vchord) {
+
+        VCHORD_PREDICTION(
+            ch_inputs,
+            ch_purple_out,
+            hmf_data.vchord_model,
+        )
+
+        ch_versions = ch_versions.mix(VCHORD_PREDICTION.out.versions)
+
+        ch_vchord_out = ch_vchord_out.mix(VCHORD_PREDICTION.out.vchord_dir)
+
+    } else {
+
+        ch_vchord_out = ch_inputs.map { meta -> [meta, []] }
 
     }
 

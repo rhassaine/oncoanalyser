@@ -1,0 +1,6 @@
+name: vchord
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::hmftools-v-chord=PLACEHOLDER_VERSION

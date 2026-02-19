@@ -1,0 +1,42 @@
+name: vchord
+description: CNN-based HRD predictor using PURPLE CIRCOS plots
+keywords:
+  - hrd
+  - homologous repair deficiency
+  - cnn
+  - panel
+tools:
+  - v-chord:
+      description: CNN-based prediction of Homologous Repair Deficiency status from PURPLE CIRCOS plots
+      homepage: https://github.com/hartwigmedical/hmftools
+      documentation: https://github.com/hartwigmedical/hmftools/tree/master/v-chord
+      licence: ["GPL v3"]
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [id: 'sample_id']
+  - purple_dir:
+      type: directory
+      description: PURPLE output directory containing CIRCOS plots
+  - model:
+      type: file
+      description: V-CHORD CNN model file
+      pattern: "*.pt"
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [id: 'sample_id']
+  - vchord_dir:
+      type: directory
+      description: V-CHORD output directory
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+  - command_files:
+      type: list
+      description: List of command files

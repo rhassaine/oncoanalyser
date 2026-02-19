@@ -1,0 +1,43 @@
+name: samtools_flagstat
+description: Generate flagstat QC metrics from BAM files
+keywords:
+  - qc
+  - flagstat
+  - bam
+tools:
+  - samtools:
+      description: Tools for manipulating next-generation sequencing data
+      homepage: https://www.htslib.org/
+      documentation: https://www.htslib.org/doc/samtools-flagstat.html
+      licence: ["MIT"]
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [id: 'sample_id']
+  - bam:
+      type: file
+      description: BAM file
+      pattern: "*.{bam}"
+  - bai:
+      type: file
+      description: BAI file
+      pattern: "*.{bai}"
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [id: 'sample_id']
+  - flagstat:
+      type: file
+      description: Flagstat output file
+      pattern: "*.flagstat"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+  - command_files:
+      type: list
+      description: List of command files

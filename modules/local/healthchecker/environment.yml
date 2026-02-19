@@ -1,0 +1,6 @@
+name: healthchecker
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::hmftools-health-checker=PLACEHOLDER_VERSION

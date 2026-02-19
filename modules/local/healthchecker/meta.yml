@@ -1,0 +1,52 @@
+name: healthchecker
+description: QC validation of sample quality metrics including coverage, mapping, contamination, and Purple QC status
+keywords:
+  - qc
+  - health check
+  - coverage
+  - contamination
+tools:
+  - health-checker:
+      description: Validates sample quality metrics for clinical sequencing
+      homepage: https://github.com/hartwigmedical/hmftools
+      documentation: https://github.com/hartwigmedical/hmftools/tree/master/health-checker
+      licence: ["GPL v3"]
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [id: 'sample_id', tumor_id: 'TUMOR', normal_id: 'NORMAL']
+  - tumor_flagstat:
+      type: file
+      description: Tumor sample flagstat file
+      pattern: "*.flagstat"
+  - ref_flagstat:
+      type: file
+      description: Reference/normal sample flagstat file
+      pattern: "*.flagstat"
+  - tumor_metrics_dir:
+      type: directory
+      description: Tumor bamtools metrics directory
+  - ref_metrics_dir:
+      type: directory
+      description: Reference/normal bamtools metrics directory
+  - purple_dir:
+      type: directory
+      description: PURPLE output directory
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [id: 'sample_id']
+  - healthchecker_dir:
+      type: directory
+      description: Health checker output directory
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+  - command_files:
+      type: list
+      description: List of command files

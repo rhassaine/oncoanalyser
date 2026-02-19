@@ -15,6 +15,7 @@ include { CIDER_CALLING         } from '../subworkflows/local/cider_calling'
 include { COBALT_PROFILING      } from '../subworkflows/local/cobalt_profiling'
 include { CUPPA_PREDICTION      } from '../subworkflows/local/cuppa_prediction'
 include { ESVEE_CALLING         } from '../subworkflows/local/esvee_calling'
+include { HEALTHCHECKER_QC      } from '../subworkflows/local/healthchecker_qc'
 include { ISOFOX_QUANTIFICATION } from '../subworkflows/local/isofox_quantification'
 include { LILAC_CALLING         } from '../subworkflows/local/lilac_calling'
 include { LINX_ANNOTATION       } from '../subworkflows/local/linx_annotation'
@@ -554,6 +555,32 @@ workflow WGTS {
 
         ch_bamtools_somatic_out = ch_inputs.map { meta -> [meta, []] }
         ch_bamtools_germline_out = ch_inputs.map { meta -> [meta, []] }
+
+    }
+
+    //
+    // SUBWORKFLOW: Run Health Checker to validate sample QC metrics
+    //
+    // channel: [ meta, healthchecker_dir ]
+    ch_healthchecker_out = Channel.empty()
+    if (run_config.stages.healthchecker) {
+
+        HEALTHCHECKER_QC(
+            ch_inputs,
+            ch_redux_dna_tumor_out,
+            ch_redux_dna_normal_out,
+            ch_bamtools_somatic_out,
+            ch_bamtools_germline_out,
+            ch_purple_out,
+        )
+
+        ch_versions = ch_versions.mix(HEALTHCHECKER_QC.out.versions)
+
+        ch_healthchecker_out = ch_healthchecker_out.mix(HEALTHCHECKER_QC.out.healthchecker_dir)
+
+    } else {
+
+        ch_healthchecker_out = ch_inputs.map { meta -> [meta, []] }
 
     }
 
