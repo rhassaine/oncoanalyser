@@ -3,7 +3,7 @@ process VCHORD {
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
-    container "TODO_VCHORD_IMAGE:TAG"
+    container "ghcr.io/rhassaine/v-chord:1.0"
 
     input:
     tuple val(meta), path(purple_dir)

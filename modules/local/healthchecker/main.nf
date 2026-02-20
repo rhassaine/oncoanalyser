@@ -3,7 +3,7 @@ process HEALTHCHECKER {
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
-    container 'TODO_HEALTHCHECKER_IMAGE:TAG'
+    container 'docker.io/hartwigmedicalfoundation/health-checker:3.6.1-beta.1'
 
     input:
     tuple val(meta), path(tumor_flagstat), path(ref_flagstat), path(tumor_metrics_dir, stageAs: 'tumor_metrics'), path(ref_metrics_dir, stageAs: 'ref_metrics'), path(purple_dir)
@@ -26,15 +26,20 @@ process HEALTHCHECKER {
     """
     mkdir -p health_checker/
 
+    # Create merged metrics directories with bamtools + flagstat files
+    mkdir -p tumor_metrics_merged/ ref_metrics_merged/
+    ln -s \$(readlink -f tumor_metrics/)/* tumor_metrics_merged/
+    ln -s \$(readlink -f ${tumor_flagstat}) tumor_metrics_merged/
+    ln -s \$(readlink -f ref_metrics/)/* ref_metrics_merged/
+    ln -s \$(readlink -f ${ref_flagstat}) ref_metrics_merged/
+
     health-checker \\
         -Xmx${Math.round(task.memory.bytes * xmx_mod)} \\
         ${args} \\
         -tumor ${meta.tumor_id} \\
         -reference ${meta.normal_id} \\
-        -tum_flagstat_file ${tumor_flagstat} \\
-        -ref_flagstat_file ${ref_flagstat} \\
-        -tum_wgs_metrics_file tumor_metrics/${meta.tumor_id}.bam_metric.summary.tsv \\
-        -ref_wgs_metrics_file ref_metrics/${meta.normal_id}.bam_metric.summary.tsv \\
+        -tumor_metrics_dir tumor_metrics_merged/ \\
+        -ref_metrics_dir ref_metrics_merged/ \\
         -purple_dir ${purple_dir} \\
         ${log_level_arg} \\
         -output_dir health_checker/
