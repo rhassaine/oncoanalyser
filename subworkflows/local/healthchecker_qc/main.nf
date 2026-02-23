@@ -6,7 +6,7 @@ import Constants
 import Utils
 
 include { SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_TUMOR  } from '../../../modules/local/samtools_flagstat/main'
-include { SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_NORMAL } from '../../../modules/local/samtools_flagstat/main'
+include { SAMTOOLS_FLAGSTAT as SAMTOOLS_FLAGSTAT_REFERENCE } from '../../../modules/local/samtools_flagstat/main'
 include { HEALTHCHECKER                                 } from '../../../modules/local/healthchecker/main'
 
 workflow HEALTHCHECKER_QC {
@@ -137,14 +137,14 @@ workflow HEALTHCHECKER_QC {
             return [meta_flagstat, normal_bam, normal_bai]
         }
 
-    SAMTOOLS_FLAGSTAT_NORMAL(ch_flagstat_normal_inputs)
-    ch_versions = ch_versions.mix(SAMTOOLS_FLAGSTAT_NORMAL.out.versions)
+    SAMTOOLS_FLAGSTAT_REFERENCE(ch_flagstat_normal_inputs)
+    ch_versions = ch_versions.mix(SAMTOOLS_FLAGSTAT_REFERENCE.out.versions)
 
     // Restore meta for flagstat outputs
     // channel: [ meta, tumor_flagstat ]
     ch_tumor_flagstat = WorkflowOncoanalyser.restoreMeta(SAMTOOLS_FLAGSTAT_TUMOR.out.flagstat, ch_inputs)
     // channel: [ meta, normal_flagstat ]
-    ch_normal_flagstat = WorkflowOncoanalyser.restoreMeta(SAMTOOLS_FLAGSTAT_NORMAL.out.flagstat, ch_inputs)
+    ch_normal_flagstat = WorkflowOncoanalyser.restoreMeta(SAMTOOLS_FLAGSTAT_REFERENCE.out.flagstat, ch_inputs)
 
     // Group all inputs for HEALTHCHECKER
     // channel: [ meta, tumor_flagstat, normal_flagstat, bamtools_tumor, bamtools_normal, purple_dir ]
