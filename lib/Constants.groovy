@@ -59,6 +59,7 @@ class Constants {
         COBALT,
         CUPPA,
         ESVEE,
+        GATK_GERMLINE,
         HEALTHCHECKER,
         ISOFOX,
         LILAC,
@@ -99,6 +100,7 @@ class Constants {
         COBALT_DIR,
         ESVEE_VCF,
         ESVEE_VCF_TBI,
+        GATK_GERMLINE_VCF,
         HEALTHCHECKER_DIR,
         ISOFOX_DIR,
         LILAC_DIR,
@@ -378,6 +380,11 @@ class Constants {
         CHORD_DIR: [
             FileType.CHORD_DIR,
             SampleType.TUMOR,
+            SequenceType.DNA,
+        ],
+        GATK_GERMLINE_VCF: [
+            FileType.GATK_GERMLINE_VCF,
+            SampleType.NORMAL,
             SequenceType.DNA,
         ],
         HEALTHCHECKER_DIR: [

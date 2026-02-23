@@ -1,0 +1,119 @@
+Changes in component 'nf-core/gatk4/haplotypecaller'
+'modules/nf-core/gatk4/haplotypecaller/meta.yml' is unchanged
+Changes in 'gatk4/haplotypecaller/main.nf':
+--- modules/nf-core/gatk4/haplotypecaller/main.nf
++++ modules/nf-core/gatk4/haplotypecaller/main.nf
+@@ -1,36 +1,34 @@
+ process GATK4_HAPLOTYPECALLER {
+     tag "${meta.id}"
+-    label 'process_low'
++    label 'process_medium'
+ 
+     conda "${moduleDir}/environment.yml"
+-    container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
+-        ? 'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/ce/ced519873646379e287bc28738bdf88e975edd39a92e7bc6a34bccd37153d9d0/data'
+-        : 'community.wave.seqera.io/library/gatk4_gcnvkernel:edb12e4f0bf02cd3'}"
++    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
++        'https://depot.galaxyproject.org/singularity/gatk4:4.6.1.0--py310hdfd78af_0' :
++        'biocontainers/gatk4:4.6.1.0--py310hdfd78af_0' }"
+ 
+     input:
+-    tuple val(meta), path(input), path(input_index), path(intervals), path(dragstr_model)
+-    tuple val(meta2), path(fasta)
+-    tuple val(meta3), path(fai)
+-    tuple val(meta4), path(dict)
+-    tuple val(meta5), path(dbsnp)
+-    tuple val(meta6), path(dbsnp_tbi)
++    tuple val(meta), path(input), path(input_index)
++    path fasta
++    path fai
++    path dict
+ 
+     output:
+-    tuple val(meta), path("*.vcf.gz"), emit: vcf
+-    tuple val(meta), path("*.tbi"), emit: tbi, optional: true
+-    tuple val(meta), path("*.realigned.bam"), emit: bam, optional: true
+-    tuple val("${task.process}"), val('gatk4'), eval("gatk --version | sed -n '/GATK.*v/s/.*v//p'"), topic: versions, emit: versions_gatk4
++    tuple val(meta), path("*.g.vcf.gz"), path("*.g.vcf.gz.tbi"), emit: vcf
++    path 'versions.yml'                                         , emit: versions
++    path '.command.*'                                           , emit: command_files
+ 
+     when:
+     task.ext.when == null || task.ext.when
+ 
+     script:
+-    def args = task.ext.args ?: ''
+-    def prefix = task.ext.prefix ?: "${meta.id}"
+-    def dbsnp_command = dbsnp ? "--dbsnp ${dbsnp}" : ""
+-    def interval_command = intervals ? "--intervals ${intervals}" : ""
+-    def dragstr_command = dragstr_model ? "--dragstr-params-path ${dragstr_model}" : ""
+-    def bamout_command = args.contains("--bam-writer-type") ? "--bam-output ${prefix.replaceAll('.g\\s*$', '')}.realigned.bam" : ""
++    def args = task.ext.args ?: [
++        '-ERC GVCF',
++        '-GQB 5 -GQB 10 -GQB 15 -GQB 20 -GQB 30 -GQB 40 -GQB 50 -GQB 60',
++        '--standard-min-confidence-threshold-for-calling 15.0',
++        '--sample-ploidy 2',
++    ].join(' ')
++    def prefix = task.ext.prefix ?: "${meta.sample_id}"
+ 
+     def avail_mem = 3072
+     if (!task.memory) {
+@@ -43,26 +41,25 @@
+     gatk --java-options "-Xmx${avail_mem}M -XX:-UsePerfData" \\
+         HaplotypeCaller \\
+         --input ${input} \\
+-        --output ${prefix}.vcf.gz \\
++        --output ${prefix}.g.vcf.gz \\
+         --reference ${fasta} \\
+         --native-pair-hmm-threads ${task.cpus} \\
+-        ${dbsnp_command} \\
+-        ${interval_command} \\
+-        ${dragstr_command} \\
+-        ${bamout_command} \\
+         --tmp-dir . \\
+         ${args}
++
++    cat <<-END_VERSIONS > versions.yml
++    "${task.process}":
++        gatk4: \$(echo \$(gatk --version 2>&1) | sed 's/^.*(GATK) v//; s/ .*\$//')
++    END_VERSIONS
+     """
+ 
+     stub:
+-    def args = task.ext.args ?: ''
+-    def prefix = task.ext.prefix ?: "${meta.id}"
+-    def bamout_command = args.contains("--bam-writer-type") ? "--bam-output ${prefix.replaceAll('.g\\s*$', '')}.realigned.bam" : ""
++    def prefix = task.ext.prefix ?: "${meta.sample_id}"
+ 
+-    def stub_realigned_bam = bamout_command ? "touch ${prefix.replaceAll('.g\\s*$', '')}.realigned.bam" : ""
+     """
+-    touch ${prefix}.vcf.gz
+-    touch ${prefix}.vcf.gz.tbi
+-    ${stub_realigned_bam}
++    touch ${prefix}.g.vcf.gz
++    touch ${prefix}.g.vcf.gz.tbi
++
++    echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
+     """
+ }
+
+Changes in 'gatk4/haplotypecaller/environment.yml':
+--- modules/nf-core/gatk4/haplotypecaller/environment.yml
++++ modules/nf-core/gatk4/haplotypecaller/environment.yml
+@@ -1,10 +1,6 @@
+----
+-# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/environment-schema.json
++name: gatk4_haplotypecaller
+ channels:
+   - conda-forge
+   - bioconda
+ dependencies:
+-  # renovate: datasource=conda depName=bioconda/gatk4
+-  - bioconda::gatk4=4.6.2.0
+-  # renovate: datasource=conda depName=bioconda/gcnvkernel
+-  - bioconda::gcnvkernel=0.9
++  - bioconda::gatk4=4.6.1.0
+
+'modules/nf-core/gatk4/haplotypecaller/tests/main.nf.test.snap' is unchanged
+'modules/nf-core/gatk4/haplotypecaller/tests/main.nf.test' is unchanged
+************************************************************

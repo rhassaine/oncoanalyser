@@ -13,6 +13,7 @@ include { BAMTOOLS_METRICS      } from '../subworkflows/local/bamtools_metrics'
 include { CIDER_CALLING         } from '../subworkflows/local/cider_calling'
 include { COBALT_PROFILING      } from '../subworkflows/local/cobalt_profiling'
 include { ESVEE_CALLING         } from '../subworkflows/local/esvee_calling'
+include { GATK_GERMLINE_CALLING } from '../subworkflows/local/gatk_germline_calling'
 include { HEALTHCHECKER_QC      } from '../subworkflows/local/healthchecker_qc'
 include { ISOFOX_QUANTIFICATION } from '../subworkflows/local/isofox_quantification'
 include { LILAC_CALLING         } from '../subworkflows/local/lilac_calling'
@@ -168,6 +169,31 @@ workflow TARGETED {
         ch_redux_dna_tumor_tsv_out = ch_inputs.map { meta -> [meta, [], [], []] }
         ch_redux_dna_normal_tsv_out = ch_inputs.map { meta -> [meta, [], [], []] }
         ch_redux_dna_donor_tsv_out = ch_inputs.map { meta -> [meta, [], [], []] }
+
+    }
+
+    //
+    // SUBWORKFLOW: Run GATK HaplotypeCaller for germline variant calling on normal sample
+    //
+    // channel: [ meta, germline_vcf, germline_vcf_tbi ]
+    ch_gatk_germline_out = Channel.empty()
+    if (run_config.stages.gatk_germline) {
+
+        GATK_GERMLINE_CALLING(
+            ch_inputs,
+            ch_redux_dna_normal_out,
+            ref_data.genome_fasta,
+            ref_data.genome_fai,
+            ref_data.genome_dict,
+        )
+
+        ch_versions = ch_versions.mix(GATK_GERMLINE_CALLING.out.versions)
+
+        ch_gatk_germline_out = ch_gatk_germline_out.mix(GATK_GERMLINE_CALLING.out.germline_vcf)
+
+    } else {
+
+        ch_gatk_germline_out = ch_inputs.map { meta -> [meta, [], []] }
 
     }
 
