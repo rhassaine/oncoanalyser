@@ -98,7 +98,7 @@ process LINX_VISUALISER {
         -data_out data/reportable/
 
     # Create placeholders to force FusionFS to create parent plot directory on S3
-    if [[ \$(ls plots/ | wc -l) -eq 0 ]]; then
+    if [[ \$(find plots/ -type f | wc -l) -eq 0 ]]; then
         touch plots/.keep;
     fi;
 
