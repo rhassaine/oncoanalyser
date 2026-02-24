@@ -11,7 +11,7 @@ process GATK4_HAPLOTYPECALLER {
     tuple val(meta), path(input), path(input_index)
     path fasta
     path fai
-    path dict
+    path("${fasta.baseName}.dict")
 
     output:
     tuple val(meta), path("*.g.vcf.gz"), path("*.g.vcf.gz.tbi"), emit: vcf
