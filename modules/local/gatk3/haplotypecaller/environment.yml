@@ -1,0 +1,6 @@
+name: gatk3_haplotypecaller
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::gatk=3.8

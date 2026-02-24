@@ -1,0 +1,56 @@
+name: gatk3_haplotypecaller
+description: Call germline SNPs and indels via local re-assembly of haplotypes
+keywords:
+  - gatk3
+  - haplotypecaller
+  - germline
+  - vcf
+tools:
+  - gatk3:
+      description:
+        Developed in the Data Sciences Platform at the Broad Institute, the toolkit offers a wide variety of tools
+        with a primary focus on variant discovery and genotyping. Its powerful processing engine
+        and high-performance computing features make it capable of taking on projects of any size.
+      homepage: https://gatk.broadinstitute.org/hc/en-us
+      documentation: https://gatk.broadinstitute.org/hc/en-us/articles/360037052812
+      tool_dev_url: https://github.com/broadinstitute/gatk
+      doi: 10.1158/1538-7445.AM2017-3590
+      licence: ["Broad Institute"]
+input:
+  - meta:
+      type: map
+      description: Groovy map containing sample information
+  - input:
+      type: file
+      description: BAM/CRAM file
+      pattern: "*.{bam,cram}"
+  - input_index:
+      type: file
+      description: BAM/CRAM index file
+      pattern: "*.{bai,crai}"
+  - fasta:
+      type: file
+      description: Reference genome FASTA file
+      pattern: "*.{fa,fasta}"
+  - fai:
+      type: file
+      description: Reference genome FASTA index
+      pattern: "*.fai"
+  - dict:
+      type: file
+      description: Reference genome sequence dictionary
+      pattern: "*.dict"
+output:
+  - vcf:
+      type: file
+      description: GVCF file and index
+      pattern: "*.g.vcf.gz{,.tbi}"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+  - command_files:
+      type: list
+      description: List of command files
+authors:
+  - "@rhassaine"
