@@ -3,7 +3,7 @@ process VCHORD {
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
-    container "ghcr.io/rhassaine/v-chord:1.0"
+    container "docker.io/hartwigmedicalfoundation/v-chord:1.0.1"
 
     input:
     tuple val(meta), path(purple_dir)
