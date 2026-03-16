@@ -5,8 +5,8 @@
 import Constants
 import Utils
 
+include { CONCATENATE_FASTQ    } from '../../../modules/local/custom/concatenate_fastq/main'
 include { GATK4_MARKDUPLICATES } from '../../../modules/nf-core/gatk4/markduplicates/main'
-include { SAMBAMBA_MERGE       } from '../../../modules/local/sambamba/merge/main'
 include { SAMTOOLS_SORT        } from '../../../modules/nf-core/samtools/sort/main'
 include { STAR_ALIGN           } from '../../../modules/local/star/align/main'
 
@@ -32,38 +32,59 @@ workflow READ_ALIGNMENT_RNA {
             skip: true
         }
 
-    // Create FASTQ input channel
-    // channel: [ meta_fastq, fastq_fwd, fastq_rev ]
-    ch_fastq_inputs = ch_inputs_sorted.runnable
-        .flatMap { meta ->
+
+
+
+    // TODO(SW): per-case / per-sample conditional branch on FASTQ count > 1
+    // TODO(SW): branch-dependent read-group; ±library/lane information
+    // TODO(SW): consider whether providing version information for CONCATENATE_FASTQ is useful
+
+
+
+
+    //
+    // MODULE: Concatenate FASTQ
+    //
+    // Create process input channel
+    // channel: [ meta_fastq_concat, [fastq_fwd, ...], [fastq_rev, ...] ]
+    ch_concatenate_fastq_inputs = ch_inputs_sorted.runnable
+        .map { meta ->
             def meta_sample = Utils.getTumorRnaSample(meta)
-            meta_sample
+            def (fastqs_fwd, fastqs_rev) = meta_sample
                 .getAt(Constants.FileType.FASTQ)
                 .collect { key, fps ->
-                    def (library_id, lane) = key
-
-                    def meta_fastq = [
-                        key: meta.group_id,
-                        id: "${meta.group_id}_${meta_sample.sample_id}",
-                        sample_id: meta_sample.sample_id,
-                        library_id: library_id,
-                        lane: lane,
-                    ]
-
-                    return [meta_fastq, fps['fwd'], fps['rev']]
+                    return [fps['fwd'], fps['rev']]
                 }
+                .sort()
+                .transpose()
+
+            def meta_concate_fastq = [
+                key: meta.group_id,
+                id: "${meta.group_id}_${meta_sample.sample_id}",
+            ]
+
+            return [meta_concate_fastq, fastqs_fwd, fastqs_rev]
         }
+
+    // Run process
+    CONCATENATE_FASTQ(
+        ch_concatenate_fastq_inputs,
+    )
 
     //
     // MODULE: STAR alignment
     //
     // Create process input channel
     // channel: [ meta_star, fastq_fwd, fastq_rev ]
-    ch_star_inputs = ch_fastq_inputs
-        .map { meta_fastq, fastq_fwd, fastq_rev ->
+    ch_star_inputs = WorkflowOncoanalyser.restoreMeta(CONCATENATE_FASTQ.out.fastq, ch_inputs)
+        .map { meta, fastq_fwd, fastq_rev ->
+
+            def sample_id = Utils.getTumorRnaSampleName(meta)
             def meta_star = [
-                *:meta_fastq,
-                read_group: "${meta_fastq.sample_id}.${meta_fastq.library_id}.${meta_fastq.lane}",
+                key: meta.group_id,
+                id: "${meta.group_id}_${sample_id}",
+                sample_id: sample_id,
+                read_group: sample_id,
             ]
 
             return [meta_star, fastq_fwd, fastq_rev]
@@ -84,8 +105,10 @@ workflow READ_ALIGNMENT_RNA {
     // channel: [ meta_sort, bam ]
     ch_sort_inputs = STAR_ALIGN.out.bam
         .map { meta_star, bam ->
+
             def meta_sort = [
-                *:meta_star,
+                key: meta_star.group_id,
+                id: meta_star.id,
                 prefix: meta_star.read_group,
             ]
 
@@ -100,78 +123,11 @@ workflow READ_ALIGNMENT_RNA {
     ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions)
 
     //
-    // MODULE: Sambamba merge
-    //
-    // Reunite BAMs
-    // First, count expected BAMs per sample for non-blocking groupTuple op
-    // channel: [ meta_count, group_size ]
-    ch_sample_fastq_counts = ch_star_inputs
-        .map { meta_star, reads_fwd, reads_rev ->
-            def meta_count = [key: meta_star.key]
-            return [meta_count, meta_star]
-        }
-        .groupTuple()
-        .map { meta_count, meta_stars -> return [meta_count, meta_stars.size()] }
-
-    // Now, group with expected size then sort into tumor and normal channels
-    // channel: [ meta_group, [bam, ...] ]
-    ch_bams_united = ch_sample_fastq_counts
-        .cross(
-            // First element to match meta_count above for `cross`
-            SAMTOOLS_SORT.out.bam.map { meta_star, bam -> [[key: meta_star.key], bam] }
-        )
-        .map { count_tuple, bam_tuple ->
-
-            def group_size = count_tuple[1]
-            def (meta_bam, bam) = bam_tuple
-
-            def meta_group = [
-                *:meta_bam,
-            ]
-
-            return tuple(groupKey(meta_group, group_size), bam)
-        }
-        .groupTuple()
-
-    // Sort into merge-eligible BAMs (at least two BAMs required)
-    // channel: runnable: [ meta_group, [bam, ...] ]
-    // channel: skip: [ meta_group, bam ]
-    ch_bams_united_sorted = ch_bams_united
-        .branch { meta_group, bams ->
-            runnable: bams.size() > 1
-            skip: true
-                return [meta_group, bams[0]]
-        }
-
-    // Create process input channel
-    // channel: [ meta_merge, [bams, ...] ]
-    ch_merge_inputs = WorkflowOncoanalyser.restoreMeta(ch_bams_united_sorted.runnable, ch_inputs)
-        .map { meta, bams ->
-            def meta_merge = [
-                key: meta.group_id,
-                id: meta.group_id,
-                sample_id: Utils.getTumorRnaSampleName(meta),
-            ]
-            return [meta_merge, bams]
-        }
-
-    // Run process
-    SAMBAMBA_MERGE(
-        ch_merge_inputs,
-    )
-
-    ch_versions = ch_versions.mix(SAMBAMBA_MERGE.out.versions)
-
-    //
     // MODULE: GATK4 markduplicates
     //
     // Create process input channel
     // channel: [ meta_markdups, bam ]
-    ch_markdups_inputs = Channel.empty()
-        .mix(
-            WorkflowOncoanalyser.restoreMeta(SAMBAMBA_MERGE.out.bam, ch_inputs),
-            WorkflowOncoanalyser.restoreMeta(ch_bams_united_sorted.skip, ch_inputs),
-        )
+    ch_markdups_inputs = WorkflowOncoanalyser.restoreMeta(SAMTOOLS_SORT.out.bam, ch_inputs)
         .map { meta, bam ->
             def meta_markdups = [
                 key: meta.group_id,
