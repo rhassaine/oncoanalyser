@@ -473,5 +473,11 @@
         {
             "$ref": "#/$defs/generic_options"
         }
-    ]
+    ],
+    "properties": {
+        "dna_aligner": {
+            "type": "string",
+            "default": "bwamem2"
+        }
+    }
 }
