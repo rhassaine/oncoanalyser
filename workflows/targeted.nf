@@ -83,6 +83,7 @@ workflow TARGETED {
             params.fastp_umi_skip,
             params.fastq_tools_umi_enabled,
             params.fastq_tools_umi_delim,
+            params.dna_aligner,
         )
 
         READ_ALIGNMENT_RNA(

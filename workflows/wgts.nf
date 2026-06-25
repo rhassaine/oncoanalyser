@@ -91,6 +91,7 @@ workflow WGTS {
             -1,     // fastp_umi_skip
             false,  // fastq_tools_umi_enabled
             '',     // fastq_tools_umi_duplex_delim
+            params.dna_aligner,
         )
 
         READ_ALIGNMENT_RNA(
