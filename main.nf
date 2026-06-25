@@ -35,6 +35,8 @@ params.ref_data_genome_bwamem2_index = getGenomeAttribute('bwamem2_index')
 params.ref_data_genome_gridss_index  = getGenomeAttribute('gridss_index')
 params.ref_data_genome_star_index    = getGenomeAttribute('star_index')
 
+pipeline.Params.parse(params)
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CREATE PLACEHOLDER FILES FOR STUB RUNS
@@ -112,8 +114,6 @@ workflow NFCORE_ONCOANALYSER {
 */
 
 workflow {
-
-    pipeline.Params.parse(params)
 
     //
     // SUBWORKFLOW: Run initialisation tasks
