@@ -92,6 +92,28 @@ workflow PREPARE_REFERENCE {
     }
 
     //
+    // Set bwa index (for parabricks), create if required
+    //
+    ch_genome_bwa_index = Channel.empty()
+    if (prep_config.require_bwamem2_index && params.dna_aligner == 'parabricks') {
+
+        if (params.containsKey('ref_data_genome_bwa_index') && params.ref_data_genome_bwa_index) {
+
+            ch_genome_bwa_index = getRefFileChannel('ref_data_genome_bwa_index')
+
+        } else {
+
+            BWA_INDEX(
+                ch_genome_fasta,
+                params.ref_data_genome_alt ? file(params.ref_data_genome_alt) : [],
+            )
+            ch_genome_bwa_index = BWA_INDEX.out.index
+            ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
+
+        }
+    }
+
+    //
     // Set bwa-mem2 index, unpack or create if required
     //
     ch_genome_bwamem2_index = Channel.empty()
@@ -338,6 +360,7 @@ workflow PREPARE_REFERENCE {
     genome_fai           = ch_genome_fai.first()           // path: genome_fai
     genome_dict          = ch_genome_dict.first()          // path: genome_dict
     genome_img           = ch_genome_img.first()           // path: genome_img
+    genome_bwa_index     = ch_genome_bwa_index             // path: genome_bwa_index (parabricks)
     genome_bwamem2_index = ch_genome_bwamem2_index.first() // path: genome_bwa-mem2_index
     genome_gridss_index  = ch_genome_gridss_index.first()  // path: genome_gridss_index
     genome_star_index    = ch_genome_star_index.first()    // path: genome_star_index

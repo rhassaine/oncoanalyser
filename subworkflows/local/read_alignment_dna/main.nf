@@ -16,6 +16,7 @@ workflow READ_ALIGNMENT_DNA {
       // Reference data
       genome_fasta         // channel: [mandatory] /path/to/genome_fasta
       genome_bwamem2_index // channel: [mandatory] /path/to/genome_bwa-mem2_index_dir/
+      genome_bwa_index     // channel: [optional]  /path/to/genome_bwa_index_dir/ (parabricks only)
       known_umis           // channel: [mandatory] /path/to/known_umis_file
 
       // Params
@@ -199,7 +200,7 @@ workflow READ_ALIGNMENT_DNA {
           PARABRICKS_FQ2BAM(
               ch_aligner_inputs.map { meta, fwd, rev -> [meta, [fwd, rev]] },
               genome_fasta.map { f -> [[id: 'genome'], f] },
-              genome_bwamem2_index.map { i -> [[id: 'genome'], i] },
+              genome_bwa_index.map { i -> [[id: 'genome'], i] },
               [[id: 'no_intervals'], []],
               [[id: 'no_known_sites'], []],
               'bam',

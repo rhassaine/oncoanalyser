@@ -83,6 +83,7 @@ workflow WGTS {
             ch_inputs,
             ref_data.genome_fasta,
             ref_data.genome_bwamem2_index,
+            ref_data.genome_bwa_index,
             [],  // known_umis
             params.max_fastq_records,
             false,  // fastp_umi_enabled
