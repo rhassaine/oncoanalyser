@@ -197,8 +197,27 @@ workflow READ_ALIGNMENT_DNA {
 
       if (dna_aligner == 'parabricks') {
 
+          // Group all lanes per sample into a single PARABRICKS_FQ2BAM call.
+          // pbrun fq2bam accepts multiple --in-fq pairs and aligns them in parallel
+          // on the GPU, so one task per sample is both correct and faster than
+          // one task per lane. The grouping key is (key, sample_type) so tumor and
+          // normal are kept separate.
+          ch_parabricks_inputs = ch_aligner_inputs
+              .map { meta, fwd, rev ->
+                  def group_key = [key: meta.key, sample_type: meta.sample_type]
+                  [group_key, meta, fwd, rev]
+              }
+              .groupTuple()
+              .map { group_key, metas, fwds, revs ->
+                  // Use the first lane's meta as the representative; read_group will
+                  // be set per-lane via ext.args in modules.config.
+                  def meta_rep = metas[0]
+                  def reads = [fwds, revs].transpose().collect { fwd, rev -> [fwd, rev] }.flatten()
+                  [meta_rep, reads]
+              }
+
           PARABRICKS_FQ2BAM(
-              ch_aligner_inputs.map { meta, fwd, rev -> [meta, [fwd, rev]] },
+              ch_parabricks_inputs,
               genome_fasta.map { f -> [[id: 'genome'], f] },
               genome_bwa_index.map { i -> [[id: 'genome'], i] },
               [[id: 'no_intervals'], []],
@@ -223,7 +242,9 @@ workflow READ_ALIGNMENT_DNA {
       }
 
       // Reunite BAMs
-      // First, count expected BAMs per sample for non-blocking groupTuple op
+      // First, count expected BAMs per sample for non-blocking groupTuple op.
+      // Parabricks merges all lanes into one BAM per task, so group_size=1.
+      // bwa-mem2 emits one BAM per lane, so group_size=number of lanes.
       // channel: [ meta_count, group_size ]
       ch_sample_fastq_counts = ch_aligner_inputs
           .map { meta_aligner, reads_fwd, reads_rev ->
@@ -236,7 +257,10 @@ workflow READ_ALIGNMENT_DNA {
               return [meta_count, meta_aligner]
           }
           .groupTuple()
-          .map { meta_count, metas_aligner -> return [meta_count, metas_aligner.size()] }
+          .map { meta_count, metas_aligner ->
+              def group_size = dna_aligner == 'parabricks' ? 1 : metas_aligner.size()
+              return [meta_count, group_size]
+          }
 
       // Now, group with expected size then sort into tumor and normal channels
       // channel: [ meta_group, [bam, ...], [bai, ...] ]
