@@ -3,7 +3,11 @@ process BWAMEM2_ALIGN {
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    // task.ext.aligner 'bwa-mem3' (--aligner bwa-mem3): the same image plus bwa-mem3 0.15.0, so the sambamba and
+    // samtools steps are unchanged
+    container "${ task.ext.aligner == 'bwa-mem3' ?
+        'ghcr.io/rhassaine/bwa-mem3-sambamba:0.15.0-oa3.0.0@sha256:04eb1723968e259c430999fd7bfa266bed59364e75e66d7a92b1aedb376a1f05' :
+        workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/mulled-v2-4dde50190ae599f2bb2027cb2c8763ea00fb5084:596c0d6a494faa218562f2be03af2714d454da4f-0' :
         'biocontainers/mulled-v2-4dde50190ae599f2bb2027cb2c8763ea00fb5084:596c0d6a494faa218562f2be03af2714d454da4f-0' }"
 
@@ -27,10 +31,15 @@ process BWAMEM2_ALIGN {
 
     def output_fn = meta.split ? "${meta.split}.${meta.output_file_id}.bam" : "${meta.output_file_id}.bam"
 
+    // bwa-mem3 in bwa-mem2 compatibility mode: reads the bwa-mem2 index and writes the same records as bwa-mem2
+    def bwamem3 = task.ext.aligner == 'bwa-mem3'
+    def aligner_cmd = bwamem3 ? 'bwa-mem3 mem --compat=bwa-mem2' : 'bwa-mem2 mem'
+    def aligner_version = bwamem3 ? 'bwa-mem3: \$(bwa-mem3 version 2>&1 | head -n1)' : 'bwa-mem2: 2.3'
+
     """
     ln -fs \$(find -L ${genome_bwamem2_index} -type f) ./
 
-    bwa-mem2 mem \\
+    ${aligner_cmd} \\
         ${args} \\
         -Y \\
         -K 100000000 \\
@@ -57,7 +66,7 @@ process BWAMEM2_ALIGN {
     # NOTE(SW): bwa-mem2 version hardcoded as 2.3 reports the wrong version, see https://github.com/bwa-mem2/bwa-mem2/issues/276
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        bwa-mem2: 2.3
+        ${aligner_version}
         samtools: \$(samtools --version | sed -n '/^samtools / { s/^.* //p }')
         sambamba: \$(sambamba --version 2>&1 | sed -n '/^sambamba / { s/^.* //p }' | head -n1)
     END_VERSIONS
