@@ -3,10 +3,10 @@ process BWAMEM2_ALIGN {
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
-    // task.ext.aligner 'bwa-mem3' (--aligner bwa-mem3): the same image plus bwa-mem3 0.15.0, so the sambamba and
-    // samtools steps are unchanged
+    // task.ext.aligner 'bwa-mem3' (--aligner bwa-mem3): Seqera community image built from bioconda bwa-mem3 0.15.0,
+    // sambamba 1.0.1 and samtools 1.21 (same sambamba/samtools builds as below), pinned by digest
     container "${ task.ext.aligner == 'bwa-mem3' ?
-        'ghcr.io/rhassaine/bwa-mem3-sambamba:0.15.0-oa3.0.0@sha256:04eb1723968e259c430999fd7bfa266bed59364e75e66d7a92b1aedb376a1f05' :
+        'community.wave.seqera.io/library/bwa-mem3_sambamba_samtools:96175df3ef699161@sha256:8fdaaffe877a774673b8a8517ba36c6c1ded33830d24b8c64f8f395b79acb063' :
         workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/mulled-v2-4dde50190ae599f2bb2027cb2c8763ea00fb5084:596c0d6a494faa218562f2be03af2714d454da4f-0' :
         'biocontainers/mulled-v2-4dde50190ae599f2bb2027cb2c8763ea00fb5084:596c0d6a494faa218562f2be03af2714d454da4f-0' }"
