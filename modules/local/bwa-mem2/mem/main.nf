@@ -4,7 +4,8 @@ process BWAMEM2_ALIGN {
 
     conda "${moduleDir}/environment.yml"
     // task.ext.aligner 'bwa-mem3' (--aligner bwa-mem3): Seqera community image built from bioconda bwa-mem3 0.15.0,
-    // sambamba 1.0.1 and samtools 1.21 (same sambamba/samtools builds as below), pinned by digest
+    // sambamba 1.0.1 and samtools 1.21 on htslib 1.24 (bwa-mem3 0.15.0 is built against htslib 1.24), pinned by digest.
+    // bioconda no longer resolves samtools 1.21 with htslib 1.24, so a rebuild needs samtools >= 1.24
     container "${ task.ext.aligner == 'bwa-mem3' ?
         'community.wave.seqera.io/library/bwa-mem3_sambamba_samtools:96175df3ef699161@sha256:8fdaaffe877a774673b8a8517ba36c6c1ded33830d24b8c64f8f395b79acb063' :
         workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
