@@ -2,7 +2,8 @@
 // Align DNA reads
 //
 
-include { BWAMEM2_ALIGN } from '../../../modules/local/bwa-mem2/mem/main'
+include { BWAMEM2_ALIGN                  } from '../../../modules/local/bwa-mem2/mem/main'
+include { BWAMEM2_ALIGN as BWAMEM3_ALIGN } from '../../../modules/local/bwa-mem2/mem/main'
 include { FASTP_SPLIT   } from '../../../modules/local/fastp/split/main'
 
 workflow READ_ALIGNMENT_DNA {
@@ -145,7 +146,7 @@ workflow READ_ALIGNMENT_DNA {
     }
 
     //
-    // MODULE: BWA-MEM2
+    // MODULE: BWA-MEM2 (or bwa-mem3 with --aligner bwa-mem3)
     //
     // Create process input channel
     // channel: [ meta_bwamem2, fastq_fwd, fastq_rev ]
@@ -155,12 +156,22 @@ workflow READ_ALIGNMENT_DNA {
             return [meta_bwamem2, fastq_fwd, fastq_rev]
         }
 
-    // Run process
-    BWAMEM2_ALIGN(
-        ch_bwamem2_inputs,
-        genome_fasta,
-        genome_bwamem2_index,
-    )
+    // Run process: with --aligner bwa-mem3 the same module runs under the name BWAMEM3_ALIGN (bwa-mem3 in bwa-mem2
+    // compatibility mode, same index), so the console, trace and logs name the aligner that ran; both emit to the
+    // bwamem2_align_bam topic below
+    if (params.aligner == 'bwa-mem3') {
+        BWAMEM3_ALIGN(
+            ch_bwamem2_inputs,
+            genome_fasta,
+            genome_bwamem2_index,
+        )
+    } else {
+        BWAMEM2_ALIGN(
+            ch_bwamem2_inputs,
+            genome_fasta,
+            genome_bwamem2_index,
+        )
+    }
 
     // Reunite BAMs
     // First, count expected BAMs per sample for non-blocking groupTuple op

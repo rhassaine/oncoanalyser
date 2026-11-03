@@ -19,7 +19,7 @@ process BWAMEM2_ALIGN {
 
     output:
     tuple val(meta), path('*.bam'), path('*.bai')            , topic: bwamem2_align_bam
-    tuple val(meta), val('bwamem2_align'), path('.command.*'), topic: command_files
+    tuple val(meta), val(task.ext.aligner == 'bwa-mem3' ? 'bwamem3_align' : 'bwamem2_align'), path('.command.*'), topic: command_files
     path 'versions.yml'                                      , topic: versions
 
     when:
