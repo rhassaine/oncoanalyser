@@ -22,6 +22,8 @@
 
 > Vasimuddin, Md., Misra, S., Li, H., & Aluru, S. (2019). Efficient Architecture-Aware Acceleration of BWA-MEM for Multicore Systems. 2019 IEEE International Parallel and Distributed Processing Symposium (IPDPS), 314–324. https://doi.org/10.1109/IPDPS.2019.00041
 
+- [bwa-mem3](https://github.com/fg-labs/bwa-mem3)
+
 - [CHORD](https://doi.org/10.1038/s41467-020-19406-4)
 
 > Nguyen, L., W. M. Martens, J., Van Hoeck, A., & Cuppen, E. (2020). Pan-cancer landscape of homologous recombination deficiency. Nature Communications, 11(1), 5584. https://doi.org/10.1038/s41467-020-19406-4

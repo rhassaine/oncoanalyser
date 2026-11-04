@@ -3,6 +3,17 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project mostly adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## dev
+
+- Add `--aligner bwa-mem3`: align DNA reads with bwa-mem3 in bwa-mem2 compatibility mode (own module, `BWAMEM3_ALIGN`;
+  same bwa-mem2 index and arguments). The default, `bwa-mem2`, is unchanged
+
+### Software dependencies
+
+| Dependency | Old version | New version |
+| ---------- | ----------- | ----------- |
+| `bwa-mem3` | -           | 0.15.0      |
+
 ## [[3.0.0](https://github.com/nf-core/oncoanalyser/releases/tag/3.0.0)] Scarlet Honeyeater - 2026-09-01
 
 - [314](https://github.com/nf-core/oncoanalyser/pull/314) - Other additions and fixes

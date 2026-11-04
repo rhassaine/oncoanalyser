@@ -105,6 +105,9 @@ sequences. In `oncoanalyser`, BWA-MEM2 is used to align DNA reads to the human g
 
 _No outputs are published directly from bwa-mem2, see [REDUX](#redux) for the fully processed alignment outputs_
 
+With `--aligner bwa-mem3`, DNA reads are aligned by [bwa-mem3](https://github.com/fg-labs/bwa-mem3) instead, in its
+bwa-mem2 compatibility mode (`--compat=bwa-mem2`): same index and arguments, and the step is named `BWAMEM3_ALIGN`.
+
 #### STAR
 
 [STAR](https://github.com/alexdobin/STAR) is a specialised mapping tool used to align RNA reads to a reference

@@ -259,6 +259,10 @@ Currently only gzip compressed, non-interleaved paired-end FASTQ files are suppo
 
 :::
 
+DNA reads are aligned with BWA-MEM2 by default. To align them with [bwa-mem3](https://github.com/fg-labs/bwa-mem3)
+instead, add `--aligner bwa-mem3`. bwa-mem3 runs in its bwa-mem2 compatibility mode (`--compat=bwa-mem2`), so it uses
+the same BWA-MEM2 index and arguments, and needs no additional reference data.
+
 #### BAM
 
 To run from BAM, specify `bam` in the `filetype` field:

@@ -9,8 +9,10 @@ keywords:
 tools:
   - bwa-mem3:
       description: Burrow-Wheeler Aligner for short-read alignment, with a bwa-mem2 compatibility mode
-      homepage: https://bioconda.github.io/recipes/bwa-mem3/README.html
-      documentation: https://bioconda.github.io/recipes/bwa-mem3/README.html
+      homepage: https://github.com/fg-labs/bwa-mem3
+      documentation: https://bwa-mem3.readthedocs.io
+      tool_dev_url: https://github.com/fg-labs/bwa-mem3
+      licence: ["MIT", "Apache-2.0", "Zlib"]
 input:
   - meta:
       type: map
