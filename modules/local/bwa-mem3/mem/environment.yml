@@ -1,0 +1,10 @@
+name: bwa-mem3_mem
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::bwa-mem3=0.15.0
+  - bioconda::sambamba=1.0.1
+  # The container image pairs samtools 1.21 with htslib 1.24, but bioconda can't resolve that pair: bwa-mem3 0.15.0
+  # requires htslib >=1.24,<1.25 and each samtools release pins its own htslib minor, so samtools 1.24 is the match
+  - bioconda::samtools=1.24

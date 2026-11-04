@@ -2,8 +2,8 @@
 // Align DNA reads
 //
 
-include { BWAMEM2_ALIGN                  } from '../../../modules/local/bwa-mem2/mem/main'
-include { BWAMEM2_ALIGN as BWAMEM3_ALIGN } from '../../../modules/local/bwa-mem2/mem/main'
+include { BWAMEM2_ALIGN } from '../../../modules/local/bwa-mem2/mem/main'
+include { BWAMEM3_ALIGN } from '../../../modules/local/bwa-mem3/mem/main'
 include { FASTP_SPLIT   } from '../../../modules/local/fastp/split/main'
 
 workflow READ_ALIGNMENT_DNA {
@@ -156,9 +156,8 @@ workflow READ_ALIGNMENT_DNA {
             return [meta_bwamem2, fastq_fwd, fastq_rev]
         }
 
-    // Run process: with --aligner bwa-mem3 the same module runs under the name BWAMEM3_ALIGN (bwa-mem3 in bwa-mem2
-    // compatibility mode, same index), so the console, trace and logs name the aligner that ran; both emit to the
-    // bwamem2_align_bam topic below
+    // Run process: --aligner picks the module. BWAMEM3_ALIGN runs bwa-mem3 in bwa-mem2 compatibility mode on the same
+    // bwa-mem2 index; both modules emit to the bwamem2_align_bam topic below
     if (params.aligner == 'bwa-mem3') {
         BWAMEM3_ALIGN(
             ch_bwamem2_inputs,

@@ -1,0 +1,54 @@
+name: bwa-mem3_mem
+description: The mem alignment algorithm of bwa-mem3, run in bwa-mem2 compatibility mode (--compat=bwa-mem2) against a bwa-mem2 index
+keywords:
+  - bwa
+  - mem
+  - read alignment
+  - bwa-mem2
+  - bwa-mem3
+tools:
+  - bwa-mem3:
+      description: Burrow-Wheeler Aligner for short-read alignment, with a bwa-mem2 compatibility mode
+      homepage: https://bioconda.github.io/recipes/bwa-mem3/README.html
+      documentation: https://bioconda.github.io/recipes/bwa-mem3/README.html
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [id: 'sample_id']
+  - reads_fwd:
+      type: file
+      description: Forward reads FASTQ file
+      pattern: "*.{fastq.gz}"
+  - reads_rev:
+      type: file
+      description: Reverse reads FASTQ file
+      pattern: "*.{fastq.gz}"
+  - genome_fasta:
+      type: file
+      description: Reference genome assembly FASTA file
+      pattern: "*.{fa,fasta}"
+  - genome_bwamem2_index:
+      type: directory
+      description: bwa-mem2 index directory (read by bwa-mem3 in bwa-mem2 compatibility mode)
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [id: 'sample_id']
+  - bwamem2_align_bam:
+      type: list
+      description: BAM and BAI file (emitted to the bwamem2_align_bam topic so downstream is shared with BWAMEM2_ALIGN)
+      pattern: "*.{bam,bam.bai}"
+  - command_files:
+      type: list
+      description: List of command files
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@scwatts"
+  - "@mkcmkc"
